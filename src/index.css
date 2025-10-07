@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* Importar fuente Rammetto One */
 @font-face {
   font-family: 'Rammetto One';
   src: url('./assets/fonts/Rammetto_One/RammettoOne-Regular.ttf') format('truetype');
@@ -8,9 +7,6 @@
   font-style: normal;
 }
 
-
-
-/* Clase personalizada para la fuente Rammetto One */
 .font-rammetto {
   font-family: 'Rammetto One', cursive;
 }
