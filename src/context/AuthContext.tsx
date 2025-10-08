@@ -100,14 +100,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithFacebook = async () => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'facebook',
-        options: { redirectTo: `${window.location.origin}/` },
+        options: {
+          redirectTo: `${window.location.origin}/profile`,
+        },
       });
-      if (error) throw error;
-    } catch (error) {
-      console.error('Facebook sign-in error:', error);
-      throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+        return;
+      }
+      if (error) {
+        console.error('Facebook sign-in error:', error.message);
+        alert('Facebook login failed: ' + error.message);
+      }
+    } catch (err) {
+      console.error('Unexpected Facebook login error:', err);
     }
   };
 

@@ -5,12 +5,15 @@ interface MenuContextType {
   isMenuOpen: boolean;
   setIsMenuOpen: (isOpen: boolean) => void;
   toggleMenu: () => void;
+  intendedPath: string | null;
+  setIntendedPath: (path: string | null) => void;
 }
 
 const MenuContext = createContext<MenuContextType | undefined>(undefined);
 
 export const MenuProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [intendedPath, setIntendedPath] = useState<string | null>(null);
 
   const toggleMenu = () => {
     setIsMenuOpen(prev => {
@@ -21,7 +24,13 @@ export const MenuProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <MenuContext.Provider value={{ isMenuOpen, setIsMenuOpen, toggleMenu }}>
+    <MenuContext.Provider value={{ 
+      isMenuOpen, 
+      setIsMenuOpen, 
+      toggleMenu,
+      intendedPath,
+      setIntendedPath
+    }}>
       {children}
     </MenuContext.Provider>
   );

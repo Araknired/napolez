@@ -3,6 +3,7 @@ import { MenuProvider } from './context/MenuContext';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/layout/Navbar';
+import MobileTabBar from './components/layout/MobileTabBar';
 import Home from './pages/Home';
 import Product from './pages/Product';
 import Arena from './pages/Arena';
@@ -19,6 +20,7 @@ import Location from './pages/Location';
 import Theme from './pages/Theme';
 import ClearData from './pages/ClearData';
 import Store from './components/store/store';
+import Cart from './pages/Cart';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -27,7 +29,7 @@ function App() {
       <AuthProvider>
         <ThemeProvider>
           <MenuProvider>
-            <div className="min-h-screen">
+            <div className="min-h-screen pb-20 lg:pb-0">
               <Navbar />
               <Routes>
                 {/* Public routes */}
@@ -59,6 +61,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Product />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/cart"
+                  element={
+                    <ProtectedRoute>
+                      <Cart />
                     </ProtectedRoute>
                   }
                 />
@@ -127,6 +137,7 @@ function App() {
                   }
                 />
               </Routes>
+              <MobileTabBar />
             </div>
           </MenuProvider>
         </ThemeProvider>
