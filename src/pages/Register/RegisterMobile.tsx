@@ -55,6 +55,27 @@ export default function RegisterMobile() {
     }
   }, [password]);
 
+  const saveUserData = async (userId: string, fullName: string, phoneNumber?: string) => {
+    try {
+      const { error } = await supabase
+        .from('users')
+        .upsert({
+          user_id: userId,
+          full_name: fullName,
+          phone: phoneNumber || null,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id'
+        });
+
+      if (error) {
+        console.error('Error saving user data:', error);
+      }
+    } catch (err) {
+      console.error('Unexpected error saving user data:', err);
+    }
+  };
+
   const handleEmailRegister = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -73,10 +94,11 @@ export default function RegisterMobile() {
     setLoading(true);
 
     try {
-      const { error } = await signUp(email, password);
+      const { data, error } = await signUp(email, password);
       if (error) {
         setError(error.message);
-      } else {
+      } else if (data?.user) {
+        await saveUserData(data.user.id, name);
         setMessage('Registration successful! Check your email to confirm your account.');
       }
     } catch {
@@ -111,7 +133,7 @@ export default function RegisterMobile() {
       if (error) {
         setError(error.message);
       } else {
-        navigate('/code', { state: { phone, from: 'register' } });
+        navigate('/code', { state: { phone, from: 'register', name } });
       }
     } catch {
       setError('An unexpected error occurred');

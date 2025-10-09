@@ -11,9 +11,11 @@ import Sponsors from './pages/Sponsors';
 import About from './pages/About';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Code from './pages/Code';
 import Profile from './pages/Profile';
-import EditProfile from './pages/EditProfile';
+import EditProfile from './pages/Profile/EditProfile';
 import Favorites from './pages/Favorites';
 import Language from './pages/Language';
 import Location from './pages/Location';
@@ -37,6 +39,8 @@ function App() {
                 <Route path="/about" element={<About />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/code" element={<Code />} />
 
                 {/* Protected routes */}

@@ -2,10 +2,11 @@ import { useState, useEffect, type FormEvent } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useMenu } from '../../context/MenuContext';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, Check, ArrowRight, Shield, Sparkles } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Check, ArrowRight, Shield, Sparkles, Phone } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 export default function LoginMobile() {
-  const [email, setEmail] = useState('');
+  const [emailOrPhone, setEmailOrPhone] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -34,22 +35,53 @@ export default function LoginMobile() {
 
   useEffect(() => {
     let progress = 0;
-    if (email) progress += 50;
-    if (password) progress += 50;
+    if (emailOrPhone) progress += 50;
+    if (password || isPhone(emailOrPhone)) progress += 50;
     setFormProgress(progress);
-  }, [email, password]);
+  }, [emailOrPhone, password]);
 
-  const handleEmailLogin = async (e: FormEvent) => {
+  const isEmail = (value: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(value);
+  };
+
+  const isPhone = (value: string): boolean => {
+    const phoneRegex = /^\+?[0-9]{10,15}$/;
+    return phoneRegex.test(value.replace(/\s/g, ''));
+  };
+
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
+
     try {
-      const { error } = await signIn(email, password);
-      if (error) {
-        setError(error.message);
+      if (isEmail(emailOrPhone)) {
+        const { error } = await signIn(emailOrPhone, password);
+        if (error) {
+          setError(error.message);
+        } else {
+          setIntendedPath(null);
+          navigate(from, { replace: true });
+        }
+      } else if (isPhone(emailOrPhone)) {
+        const cleanPhone = emailOrPhone.replace(/\s/g, '');
+        const { error } = await supabase.auth.signInWithOtp({
+          phone: cleanPhone,
+        });
+
+        if (error) {
+          setError(error.message);
+        } else {
+          navigate('/code', { 
+            state: { 
+              phone: cleanPhone, 
+              from: 'login'
+            } 
+          });
+        }
       } else {
-        setIntendedPath(null);
-        navigate(from, { replace: true });
+        setError('Please enter a valid email or phone number');
       }
     } catch {
       setError('An unexpected error occurred');
@@ -68,6 +100,9 @@ export default function LoginMobile() {
       }
     }
   };
+
+  const inputIcon = isPhone(emailOrPhone) ? Phone : Mail;
+  const InputIcon = inputIcon;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 relative overflow-hidden">
@@ -129,7 +164,7 @@ export default function LoginMobile() {
             mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          <form onSubmit={handleEmailLogin} className="space-y-5">
+          <form onSubmit={handleLogin} className="space-y-5">
             {error && (
               <div className="bg-red-50/80 backdrop-blur-sm border-l-4 border-red-500 rounded-r-xl px-4 py-3 animate-shake">
                 <div className="flex items-center gap-2">
@@ -141,32 +176,32 @@ export default function LoginMobile() {
 
             <div className="relative">
               <label className="block text-xs font-semibold text-gray-600 mb-2 ml-1">
-                Email Address
+                Email or Phone
               </label>
               <div className={`relative transition-all duration-300 ${
-                focusedField === 'email' ? 'transform scale-[1.02]' : ''
+                focusedField === 'emailOrPhone' ? 'transform scale-[1.02]' : ''
               }`}>
                 <div className={`absolute inset-0 bg-gradient-to-r rounded-2xl transition-opacity duration-300 ${
-                  focusedField === 'email' 
+                  focusedField === 'emailOrPhone' 
                     ? 'from-blue-500 to-purple-500 opacity-20' 
                     : 'opacity-0'
                 }`} />
                 <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100">
                   <div className="flex items-center px-4 py-4">
-                    <Mail className={`w-5 h-5 mr-3 transition-all duration-300 ${
-                      focusedField === 'email' ? 'text-blue-500 scale-110' : 'text-gray-400'
+                    <InputIcon className={`w-5 h-5 mr-3 transition-all duration-300 ${
+                      focusedField === 'emailOrPhone' ? 'text-blue-500 scale-110' : 'text-gray-400'
                     }`} />
                     <input
-                      type="email"
+                      type="text"
                       required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      onFocus={() => setFocusedField('email')}
+                      value={emailOrPhone}
+                      onChange={(e) => setEmailOrPhone(e.target.value)}
+                      onFocus={() => setFocusedField('emailOrPhone')}
                       onBlur={() => setFocusedField(null)}
                       className="flex-1 bg-transparent border-0 focus:outline-none text-gray-900 placeholder-gray-400 text-sm font-medium"
-                      placeholder="example@gmail.com"
+                      placeholder="noreply@example.com or +57 123-456-7890"
                     />
-                    {email && email.includes('@') && (
+                    {emailOrPhone && (isEmail(emailOrPhone) || isPhone(emailOrPhone)) && (
                       <Check className="w-5 h-5 text-green-500 animate-scale-in" />
                     )}
                   </div>
@@ -174,56 +209,58 @@ export default function LoginMobile() {
               </div>
             </div>
 
-            <div className="relative">
-              <label className="block text-xs font-semibold text-gray-600 mb-2 ml-1">
-                Password
-              </label>
-              <div className={`relative transition-all duration-300 ${
-                focusedField === 'password' ? 'transform scale-[1.02]' : ''
-              }`}>
-                <div className={`absolute inset-0 bg-gradient-to-r rounded-2xl transition-opacity duration-300 ${
-                  focusedField === 'password' 
-                    ? 'from-purple-500 to-pink-500 opacity-20' 
-                    : 'opacity-0'
-                }`} />
-                <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100">
-                  <div className="flex items-center px-4 py-4">
-                    <Lock className={`w-5 h-5 mr-3 transition-all duration-300 ${
-                      focusedField === 'password' ? 'text-purple-500 scale-110' : 'text-gray-400'
-                    }`} />
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      onFocus={() => setFocusedField('password')}
-                      onBlur={() => setFocusedField(null)}
-                      className="flex-1 bg-transparent border-0 focus:outline-none text-gray-900 placeholder-gray-400 text-sm font-medium"
-                      placeholder="••••••••••"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="ml-2 text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="w-5 h-5" />
-                      ) : (
-                        <Eye className="w-5 h-5" />
-                      )}
-                    </button>
+            {isEmail(emailOrPhone) && (
+              <div className="relative">
+                <label className="block text-xs font-semibold text-gray-600 mb-2 ml-1">
+                  Password
+                </label>
+                <div className={`relative transition-all duration-300 ${
+                  focusedField === 'password' ? 'transform scale-[1.02]' : ''
+                }`}>
+                  <div className={`absolute inset-0 bg-gradient-to-r rounded-2xl transition-opacity duration-300 ${
+                    focusedField === 'password' 
+                      ? 'from-purple-500 to-pink-500 opacity-20' 
+                      : 'opacity-0'
+                  }`} />
+                  <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100">
+                    <div className="flex items-center px-4 py-4">
+                      <Lock className={`w-5 h-5 mr-3 transition-all duration-300 ${
+                        focusedField === 'password' ? 'text-purple-500 scale-110' : 'text-gray-400'
+                      }`} />
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        onFocus={() => setFocusedField('password')}
+                        onBlur={() => setFocusedField(null)}
+                        className="flex-1 bg-transparent border-0 focus:outline-none text-gray-900 placeholder-gray-400 text-sm font-medium"
+                        placeholder="••••••••••"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="ml-2 text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
+                <div className="text-right mt-3">
+                  <Link 
+                    to="/forgot-password" 
+                    className="text-xs text-blue-500 hover:text-blue-600 font-semibold underline underline-offset-2 transition-colors"
+                  >
+                    Forgot Password?
+                  </Link>
+                </div>
               </div>
-              <div className="text-right mt-3">
-                <Link 
-                  to="/forgot-password" 
-                  className="text-xs text-blue-500 hover:text-blue-600 font-semibold underline underline-offset-2 transition-colors"
-                >
-                  Forgot Password?
-                </Link>
-              </div>
-            </div>
+            )}
 
             <div className="pt-2">
               <button
@@ -247,11 +284,15 @@ export default function LoginMobile() {
                         <span className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                         <span className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                       </div>
-                      <span className="text-white font-bold text-base">Signing in...</span>
+                      <span className="text-white font-bold text-base">
+                        {isPhone(emailOrPhone) ? 'Sending code...' : 'Signing in...'}
+                      </span>
                     </>
                   ) : (
                     <>
-                      <span className="text-white font-bold text-base">Sign In</span>
+                      <span className="text-white font-bold text-base">
+                        {isPhone(emailOrPhone) ? 'Send Code' : 'Sign In'}
+                      </span>
                       <ArrowRight className="w-5 h-5 text-white" />
                     </>
                   )}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Search, SlidersHorizontal, Star, Heart, ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react';
+import { Search, SlidersHorizontal, Star, Heart, ShoppingCart, Plus, Minus, Trash2, ChevronDown } from 'lucide-react';
 
-type Category = 'Donuts' | 'Burger' | 'Ice' | 'Potato' | 'Pizza' | 'Fuchka' | 'Hot dog' | 'Chicken';
+type Category = 'Donuts' | 'Burger' | 'Ice' | 'Potato' | 'Pizza' | 'Fuchka' | 'Hot dog' | 'Chicken' | 'Tacos' | 'Drinks' | 'Coffee' | 'Pasta' | 'Snacks' | 'Energy Drinks' | 'Desserts' | 'Sushi';
 
 interface CategoryItem {
   id: Category;
@@ -23,7 +23,7 @@ interface CartItem extends Product {
   quantity: number;
 }
 
-type PaymentMethod = 'paypal' | 'visa' | 'mastercard' | 'amex';
+type PaymentMethod = 'paypal' | 'visa' | 'mastercard' | 'american';
 type TabType = 'popular' | 'recent';
 
 const FoodOrderApp: React.FC = () => {
@@ -31,6 +31,7 @@ const FoodOrderApp: React.FC = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('mastercard');
   const [activeTab, setActiveTab] = useState<TabType>('popular');
+  const [showAllCategories, setShowAllCategories] = useState(false);
 
   const categories: CategoryItem[] = [
     { id: 'Donuts', name: 'Donuts', emoji: '/src/assets/arena/media/donut/donut.png' },
@@ -40,7 +41,15 @@ const FoodOrderApp: React.FC = () => {
     { id: 'Pizza', name: 'Pizza', emoji: '/src/assets/arena/media/pizza/pizza.png' },
     { id: 'Fuchka', name: 'Fuchka', emoji: '/src/assets/arena/media/fuchka/fuchka.png' },
     { id: 'Hot dog', name: 'Hot dog', emoji: '/src/assets/arena/media/hotdog/hotdog.png' },
-    { id: 'Chicken', name: 'Chicken', emoji: '/src/assets/arena/media/chicken/chicken.png' }
+    { id: 'Chicken', name: 'Chicken', emoji: '/src/assets/arena/media/chicken/chicken.png' },
+    { id: 'Tacos', name: 'Tacos', emoji: '/src/assets/arena/media/tacos/tacos.png' },
+    { id: 'Drinks', name: 'Drinks', emoji: '/src/assets/arena/media/drinks/drinks.png' },
+    { id: 'Coffee', name: 'Coffee', emoji: '/src/assets/arena/media/coffee/coffee.png' },
+    { id: 'Pasta', name: 'Pasta', emoji: '/src/assets/arena/media/pasta/pasta.png' },
+    { id: 'Snacks', name: 'Snacks', emoji: '/src/assets/arena/media/snacks/snacks.png' },
+    { id: 'Energy Drinks', name: 'Energy Drinks', emoji: '/src/assets/arena/media/energy/energy.png' },
+    { id: 'Desserts', name: 'Desserts', emoji: '/src/assets/arena/media/desserts/desserts.png' },
+    { id: 'Sushi', name: 'Sushi', emoji: '/src/assets/arena/media/sushi/sushi.png' }
   ];
 
   const products: Record<Category, Product[]> = {
@@ -187,6 +196,150 @@ const FoodOrderApp: React.FC = () => {
       { id: 'c14', name: 'Chicken Popcorn', price: 16, originalPrice: 20.00, rating: 2.5, image: '/src/assets/arena/media/chicken/chicken-14.png', color: '#FFE8E8' },
       { id: 'c15', name: 'Rotisserie Chicken', price: 24, originalPrice: 28.00, rating: 2.5, image: '/src/assets/arena/media/chicken/chicken-15.png', color: '#FFF9E6' },
       { id: 'c16', name: 'Chicken Katsu', price: 22, originalPrice: 26.50, rating: 2.5, image: '/src/assets/arena/media/chicken/chicken-16.png', color: '#F0FFE6' }
+    ],
+    Tacos: [
+      { id: 't1', name: 'Beef Tacos', price: 14, originalPrice: 17.00, rating: 2.5, image: '/src/assets/arena/media/tacos/tacos-1.png', color: '#FFF4E6' },
+      { id: 't2', name: 'Chicken Tacos', price: 13, originalPrice: 16.00, rating: 2.5, image: '/src/assets/arena/media/tacos/tacos-2.png', color: '#FFE8E8' },
+      { id: 't3', name: 'Fish Tacos', price: 16, originalPrice: 19.00, rating: 2.5, image: '/src/assets/arena/media/tacos/tacos-3.png', color: '#FFF9E6' },
+      { id: 't4', name: 'Shrimp Tacos', price: 18, originalPrice: 21.00, rating: 2.5, image: '/src/assets/arena/media/tacos/tacos-4.png', color: '#F0FFE6' },
+      { id: 't5', name: 'Veggie Tacos', price: 12, originalPrice: 15.00, rating: 2.5, image: '/src/assets/arena/media/tacos/tacos-5.png', color: '#FFE6F0' },
+      { id: 't6', name: 'Pork Tacos', price: 15, originalPrice: 18.00, rating: 2.5, image: '/src/assets/arena/media/tacos/tacos-6.png', color: '#E6F7FF' },
+      { id: 't7', name: 'Carnitas Tacos', price: 17, originalPrice: 20.00, rating: 2.5, image: '/src/assets/arena/media/tacos/tacos-7.png', color: '#FFF4E6' },
+      { id: 't8', name: 'Al Pastor Tacos', price: 16, originalPrice: 19.00, rating: 2.5, image: '/src/assets/arena/media/tacos/tacos-8.png', color: '#FFE8E8' },
+      { id: 't9', name: 'Barbacoa Tacos', price: 18, originalPrice: 21.50, rating: 2.5, image: '/src/assets/arena/media/tacos/tacos-9.png', color: '#FFF9E6' },
+      { id: 't10', name: 'Carne Asada Tacos', price: 19, originalPrice: 22.50, rating: 2.5, image: '/src/assets/arena/media/tacos/tacos-10.png', color: '#F0FFE6' },
+      { id: 't11', name: 'Chorizo Tacos', price: 15, originalPrice: 18.50, rating: 2.5, image: '/src/assets/arena/media/tacos/tacos-11.png', color: '#FFE6F0' },
+      { id: 't12', name: 'Birria Tacos', price: 20, originalPrice: 24.00, rating: 2.5, image: '/src/assets/arena/media/tacos/tacos-12.png', color: '#E6F7FF' },
+      { id: 't13', name: 'Lengua Tacos', price: 17, originalPrice: 20.50, rating: 2.5, image: '/src/assets/arena/media/tacos/tacos-13.png', color: '#FFF4E6' },
+      { id: 't14', name: 'Breakfast Tacos', price: 11, originalPrice: 14.00, rating: 2.5, image: '/src/assets/arena/media/tacos/tacos-14.png', color: '#FFE8E8' },
+      { id: 't15', name: 'Street Tacos', price: 13, originalPrice: 16.50, rating: 2.5, image: '/src/assets/arena/media/tacos/tacos-15.png', color: '#FFF9E6' },
+      { id: 't16', name: 'Taco Platter', price: 22, originalPrice: 26.00, rating: 2.5, image: '/src/assets/arena/media/tacos/tacos-16.png', color: '#F0FFE6' }
+    ],
+    Drinks: [
+      { id: 'dr1', name: 'Cola', price: 3, originalPrice: 5.00, rating: 2.5, image: '/src/assets/arena/media/drinks/drink-1.png', color: '#FFF4E6' },
+      { id: 'dr2', name: 'Orange Juice', price: 4, originalPrice: 6.00, rating: 2.5, image: '/src/assets/arena/media/drinks/drink-2.png', color: '#FFE8E8' },
+      { id: 'dr3', name: 'Lemonade', price: 4, originalPrice: 6.00, rating: 2.5, image: '/src/assets/arena/media/drinks/drink-3.png', color: '#FFF9E6' },
+      { id: 'dr4', name: 'Iced Tea', price: 3, originalPrice: 5.50, rating: 2.5, image: '/src/assets/arena/media/drinks/drink-4.png', color: '#F0FFE6' },
+      { id: 'dr5', name: 'Mineral Water', price: 2, originalPrice: 4.00, rating: 2.5, image: '/src/assets/arena/media/drinks/drink-5.png', color: '#FFE6F0' },
+      { id: 'dr6', name: 'Smoothie', price: 6, originalPrice: 8.50, rating: 2.5, image: '/src/assets/arena/media/drinks/drink-6.png', color: '#E6F7FF' },
+      { id: 'dr7', name: 'Milkshake', price: 7, originalPrice: 9.50, rating: 2.5, image: '/src/assets/arena/media/drinks/drink-7.png', color: '#FFF4E6' },
+      { id: 'dr8', name: 'Hot Chocolate', price: 5, originalPrice: 7.00, rating: 2.5, image: '/src/assets/arena/media/drinks/drink-8.png', color: '#FFE8E8' },
+      { id: 'dr9', name: 'Apple Juice', price: 4, originalPrice: 6.50, rating: 2.5, image: '/src/assets/arena/media/drinks/drink-9.png', color: '#FFF9E6' },
+      { id: 'dr10', name: 'Grape Juice', price: 4, originalPrice: 6.50, rating: 2.5, image: '/src/assets/arena/media/drinks/drink-10.png', color: '#F0FFE6' },
+      { id: 'dr11', name: 'Cranberry Juice', price: 5, originalPrice: 7.00, rating: 2.5, image: '/src/assets/arena/media/drinks/drink-11.png', color: '#FFE6F0' },
+      { id: 'dr12', name: 'Pineapple Juice', price: 5, originalPrice: 7.50, rating: 2.5, image: '/src/assets/arena/media/drinks/drink-12.png', color: '#E6F7FF' },
+      { id: 'dr13', name: 'Mango Juice', price: 5, originalPrice: 7.50, rating: 2.5, image: '/src/assets/arena/media/drinks/drink-13.png', color: '#FFF4E6' },
+      { id: 'dr14', name: 'Sparkling Water', price: 3, originalPrice: 5.00, rating: 2.5, image: '/src/assets/arena/media/drinks/drink-14.png', color: '#FFE8E8' },
+      { id: 'dr15', name: 'Lime Soda', price: 4, originalPrice: 6.00, rating: 2.5, image: '/src/assets/arena/media/drinks/drink-15.png', color: '#FFF9E6' },
+      { id: 'dr16', name: 'Fresh Coconut Water', price: 6, originalPrice: 8.00, rating: 2.5, image: '/src/assets/arena/media/drinks/drink-16.png', color: '#F0FFE6' }
+    ],
+    Coffee: [
+      { id: 'cf1', name: 'Espresso', price: 4, originalPrice: 6.00, rating: 2.5, image: '/src/assets/arena/media/coffee/coffee-1.png', color: '#FFF4E6' },
+      { id: 'cf2', name: 'Cappuccino', price: 5, originalPrice: 7.00, rating: 2.5, image: '/src/assets/arena/media/coffee/coffee-2.png', color: '#FFE8E8' },
+      { id: 'cf3', name: 'Latte', price: 5, originalPrice: 7.50, rating: 2.5, image: '/src/assets/arena/media/coffee/coffee-3.png', color: '#FFF9E6' },
+      { id: 'cf4', name: 'Americano', price: 4, originalPrice: 6.50, rating: 2.5, image: '/src/assets/arena/media/coffee/coffee-4.png', color: '#F0FFE6' },
+      { id: 'cf5', name: 'Mocha', price: 6, originalPrice: 8.00, rating: 2.5, image: '/src/assets/arena/media/coffee/coffee-5.png', color: '#FFE6F0' },
+      { id: 'cf6', name: 'Macchiato', price: 5, originalPrice: 7.00, rating: 2.5, image: '/src/assets/arena/media/coffee/coffee-6.png', color: '#E6F7FF' },
+      { id: 'cf7', name: 'Flat White', price: 5, originalPrice: 7.50, rating: 2.5, image: '/src/assets/arena/media/coffee/coffee-7.png', color: '#FFF4E6' },
+      { id: 'cf8', name: 'Caramel Latte', price: 6, originalPrice: 8.50, rating: 2.5, image: '/src/assets/arena/media/coffee/coffee-8.png', color: '#FFE8E8' },
+      { id: 'cf9', name: 'Iced Coffee', price: 5, originalPrice: 7.00, rating: 2.5, image: '/src/assets/arena/media/coffee/coffee-9.png', color: '#FFF9E6' },
+      { id: 'cf10', name: 'Cold Brew', price: 6, originalPrice: 8.00, rating: 2.5, image: '/src/assets/arena/media/coffee/coffee-10.png', color: '#F0FFE6' },
+      { id: 'cf11', name: 'Frappuccino', price: 7, originalPrice: 9.50, rating: 2.5, image: '/src/assets/arena/media/coffee/coffee-11.png', color: '#FFE6F0' },
+      { id: 'cf12', name: 'Turkish Coffee', price: 5, originalPrice: 7.50, rating: 2.5, image: '/src/assets/arena/media/coffee/coffee-12.png', color: '#E6F7FF' },
+      { id: 'cf13', name: 'Irish Coffee', price: 8, originalPrice: 10.50, rating: 2.5, image: '/src/assets/arena/media/coffee/coffee-13.png', color: '#FFF4E6' },
+      { id: 'cf14', name: 'Vanilla Latte', price: 6, originalPrice: 8.50, rating: 2.5, image: '/src/assets/arena/media/coffee/coffee-14.png', color: '#FFE8E8' },
+      { id: 'cf15', name: 'Hazelnut Coffee', price: 6, originalPrice: 8.00, rating: 2.5, image: '/src/assets/arena/media/coffee/coffee-15.png', color: '#FFF9E6' },
+      { id: 'cf16', name: 'Affogato', price: 7, originalPrice: 9.00, rating: 2.5, image: '/src/assets/arena/media/coffee/coffee-16.png', color: '#F0FFE6' }
+    ],
+    Pasta: [
+      { id: 'pa1', name: 'Spaghetti Carbonara', price: 22, originalPrice: 26.00, rating: 2.5, image: '/src/assets/arena/media/pasta/pasta-1.png', color: '#FFF4E6' },
+      { id: 'pa2', name: 'Fettuccine Alfredo', price: 24, originalPrice: 28.00, rating: 2.5, image: '/src/assets/arena/media/pasta/pasta-2.png', color: '#FFE8E8' },
+      { id: 'pa3', name: 'Penne Arrabiata', price: 20, originalPrice: 24.00, rating: 2.5, image: '/src/assets/arena/media/pasta/pasta-3.png', color: '#FFF9E6' },
+      { id: 'pa4', name: 'Lasagna', price: 26, originalPrice: 30.00, rating: 2.5, image: '/src/assets/arena/media/pasta/pasta-4.png', color: '#F0FFE6' },
+      { id: 'pa5', name: 'Mac and Cheese', price: 18, originalPrice: 22.00, rating: 2.5, image: '/src/assets/arena/media/pasta/pasta-5.png', color: '#FFE6F0' },
+      { id: 'pa6', name: 'Spaghetti Bolognese', price: 23, originalPrice: 27.00, rating: 2.5, image: '/src/assets/arena/media/pasta/pasta-6.png', color: '#E6F7FF' },
+      { id: 'pa7', name: 'Pesto Pasta', price: 21, originalPrice: 25.00, rating: 2.5, image: '/src/assets/arena/media/pasta/pasta-7.png', color: '#FFF4E6' },
+      { id: 'pa8', name: 'Ravioli', price: 25, originalPrice: 29.00, rating: 2.5, image: '/src/assets/arena/media/pasta/pasta-8.png', color: '#FFE8E8' },
+      { id: 'pa9', name: 'Linguine Seafood', price: 28, originalPrice: 32.00, rating: 2.5, image: '/src/assets/arena/media/pasta/pasta-9.png', color: '#FFF9E6' },
+      { id: 'pa10', name: 'Tortellini', price: 24, originalPrice: 28.50, rating: 2.5, image: '/src/assets/arena/media/pasta/pasta-10.png', color: '#F0FFE6' },
+      { id: 'pa11', name: 'Rigatoni', price: 22, originalPrice: 26.50, rating: 2.5, image: '/src/assets/arena/media/pasta/pasta-11.png', color: '#FFE6F0' },
+      { id: 'pa12', name: 'Aglio e Olio', price: 19, originalPrice: 23.00, rating: 2.5, image: '/src/assets/arena/media/pasta/pasta-12.png', color: '#E6F7FF' },
+      { id: 'pa13', name: 'Pasta Primavera', price: 21, originalPrice: 25.50, rating: 2.5, image: '/src/assets/arena/media/pasta/pasta-13.png', color: '#FFF4E6' },
+      { id: 'pa14', name: 'Cacio e Pepe', price: 20, originalPrice: 24.50, rating: 2.5, image: '/src/assets/arena/media/pasta/pasta-14.png', color: '#FFE8E8' },
+      { id: 'pa15', name: 'Gnocchi', price: 23, originalPrice: 27.50, rating: 2.5, image: '/src/assets/arena/media/pasta/pasta-15.png', color: '#FFF9E6' },
+      { id: 'pa16', name: 'Pasta Amatriciana', price: 24, originalPrice: 28.50, rating: 2.5, image: '/src/assets/arena/media/pasta/pasta-16.png', color: '#F0FFE6' }
+    ],
+    Snacks: [
+      { id: 'sn1', name: 'Nachos', price: 8, originalPrice: 11.00, rating: 2.5, image: '/src/assets/arena/media/snacks/snack-1.png', color: '#FFF4E6' },
+      { id: 'sn2', name: 'Onion Rings', price: 7, originalPrice: 10.00, rating: 2.5, image: '/src/assets/arena/media/snacks/snack-2.png', color: '#FFE8E8' },
+      { id: 'sn3', name: 'Mozzarella Sticks', price: 9, originalPrice: 12.00, rating: 2.5, image: '/src/assets/arena/media/snacks/snack-3.png', color: '#FFF9E6' },
+      { id: 'sn4', name: 'Chicken Wings', price: 12, originalPrice: 15.00, rating: 2.5, image: '/src/assets/arena/media/snacks/snack-4.png', color: '#F0FFE6' },
+      { id: 'sn5', name: 'Spring Rolls', price: 8, originalPrice: 11.50, rating: 2.5, image: '/src/assets/arena/media/snacks/snack-5.png', color: '#FFE6F0' },
+      { id: 'sn6', name: 'Popcorn', price: 5, originalPrice: 7.50, rating: 2.5, image: '/src/assets/arena/media/snacks/snack-6.png', color: '#E6F7FF' },
+      { id: 'sn7', name: 'Pretzels', price: 6, originalPrice: 8.50, rating: 2.5, image: '/src/assets/arena/media/snacks/snack-7.png', color: '#FFF4E6' },
+      { id: 'sn8', name: 'Jalapeño Poppers', price: 10, originalPrice: 13.00, rating: 2.5, image: '/src/assets/arena/media/snacks/snack-8.png', color: '#FFE8E8' },
+      { id: 'sn9', name: 'Buffalo Wings', price: 13, originalPrice: 16.00, rating: 2.5, image: '/src/assets/arena/media/snacks/snack-9.png', color: '#FFF9E6' },
+      { id: 'sn10', name: 'Quesadillas', price: 11, originalPrice: 14.50, rating: 2.5, image: '/src/assets/arena/media/snacks/snack-10.png', color: '#F0FFE6' },
+      { id: 'sn11', name: 'Chips and Salsa', price: 6, originalPrice: 9.00, rating: 2.5, image: '/src/assets/arena/media/snacks/snack-11.png', color: '#FFE6F0' },
+      { id: 'sn12', name: 'Guacamole and Chips', price: 9, originalPrice: 12.50, rating: 2.5, image: '/src/assets/arena/media/snacks/snack-12.png', color: '#E6F7FF' },
+      { id: 'sn13', name: 'Calamari', price: 14, originalPrice: 17.50, rating: 2.5, image: '/src/assets/arena/media/snacks/snack-13.png', color: '#FFF4E6' },
+      { id: 'sn14', name: 'Edamame', price: 7, originalPrice: 10.00, rating: 2.5, image: '/src/assets/arena/media/snacks/snack-14.png', color: '#FFE8E8' },
+      { id: 'sn15', name: 'Loaded Fries', price: 10, originalPrice: 13.50, rating: 2.5, image: '/src/assets/arena/media/snacks/snack-15.png', color: '#FFF9E6' },
+      { id: 'sn16', name: 'Samosas', price: 8, originalPrice: 11.00, rating: 2.5, image: '/src/assets/arena/media/snacks/snack-16.png', color: '#F0FFE6' }
+    ],
+    'Energy Drinks': [
+      { id: 'en1', name: 'Red Bull', price: 5, originalPrice: 7.00, rating: 2.5, image: '/src/assets/arena/media/energy/energy-1.png', color: '#FFF4E6' },
+      { id: 'en2', name: 'Monster Energy', price: 5, originalPrice: 7.50, rating: 2.5, image: '/src/assets/arena/media/energy/energy-2.png', color: '#FFE8E8' },
+      { id: 'en3', name: 'Rockstar', price: 5, originalPrice: 7.00, rating: 2.5, image: '/src/assets/arena/media/energy/energy-3.png', color: '#FFF9E6' },
+      { id: 'en4', name: 'Bang Energy', price: 6, originalPrice: 8.00, rating: 2.5, image: '/src/assets/arena/media/energy/energy-4.png', color: '#F0FFE6' },
+      { id: 'en5', name: 'Celsius', price: 6, originalPrice: 8.50, rating: 2.5, image: '/src/assets/arena/media/energy/energy-5.png', color: '#FFE6F0' },
+      { id: 'en6', name: 'NOS Energy', price: 5, originalPrice: 7.50, rating: 2.5, image: '/src/assets/arena/media/energy/energy-6.png', color: '#E6F7FF' },
+      { id: 'en7', name: 'Full Throttle', price: 5, originalPrice: 7.00, rating: 2.5, image: '/src/assets/arena/media/energy/energy-7.png', color: '#FFF4E6' },
+      { id: 'en8', name: 'Amp Energy', price: 5, originalPrice: 7.50, rating: 2.5, image: '/src/assets/arena/media/energy/energy-8.png', color: '#FFE8E8' },
+      { id: 'en9', name: '5-hour Energy', price: 4, originalPrice: 6.00, rating: 2.5, image: '/src/assets/arena/media/energy/energy-9.png', color: '#FFF9E6' },
+      { id: 'en10', name: 'Reign Energy', price: 6, originalPrice: 8.00, rating: 2.5, image: '/src/assets/arena/media/energy/energy-10.png', color: '#F0FFE6' },
+      {id: 'en11', name: 'Prime Energy', price: 6, originalPrice: 8.50, rating: 2.5, image: '/src/assets/arena/media/energy/energy-11.png', color: '#FFE6F0' },
+      { id: 'en12', name: 'Gfuel', price: 7, originalPrice: 9.00, rating: 2.5, image: '/src/assets/arena/media/energy/energy-12.png', color: '#E6F7FF' },
+      { id: 'en13', name: 'C4 Energy', price: 6, originalPrice: 8.00, rating: 2.5, image: '/src/assets/arena/media/energy/energy-13.png', color: '#FFF4E6' },
+      { id: 'en14', name: 'Xyience', price: 5, originalPrice: 7.50, rating: 2.5, image: '/src/assets/arena/media/energy/energy-14.png', color: '#FFE8E8' },
+      { id: 'en15', name: 'Guru Energy', price: 6, originalPrice: 8.50, rating: 2.5, image: '/src/assets/arena/media/energy/energy-15.png', color: '#FFF9E6' },
+      { id: 'en16', name: 'Zevia Energy', price: 5, originalPrice: 7.00, rating: 2.5, image: '/src/assets/arena/media/energy/energy-16.png', color: '#F0FFE6' }
+    ],
+    Desserts: [
+      { id: 'ds1', name: 'Chocolate Cake', price: 12, originalPrice: 15.00, rating: 2.5, image: '/src/assets/arena/media/desserts/dessert-1.png', color: '#FFF4E6' },
+      { id: 'ds2', name: 'Cheesecake', price: 14, originalPrice: 17.00, rating: 2.5, image: '/src/assets/arena/media/desserts/dessert-2.png', color: '#FFE8E8' },
+      { id: 'ds3', name: 'Tiramisu', price: 13, originalPrice: 16.00, rating: 2.5, image: '/src/assets/arena/media/desserts/dessert-3.png', color: '#FFF9E6' },
+      { id: 'ds4', name: 'Brownie', price: 10, originalPrice: 13.00, rating: 2.5, image: '/src/assets/arena/media/desserts/dessert-4.png', color: '#F0FFE6' },
+      { id: 'ds5', name: 'Apple Pie', price: 11, originalPrice: 14.00, rating: 2.5, image: '/src/assets/arena/media/desserts/dessert-5.png', color: '#FFE6F0' },
+      { id: 'ds6', name: 'Panna Cotta', price: 12, originalPrice: 15.50, rating: 2.5, image: '/src/assets/arena/media/desserts/dessert-6.png', color: '#E6F7FF' },
+      { id: 'ds7', name: 'Crème Brûlée', price: 15, originalPrice: 18.00, rating: 2.5, image: '/src/assets/arena/media/desserts/dessert-7.png', color: '#FFF4E6' },
+      { id: 'ds8', name: 'Macarons', price: 16, originalPrice: 19.00, rating: 2.5, image: '/src/assets/arena/media/desserts/dessert-8.png', color: '#FFE8E8' },
+      { id: 'ds9', name: 'Cupcakes', price: 9, originalPrice: 12.00, rating: 2.5, image: '/src/assets/arena/media/desserts/dessert-9.png', color: '#FFF9E6' },
+      { id: 'ds10', name: 'Churros', price: 8, originalPrice: 11.00, rating: 2.5, image: '/src/assets/arena/media/desserts/dessert-10.png', color: '#F0FFE6' },
+      { id: 'ds11', name: 'Flan', price: 10, originalPrice: 13.50, rating: 2.5, image: '/src/assets/arena/media/desserts/dessert-11.png', color: '#FFE6F0' },
+      { id: 'ds12', name: 'Pavlova', price: 13, originalPrice: 16.50, rating: 2.5, image: '/src/assets/arena/media/desserts/dessert-12.png', color: '#E6F7FF' },
+      { id: 'ds13', name: 'Gelato', price: 11, originalPrice: 14.50, rating: 2.5, image: '/src/assets/arena/media/desserts/dessert-13.png', color: '#FFF4E6' },
+      { id: 'ds14', name: 'Baklava', price: 12, originalPrice: 15.00, rating: 2.5, image: '/src/assets/arena/media/desserts/dessert-14.png', color: '#FFE8E8' },
+      { id: 'ds15', name: 'Mousse', price: 11, originalPrice: 14.00, rating: 2.5, image: '/src/assets/arena/media/desserts/dessert-15.png', color: '#FFF9E6' },
+      { id: 'ds16', name: 'Tres Leches', price: 13, originalPrice: 16.00, rating: 2.5, image: '/src/assets/arena/media/desserts/dessert-16.png', color: '#F0FFE6' }
+    ],
+    Sushi: [
+      { id: 'su1', name: 'California Roll', price: 18, originalPrice: 22.00, rating: 2.5, image: '/src/assets/arena/media/sushi/sushi-1.png', color: '#FFF4E6' },
+      { id: 'su2', name: 'Spicy Tuna Roll', price: 20, originalPrice: 24.00, rating: 2.5, image: '/src/assets/arena/media/sushi/sushi-2.png', color: '#FFE8E8' },
+      { id: 'su3', name: 'Dragon Roll', price: 24, originalPrice: 28.00, rating: 2.5, image: '/src/assets/arena/media/sushi/sushi-3.png', color: '#FFF9E6' },
+      { id: 'su4', name: 'Rainbow Roll', price: 25, originalPrice: 29.00, rating: 2.5, image: '/src/assets/arena/media/sushi/sushi-4.png', color: '#F0FFE6' },
+      { id: 'su5', name: 'Philadelphia Roll', price: 19, originalPrice: 23.00, rating: 2.5, image: '/src/assets/arena/media/sushi/sushi-5.png', color: '#FFE6F0' },
+      { id: 'su6', name: 'Salmon Nigiri', price: 16, originalPrice: 20.00, rating: 2.5, image: '/src/assets/arena/media/sushi/sushi-6.png', color: '#E6F7FF' },
+      { id: 'su7', name: 'Tuna Nigiri', price: 17, originalPrice: 21.00, rating: 2.5, image: '/src/assets/arena/media/sushi/sushi-7.png', color: '#FFF4E6' },
+      { id: 'su8', name: 'Eel Roll', price: 22, originalPrice: 26.00, rating: 2.5, image: '/src/assets/arena/media/sushi/sushi-8.png', color: '#FFE8E8' },
+      { id: 'su9', name: 'Shrimp Tempura Roll', price: 21, originalPrice: 25.00, rating: 2.5, image: '/src/assets/arena/media/sushi/sushi-9.png', color: '#FFF9E6' },
+      { id: 'su10', name: 'Vegetable Roll', price: 15, originalPrice: 19.00, rating: 2.5, image: '/src/assets/arena/media/sushi/sushi-10.png', color: '#F0FFE6' },
+      { id: 'su11', name: 'Spider Roll', price: 23, originalPrice: 27.00, rating: 2.5, image: '/src/assets/arena/media/sushi/sushi-11.png', color: '#FFE6F0' },
+      { id: 'su12', name: 'Salmon Sashimi', price: 20, originalPrice: 24.50, rating: 2.5, image: '/src/assets/arena/media/sushi/sushi-12.png', color: '#E6F7FF' },
+      { id: 'su13', name: 'Tuna Sashimi', price: 21, originalPrice: 25.50, rating: 2.5, image: '/src/assets/arena/media/sushi/sushi-13.png', color: '#FFF4E6' },
+      { id: 'su14', name: 'Yellowtail Roll', price: 22, originalPrice: 26.50, rating: 2.5, image: '/src/assets/arena/media/sushi/sushi-14.png', color: '#FFE8E8' },
+      { id: 'su15', name: 'Boston Roll', price: 19, originalPrice: 23.50, rating: 2.5, image: '/src/assets/arena/media/sushi/sushi-15.png', color: '#FFF9E6' },
+      { id: 'su16', name: 'Sushi Platter', price: 45, originalPrice: 52.00, rating: 2.5, image: '/src/assets/arena/media/sushi/sushi-16.png', color: '#F0FFE6' }
     ]
   };
 
@@ -221,12 +374,16 @@ const FoodOrderApp: React.FC = () => {
 
   const currentProducts: Product[] = products[selectedCategory];
 
+  const visibleCategories = showAllCategories ? categories : categories.slice(0, 8);
+  const desktopVisibleCategories = categories.slice(0, 8);
+  const desktopSecondRowCategories = categories.slice(8);
+
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden pt-20 lg:pt-24">
+    <div className="flex h-screen bg-gray-50 overflow-hidden pt-0 xl:pt-20 lg:pt-24">
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto">
-          <div className="max-w-[1600px] mx-auto p-6 lg:p-8">
-            <div className="flex gap-4 mb-8">
+          <div className="max-w-[1600px] mx-auto p-4 xl:p-6 lg:p-8">
+            <div className="flex gap-4 mb-6 xl:mb-8">
               <div className="flex-1 relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                 <input
@@ -241,27 +398,80 @@ const FoodOrderApp: React.FC = () => {
               </button>
             </div>
 
-            <div className="mb-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Explore Categories</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3">
-                {categories.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                    className={`p-4 rounded-2xl border-2 transition-all flex items-center gap-3 ${
-                      selectedCategory === category.id
-                        ? 'border-orange-400 bg-orange-50 shadow-md'
-                        : 'border-gray-200 bg-white hover:border-orange-200 hover:shadow-sm'
-                    }`}
-                  >
-                    <img src={category.emoji} alt={category.name} className="w-10 h-10 object-contain flex-shrink-0" />
-                    <span className="text-sm font-medium text-gray-700">{category.name}</span>
-                  </button>
-                ))}
+            <div className="mb-6 xl:mb-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-4 xl:mb-6">Explore Categories</h2>
+              
+              <div className="hidden xl:block">
+                <div className="grid grid-cols-8 gap-3 mb-3">
+                  {desktopVisibleCategories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => setSelectedCategory(category.id)}
+                      className={`p-4 rounded-2xl border-2 transition-all flex items-center gap-3 ${
+                        selectedCategory === category.id
+                          ? 'border-orange-400 bg-orange-50 shadow-md'
+                          : 'border-gray-200 bg-white hover:border-orange-200 hover:shadow-sm'
+                      }`}
+                    >
+                      <img src={category.emoji} alt={category.name} className="w-10 h-10 object-contain flex-shrink-0" />
+                      <span className="text-sm font-medium text-gray-700">{category.name}</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="grid grid-cols-8 gap-3">
+                  {desktopSecondRowCategories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => setSelectedCategory(category.id)}
+                      className={`p-4 rounded-2xl border-2 transition-all flex items-center gap-3 ${
+                        selectedCategory === category.id
+                          ? 'border-orange-400 bg-orange-50 shadow-md'
+                          : 'border-gray-200 bg-white hover:border-orange-200 hover:shadow-sm'
+                      }`}
+                    >
+                      <img src={category.emoji} alt={category.name} className="w-10 h-10 object-contain flex-shrink-0" />
+                      <span className="text-sm font-medium text-gray-700">{category.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="xl:hidden">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                  {visibleCategories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => setSelectedCategory(category.id)}
+                      className={`p-4 rounded-2xl border-2 transition-all flex items-center gap-3 ${
+                        selectedCategory === category.id
+                          ? 'border-orange-400 bg-orange-50 shadow-md'
+                          : 'border-gray-200 bg-white hover:border-orange-200 hover:shadow-sm'
+                      }`}
+                    >
+                      <img src={category.emoji} alt={category.name} className="w-10 h-10 object-contain flex-shrink-0" />
+                      <span className="text-sm font-medium text-gray-700">{category.name}</span>
+                    </button>
+                  ))}
+                </div>
+                
+                {categories.length > 8 && (
+                  <div className="mt-4 flex justify-center">
+                    <button
+                      onClick={() => setShowAllCategories(!showAllCategories)}
+                      className="px-6 py-3 bg-white border-2 border-gray-200 rounded-xl font-semibold text-gray-700 hover:border-orange-400 hover:bg-orange-50 transition-all flex items-center gap-2"
+                    >
+                      {showAllCategories ? 'Show Less' : 'Show More'}
+                      <ChevronDown 
+                        size={20} 
+                        className={`transition-transform ${showAllCategories ? 'rotate-180' : ''}`}
+                      />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="flex gap-8 mb-6 border-b border-gray-200">
+            <div className="flex gap-8 mb-4 xl:mb-6 border-b border-gray-200">
               <button 
                 onClick={() => setActiveTab('popular')}
                 className={`pb-3 font-semibold transition-all ${
@@ -431,16 +641,16 @@ const FoodOrderApp: React.FC = () => {
               </button>
 
               <button
-                onClick={() => setSelectedPayment('amex')}
+                onClick={() => setSelectedPayment('american')}
                 className={`p-4 rounded-2xl border-2 transition-all ${
-                  selectedPayment === 'amex'
+                  selectedPayment === 'american'
                     ? 'border-blue-600 bg-blue-50'
                     : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <img src="/src/assets/arena/media/payments/american.png" alt="American Express" className="w-12 h-8 object-contain rounded-lg" />
-                  <span className="text-sm font-semibold text-gray-900">Amex</span>
+                  <span className="text-sm font-semibold text-gray-900">American</span>
                 </div>
               </button>
               
@@ -465,15 +675,6 @@ const FoodOrderApp: React.FC = () => {
           </button>
         </div>
       </div>
-
-      {cart.length > 0 && (
-        <button className="xl:hidden fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full shadow-2xl flex items-center justify-center z-50 hover:scale-110 transition-transform">
-          <ShoppingCart size={24} />
-          <span className="absolute -top-2 -right-2 w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-xs font-bold">
-            {cart.reduce((sum, item) => sum + item.quantity, 0)}
-          </span>
-        </button>
-      )}
     </div>
   );
 };
