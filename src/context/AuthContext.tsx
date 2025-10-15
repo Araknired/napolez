@@ -7,6 +7,8 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  isAdmin: boolean;
+  userRole: string | null;
   signUp: (email: string, password: string) => Promise<{ error: AuthError | null; data: { user: User | null } | null }>;
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
@@ -23,11 +25,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  // Función para verificar el rol del usuario
+  const checkUserRole = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('role')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error checking user role:', error);
+        setIsAdmin(false);
+        setUserRole('user');
+        return;
+      }
+
+      const role = data?.role || 'user';
+      setUserRole(role);
+      setIsAdmin(role === 'admin');
+    } catch (error) {
+      console.error('Error in checkUserRole:', error);
+      setIsAdmin(false);
+      setUserRole('user');
+    }
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      if (session?.user) {
+        checkUserRole(session.user.id);
+      }
       setLoading(false);
     });
 
@@ -36,6 +69,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
+      if (session?.user) {
+        checkUserRole(session.user.id);
+      } else {
+        setIsAdmin(false);
+        setUserRole(null);
+      }
       setLoading(false);
     });
 
@@ -66,6 +105,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
       setUser(null);
       setSession(null);
+      setIsAdmin(false);
+      setUserRole(null);
     } catch (error) {
       console.error('Sign out error:', error);
       throw error;
@@ -151,6 +192,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     session,
     loading,
+    isAdmin,
+    userRole,
     signUp,
     signIn,
     signOut,

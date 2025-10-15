@@ -1,6 +1,6 @@
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Moon, Trash2, LogOut, Settings, Shield, Bell, Award, TrendingUp } from 'lucide-react';
+import { Heart, Moon, Trash2, LogOut, Settings, Shield, UserCircle, Award, TrendingUp } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
@@ -45,7 +45,7 @@ export default function Profile() {
   const settingsItems = [
     { icon: Settings, label: 'Account Settings', path: '/profile/edit', description: 'Manage your account preferences' },
     { icon: Shield, label: 'Privacy & Security', path: '/profile/privacy', description: 'Control your privacy settings' },
-    { icon: Bell, label: 'Notifications', path: '/profile/notifications', description: 'Manage notification preferences' },
+    { icon: UserCircle, label: 'About Me', path: '/about', description: 'Learn more about this project' },
   ];
 
   const quickActions = [

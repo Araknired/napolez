@@ -3,6 +3,15 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Camera, X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import tarjetaImg from '../../assets/images/payment/tarjeta.png';
+
+interface PaymentCard {
+  id: string;
+  card_number: string;
+  card_holder: string;
+  expiry_date: string;
+  card_type: string;
+}
 
 export default function EditProfile() {
   const { user } = useAuth();
@@ -10,6 +19,8 @@ export default function EditProfile() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [paymentCards, setPaymentCards] = useState<PaymentCard[]>([]);
+  const [selectedCard, setSelectedCard] = useState<string>('');
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -28,12 +39,12 @@ export default function EditProfile() {
     facebook: '',
     google: '',
     slogan: '',
-    language: 'English',
-    paymentMethod: 'visa'
+    language: 'English'
   });
 
   useEffect(() => {
     fetchUserData();
+    fetchPaymentCards();
   }, [user]);
 
   const fetchUserData = async () => {
@@ -69,6 +80,51 @@ export default function EditProfile() {
       }
     } catch (err) {
       console.error('Error fetching user data:', err);
+    }
+  };
+
+  const fetchPaymentCards = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('payment_cards')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (data && !error) {
+        setPaymentCards(data);
+        if (data.length > 0 && !selectedCard) {
+          setSelectedCard(data[0].id);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching payment cards:', err);
+    }
+  };
+
+  const handleRemoveCard = async (cardId: string) => {
+    if (!confirm('Are you sure you want to remove this card?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('payment_cards')
+        .delete()
+        .eq('id', cardId);
+
+      if (!error) {
+        setPaymentCards(prev => prev.filter(card => card.id !== cardId));
+        if (selectedCard === cardId) {
+          setSelectedCard(paymentCards.find(c => c.id !== cardId)?.id || '');
+        }
+        setMessage('Card removed successfully');
+        setTimeout(() => setMessage(null), 3000);
+      }
+    } catch (err) {
+      console.error('Error removing card:', err);
+      setError('Failed to remove card');
+      setTimeout(() => setError(null), 3000);
     }
   };
 
@@ -126,10 +182,18 @@ export default function EditProfile() {
     navigate('/profile');
   };
 
+  const handleAddPaymentMethod = () => {
+    navigate('/payment');
+  };
+
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
+
+  const getLastFourDigits = (cardNumber: string) => {
+    return cardNumber.slice(-4);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 pt-4 lg:pt-24">
@@ -241,7 +305,10 @@ export default function EditProfile() {
                       placeholder="••••••••••"
                       disabled
                     />
-                    <button className="ml-3 text-green-500 hover:text-green-600 text-xs font-medium whitespace-nowrap">
+                    <button 
+                      onClick={() => navigate('/forgot-password')}
+                      className="ml-3 text-green-500 hover:text-green-600 text-xs font-medium whitespace-nowrap"
+                    >
                       CHANGE PASSWORD
                     </button>
                   </div>
@@ -446,70 +513,62 @@ export default function EditProfile() {
               <label className="block text-xs font-medium text-gray-500 mb-4">
                 Payment Method
               </label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="relative">
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="visa"
-                    checked={formData.paymentMethod === 'visa'}
-                    onChange={(e) => setFormData({...formData, paymentMethod: e.target.value})}
-                    className="peer sr-only"
-                    id="visa"
-                  />
-                  <label
-                    htmlFor="visa"
-                    className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:bg-gray-50 transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-8 bg-blue-600 rounded flex items-center justify-center text-white text-xs font-bold">
-                        VISA
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium">Visa ....8334</div>
-                        <div className="text-xs text-gray-500">Exp 05/2021</div>
-                      </div>
-                    </div>
-                    <button className="text-red-400 hover:text-red-600 text-xs">
-                      REMOVE
-                    </button>
-                  </label>
-                </div>
-
-                <div className="relative">
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="mastercard"
-                    checked={formData.paymentMethod === 'mastercard'}
-                    onChange={(e) => setFormData({...formData, paymentMethod: e.target.value})}
-                    className="peer sr-only"
-                    id="mastercard"
-                  />
-                  <label
-                    htmlFor="mastercard"
-                    className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:bg-gray-50 transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-8 bg-gradient-to-r from-red-500 to-orange-500 rounded flex items-center justify-center">
-                        <div className="flex gap-0.5">
-                          <div className="w-3 h-3 bg-red-600 rounded-full"></div>
-                          <div className="w-3 h-3 bg-orange-400 rounded-full -ml-1.5"></div>
+              
+              {paymentCards.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {paymentCards.map((card) => (
+                    <div key={card.id} className="relative">
+                      <input
+                        type="radio"
+                        name="payment"
+                        value={card.id}
+                        checked={selectedCard === card.id}
+                        onChange={(e) => setSelectedCard(e.target.value)}
+                        className="peer sr-only"
+                        id={card.id}
+                      />
+                      <label
+                        htmlFor={card.id}
+                        className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:bg-gray-50 transition-all"
+                      >
+                        <div className="flex items-center gap-3">
+                          <img 
+                            src={tarjetaImg} 
+                            alt="Card" 
+                            className="w-12 h-8 object-cover rounded"
+                          />
+                          <div>
+                            <div className="text-sm font-medium">
+                              {card.card_type} ....{getLastFourDigits(card.card_number)}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              Exp {card.expiry_date}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium">Master ....8334</div>
-                        <div className="text-xs text-gray-500">Exp 05/2021</div>
-                      </div>
+                        <button 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleRemoveCard(card.id);
+                          }}
+                          className="text-red-400 hover:text-red-600 text-xs"
+                        >
+                          REMOVE
+                        </button>
+                      </label>
                     </div>
-                    <button className="text-red-400 hover:text-red-600 text-xs">
-                      REMOVE
-                    </button>
-                  </label>
+                  ))}
                 </div>
-              </div>
+              ) : (
+                <div className="text-center py-8 text-gray-400 text-sm">
+                  No payment methods added yet
+                </div>
+              )}
 
-              <button className="mt-4 w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-green-500 hover:text-green-600 hover:border-green-500 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+              <button 
+                onClick={handleAddPaymentMethod}
+                className="mt-4 w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-green-500 hover:text-green-600 hover:border-green-500 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+              >
                 <span className="text-lg">+</span>
                 ADD PAYMENT METHOD
               </button>

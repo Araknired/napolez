@@ -18,7 +18,10 @@ const Navbar: React.FC = () => {
   const isForgotPasswordActive = location.pathname === '/forgot-password' || location.pathname === '/reset-password';
   const isProfileActive = location.pathname === '/profile' || location.pathname === '/profile/edit';
   const isSponsorsActive = location.pathname === '/sponsors';
-  const isTransparentMode = isArenaActive || isLoginActive || isForgotPasswordActive || isProfileActive;
+  const isAboutActive = location.pathname === '/about';
+  const isContactActive = location.pathname === '/contact';
+  const isPaymentActive = location.pathname === '/payment';
+  const isTransparentMode = isArenaActive || isLoginActive || isForgotPasswordActive || isProfileActive || isAboutActive || isContactActive || isPaymentActive;
 
   useEffect(() => {
     if (prevPath !== location.pathname) {
@@ -99,9 +102,9 @@ const Navbar: React.FC = () => {
                 NAPOLEZ
               </span>
               <span className={`text-[9px] font-medium tracking-widest uppercase transition-all duration-700 ${
-                isArenaActive ? 'text-black font-bold' : isLoginActive ? 'text-black font-bold' : isForgotPasswordActive ? 'text-black font-bold' : isProfileActive ? 'text-black font-bold' : 'text-white font-bold'
+                isArenaActive ? 'text-black font-bold' : isLoginActive ? 'text-black font-bold' : isForgotPasswordActive ? 'text-black font-bold' : isProfileActive ? 'text-black font-bold' : isAboutActive ? 'text-black font-bold' : isContactActive ? 'text-black font-bold' : isPaymentActive ? 'text-black font-bold' : 'text-white font-bold'
               }`}>
-                {isArenaActive ? 'GASTRONOMY' : isLoginActive ? 'WELCOME' : isForgotPasswordActive ? 'RECOVERY' : isProfileActive ? 'YOUR PROFILE' : isSponsorsActive ? 'NAPOLEZ UI/UX' : 'THE GOLDEN NAPOLES'}
+                {isArenaActive ? 'GASTRONOMY' : isLoginActive ? 'WELCOME' : isForgotPasswordActive ? 'RECOVERY' : isProfileActive ? 'YOUR PROFILE' : isSponsorsActive ? 'NAPOLEZ UI/UX' : isAboutActive ? 'UX NAPOLEZ' : isContactActive ? 'UX NAPOLEZ' : isPaymentActive ? 'PAYMENT' : 'THE GOLDEN NAPOLES'}
               </span>
             </div>
           </Link>
