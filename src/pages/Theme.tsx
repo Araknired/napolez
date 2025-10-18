@@ -351,7 +351,7 @@ const Theme: FC = () => {
   const currentDetail = THEME_DETAILS.find(d => d.value === preference);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pb-24 sm:pb-20 lg:pb-8 lg:pt-0">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pb-24 sm:pb-20 lg:pb-8 lg:pt-24">
       {/* Header - Mobile and Tablet Only */}
       <div className="lg:hidden bg-white/90 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-5 sm:px-6 py-6 sm:py-8">
@@ -440,7 +440,7 @@ const Theme: FC = () => {
       </div>
 
       {/* Main Content - Desktop */}
-      <div className="hidden lg:block max-w-7xl mx-auto px-8 py-12 h-[calc(100vh-80px)]">
+      <div className="hidden lg:block max-w-7xl mx-auto px-8 pt-0 pb-12 h-[calc(100vh-100px)] flex items-center">
         <div className="grid grid-cols-2 gap-12">
           {/* Right Column - Information First */}
           <div className="flex flex-col">
