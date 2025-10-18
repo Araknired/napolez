@@ -1,19 +1,33 @@
 import { useEffect, useState } from 'react';
+import type { FC } from 'react';
+
 import ForgotDesktop from './ForgotPassword/ForgotDesktop';
 import ForgotMobile from './ForgotPassword/ForgotMobile';
 
-export default function ForgotPassword() {
-  const [isMobile, setIsMobile] = useState(false);
+const MOBILE_BREAKPOINT = 1024;
+
+/**
+ * ForgotPassword component that renders responsive views based on screen size.
+ * Displays mobile layout below 1024px, desktop layout otherwise.
+ */
+const ForgotPassword: FC = () => {
+  const [isMobile, setIsMobile] = useState<boolean>(() => 
+    typeof window !== 'undefined' && window.innerWidth < MOBILE_BREAKPOINT
+  );
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
+    const handleResize = (): void => {
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
     };
 
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   return isMobile ? <ForgotMobile /> : <ForgotDesktop />;
-}
+};
+
+export default ForgotPassword;

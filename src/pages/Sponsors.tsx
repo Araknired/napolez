@@ -1,281 +1,487 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import type { FC } from 'react';
 import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useMenu } from '../context/MenuContext';
 
-const Sponsors = () => {
+// ============================================================================
+// Types & Constants
+// ============================================================================
+
+type CarouselType = 'redbull' | 'plasma' | 'energy';
+
+interface CarouselSection {
+  readonly id: string;
+  readonly type: CarouselType;
+}
+
+interface CarouselConfig {
+  readonly images: readonly string[];
+  readonly altPrefix: string;
+}
+
+interface ImagePositionRule {
+  readonly pattern: string;
+  readonly className: string;
+}
+
+interface NavigationButtonProps {
+  readonly onClick: () => void;
+  readonly icon: LucideIcon;
+  readonly label: string;
+  readonly disabled?: boolean;
+  readonly className?: string;
+}
+
+const CAROUSEL_CONFIGS: Record<CarouselType, CarouselConfig> = {
+  redbull: {
+    images: [
+      'src/assets/images/red-bull/red-bull-post.jpg',
+      'src/assets/images/red-bull/red-bull-rb20.jpg',
+      'src/assets/images/red-bull/red-bull-lata.png',
+    ],
+    altPrefix: 'Red Bull',
+  },
+  plasma: {
+    images: [
+      'src/assets/images/plasma-shock/plasma-shock-post-blue.png',
+      'src/assets/images/plasma-shock/plasma-shock-post-orange.png',
+      'src/assets/images/plasma-shock/plasma-shock-post-fresamora.png',
+      'src/assets/images/plasma-shock/plasma-shock-post-lemon.png',
+    ],
+    altPrefix: 'Plasma Shock',
+  },
+  energy: {
+    images: [
+      'src/assets/images/energy-drnk/energy-drink-score.png',
+      'src/assets/images/energy-drnk/energy-drink-original.png',
+      'src/assets/images/energy-drnk/energy-drink.png',
+      'src/assets/images/energy-drnk/energy-crem.png',
+    ],
+    altPrefix: 'Energy Drink',
+  },
+} as const;
+
+const IMAGE_POSITION_RULES: readonly ImagePositionRule[] = [
+  { pattern: 'red-bull-post.jpg', className: 'object-right object-cover' },
+  { pattern: 'red-bull-lata.png', className: 'object-[60%_center] object-cover' },
+  { pattern: 'energy-drink-score.png', className: 'object-[70%_center] object-cover' },
+  { pattern: 'energy-drink-original.png', className: 'object-[90%_center] object-cover' },
+  { pattern: 'energy-drink.png', className: 'object-left object-cover' },
+  { pattern: 'energy-crem.png', className: 'object-left object-cover' },
+] as const;
+
+const SECTIONS: readonly CarouselSection[] = [
+  { id: 'redbull', type: 'redbull' },
+  { id: 'plasma', type: 'plasma' },
+  { id: 'energy', type: 'energy' },
+] as const;
+
+const AUTO_PLAY_INTERVAL_MS = 5000;
+const TRANSITION_DURATION_MS = 1200;
+
+const BASE_BUTTON_CLASSES =
+  'bg-white/20 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.6)] hover:bg-white/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.8)] active:scale-95 transition-all duration-300';
+
+const DISABLED_BUTTON_CLASSES =
+  'disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-white/20';
+
+// ============================================================================
+// Custom Hooks
+// ============================================================================
+
+/**
+ * Manages carousel autoplay with pause/resume functionality
+ */
+function useCarouselAutoplay(
+  isActive: boolean,
+  imageCount: number,
+  isPaused: boolean,
+  onNext: () => void
+): void {
+  useEffect(() => {
+    if (!isActive || isPaused || imageCount === 0) return;
+
+    const intervalId = setInterval(onNext, AUTO_PLAY_INTERVAL_MS);
+    return () => clearInterval(intervalId);
+  }, [isActive, isPaused, imageCount, onNext]);
+}
+
+/**
+ * Manages image index state for a carousel
+ */
+function useCarouselIndex(imageCount: number) {
+  const [index, setIndex] = useState(0);
+
+  const next = useCallback(() => {
+    setIndex((prev) => (prev + 1) % imageCount);
+  }, [imageCount]);
+
+  const previous = useCallback(() => {
+    setIndex((prev) => (prev - 1 + imageCount) % imageCount);
+  }, [imageCount]);
+
+  const reset = useCallback(() => {
+    setIndex(0);
+  }, []);
+
+  return { index, next, previous, reset };
+}
+
+// ============================================================================
+// Utility Functions
+// ============================================================================
+
+/**
+ * Determines the CSS class for image positioning based on file path
+ */
+function getImagePositionClass(imagePath: string): string {
+  const rule = IMAGE_POSITION_RULES.find((r) => imagePath.includes(r.pattern));
+  return rule?.className ?? 'object-cover';
+}
+
+/**
+ * Calculates image transition state based on current and active indices
+ */
+function getImageTransitionClass(
+  currentIndex: number,
+  activeIndex: number,
+  totalImages: number
+): string {
+  const isActive = currentIndex === activeIndex;
+  const isPrevious =
+    currentIndex === (activeIndex - 1 + totalImages) % totalImages;
+
+  if (isActive) {
+    return 'opacity-100 scale-100 blur-none translate-x-0 z-10';
+  }
+  if (isPrevious) {
+    return 'opacity-0 scale-105 blur-[40px] -translate-x-full z-0';
+  }
+  return 'opacity-0 scale-95 blur-[40px] translate-x-full z-0';
+}
+
+// ============================================================================
+// Components
+// ============================================================================
+
+/**
+ * Navigation button with consistent styling and accessibility
+ */
+const NavigationButton: FC<NavigationButtonProps> = ({
+  onClick,
+  icon: Icon,
+  label,
+  disabled = false,
+  className = '',
+}) => {
+  const buttonClasses = `${BASE_BUTTON_CLASSES} ${
+    disabled ? DISABLED_BUTTON_CLASSES : ''
+  } ${className}`;
+
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={buttonClasses}
+      aria-label={label}
+      type="button"
+    >
+      <Icon className="w-8 h-8 text-white md:w-8 md:h-8" />
+    </button>
+  );
+};
+
+/**
+ * Mobile navigation control panel
+ */
+const MobileControls: FC<{
+  onPrevImage: () => void;
+  onNextImage: () => void;
+  onPrevSection: () => void;
+  onNextSection: () => void;
+  onToggleAutoPlay: () => void;
+  isAutoPlayPaused: boolean;
+  isFirstSection: boolean;
+  isLastSection: boolean;
+  isMenuOpen: boolean;
+}> = ({
+  onPrevImage,
+  onNextImage,
+  onPrevSection,
+  onNextSection,
+  onToggleAutoPlay,
+  isAutoPlayPaused,
+  isFirstSection,
+  isLastSection,
+  isMenuOpen,
+}) => {
+  const visibilityClasses = isMenuOpen
+    ? 'opacity-0 invisible'
+    : 'opacity-100 visible';
+
+  return (
+    <div
+      className={`md:hidden fixed left-4 right-4 bottom-8 flex items-center justify-between gap-3 z-50 transition-all duration-300 ${visibilityClasses}`}
+    >
+      <div className="flex gap-3">
+        <NavigationButton
+          onClick={onPrevImage}
+          icon={ChevronLeft}
+          label="Previous image"
+          className="p-4 hover:scale-110"
+        />
+        <NavigationButton
+          onClick={onNextImage}
+          icon={ChevronRight}
+          label="Next image"
+          className="p-4 hover:scale-110"
+        />
+      </div>
+
+      <div className="flex gap-3">
+        <NavigationButton
+          onClick={onToggleAutoPlay}
+          icon={isAutoPlayPaused ? Play : Pause}
+          label={isAutoPlayPaused ? 'Resume autoplay' : 'Pause autoplay'}
+          className="p-4 hover:scale-110"
+        />
+        <NavigationButton
+          onClick={onPrevSection}
+          icon={ChevronUp}
+          label="Previous section"
+          disabled={isFirstSection}
+          className="p-4 hover:scale-110"
+        />
+        <NavigationButton
+          onClick={onNextSection}
+          icon={ChevronDown}
+          label="Next section"
+          disabled={isLastSection}
+          className="p-4 hover:scale-110"
+        />
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Desktop navigation control panel with circular layout
+ */
+const DesktopControls: FC<{
+  onPrevImage: () => void;
+  onNextImage: () => void;
+  onPrevSection: () => void;
+  onNextSection: () => void;
+  onToggleAutoPlay: () => void;
+  isAutoPlayPaused: boolean;
+  isFirstSection: boolean;
+  isLastSection: boolean;
+  isMenuOpen: boolean;
+}> = ({
+  onPrevImage,
+  onNextImage,
+  onPrevSection,
+  onNextSection,
+  onToggleAutoPlay,
+  isAutoPlayPaused,
+  isFirstSection,
+  isLastSection,
+  isMenuOpen,
+}) => {
+  const navigationVisibilityClasses = isMenuOpen
+    ? 'lg:block opacity-0 invisible lg:opacity-100 lg:visible'
+    : 'block opacity-100 visible';
+
+  const autoPlayVisibilityClasses = isMenuOpen
+    ? 'opacity-0 invisible'
+    : 'opacity-100 visible';
+
+  return (
+    <>
+      {/* Circular navigation layout */}
+      <div
+        className={`hidden md:block fixed right-12 bottom-32 z-50 transition-all duration-300 ${navigationVisibilityClasses}`}
+      >
+        <div className="relative w-52 h-52">
+          <NavigationButton
+            onClick={onPrevSection}
+            icon={ChevronUp}
+            label="Previous section"
+            disabled={isFirstSection}
+            className="absolute top-0 left-1/2 -translate-x-1/2 p-5"
+          />
+          <NavigationButton
+            onClick={onNextSection}
+            icon={ChevronDown}
+            label="Next section"
+            disabled={isLastSection}
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 p-5"
+          />
+          <NavigationButton
+            onClick={onPrevImage}
+            icon={ChevronLeft}
+            label="Previous image"
+            className="absolute top-1/2 left-0 -translate-y-1/2 p-5"
+          />
+          <NavigationButton
+            onClick={onNextImage}
+            icon={ChevronRight}
+            label="Next image"
+            className="absolute top-1/2 right-0 -translate-y-1/2 p-5"
+          />
+        </div>
+      </div>
+
+      {/* Autoplay toggle */}
+      <div
+        className={`hidden md:block fixed right-12 bottom-16 z-50 transition-all duration-300 ${autoPlayVisibilityClasses}`}
+      >
+        <NavigationButton
+          onClick={onToggleAutoPlay}
+          icon={isAutoPlayPaused ? Play : Pause}
+          label={isAutoPlayPaused ? 'Resume autoplay' : 'Pause autoplay'}
+          className="p-5"
+        />
+      </div>
+    </>
+  );
+};
+
+/**
+ * Image carousel with smooth transitions
+ */
+const Carousel: FC<{
+  images: readonly string[];
+  activeIndex: number;
+  altPrefix: string;
+}> = ({ images, activeIndex, altPrefix }) => {
+  return (
+    <div className="relative w-full h-full overflow-hidden">
+      {images.map((imagePath, index) => {
+        const positionClass = getImagePositionClass(imagePath);
+        const transitionClass = getImageTransitionClass(
+          index,
+          activeIndex,
+          images.length
+        );
+
+        return (
+          <img
+            key={imagePath}
+            src={imagePath}
+            alt={`${altPrefix} ${index + 1}`}
+            className={`absolute inset-0 w-full h-full transition-all duration-[${TRANSITION_DURATION_MS}ms] ease-in-out ${positionClass} ${transitionClass}`}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
+// ============================================================================
+// Main Component
+// ============================================================================
+
+const Sponsors: FC = () => {
+  const { isMenuOpen } = useMenu();
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-  const [redbullImageIndex, setRedbullImageIndex] = useState(0);
-  const [plasmaImageIndex, setPlasmaImageIndex] = useState(0);
-  const [energyImageIndex, setEnergyImageIndex] = useState(0);
   const [isAutoPlayPaused, setIsAutoPlayPaused] = useState(false);
 
-  const { isMenuOpen } = useMenu();
+  const currentSection = SECTIONS[currentSectionIndex];
+  const currentConfig = CAROUSEL_CONFIGS[currentSection.type];
 
-  const redbullImages = [
-    'src/assets/images/red-bull/red-bull-post.jpg',
-    'src/assets/images/red-bull/red-bull-rb20.jpg',
-    'src/assets/images/red-bull/red-bull-lata.png'
-  ];
+  // Carousel state management for each section
+  const redbullCarousel = useCarouselIndex(CAROUSEL_CONFIGS.redbull.images.length);
+  const plasmaCarousel = useCarouselIndex(CAROUSEL_CONFIGS.plasma.images.length);
+  const energyCarousel = useCarouselIndex(CAROUSEL_CONFIGS.energy.images.length);
 
-  const plasmaImages = [
-    'src/assets/images/plasma-shock/plasma-shock-post-blue.png',
-    'src/assets/images/plasma-shock/plasma-shock-post-orange.png',
-    'src/assets/images/plasma-shock/plasma-shock-post-fresamora.png',
-    'src/assets/images/plasma-shock/plasma-shock-post-lemon.png'
-  ];
+  // Map carousel controls based on current section
+  const carouselControls = useMemo(() => {
+    const controlsMap = {
+      redbull: redbullCarousel,
+      plasma: plasmaCarousel,
+      energy: energyCarousel,
+    };
+    return controlsMap[currentSection.type];
+  }, [currentSection.type, redbullCarousel, plasmaCarousel, energyCarousel]);
 
-  const energyImages = [
-    'src/assets/images/energy-drnk/energy-drink-score.png',
-    'src/assets/images/energy-drnk/energy-drink-original.png',
-    'src/assets/images/energy-drnk/energy-drink.png',
-    'src/assets/images/energy-drnk/energy-crem.png'
-  ];
-
-  const sections = [
-    { id: 'redbull', isCarousel: true, carouselType: 'redbull' as const },
-    { id: 'plasma', isCarousel: true, carouselType: 'plasma' as const },
-    { id: 'energy', isCarousel: true, carouselType: 'energy' as const },
-  ];
-
+  // Reset carousel index when section changes
   useEffect(() => {
-    if (currentSectionIndex === 0 && !isAutoPlayPaused) {
-      const interval = setInterval(() => {
-        setRedbullImageIndex((prevIndex) => (prevIndex + 1) % redbullImages.length);
-      }, 5000);
-      return () => clearInterval(interval);
-    } else {
-      setRedbullImageIndex(0);
-    }
-  }, [currentSectionIndex, redbullImages.length, isAutoPlayPaused]);
+    redbullCarousel.reset();
+    plasmaCarousel.reset();
+    energyCarousel.reset();
+  }, [currentSectionIndex]); // Intentionally depend only on index
 
-  useEffect(() => {
-    if (currentSectionIndex === 1 && !isAutoPlayPaused) {
-      const interval = setInterval(() => {
-        setPlasmaImageIndex((prevIndex) => (prevIndex + 1) % plasmaImages.length);
-      }, 5000);
-      return () => clearInterval(interval);
-    } else {
-      setPlasmaImageIndex(0);
-    }
-  }, [currentSectionIndex, plasmaImages.length, isAutoPlayPaused]);
+  // Autoplay for current carousel
+  useCarouselAutoplay(
+    true,
+    currentConfig.images.length,
+    isAutoPlayPaused,
+    carouselControls.next
+  );
 
-  useEffect(() => {
-    if (currentSectionIndex === 2 && !isAutoPlayPaused) {
-      const interval = setInterval(() => {
-        setEnergyImageIndex((prevIndex) => (prevIndex + 1) % energyImages.length);
-      }, 5000);
-      return () => clearInterval(interval);
-    } else {
-      setEnergyImageIndex(0);
-    }
-  }, [currentSectionIndex, energyImages.length, isAutoPlayPaused]);
-
-  const scrollToNext = () => {
-    if (currentSectionIndex < sections.length - 1) {
-      setCurrentSectionIndex(currentSectionIndex + 1);
-    }
-  };
-
-  const scrollToPrev = () => {
-    if (currentSectionIndex > 0) {
-      setCurrentSectionIndex(currentSectionIndex - 1);
-    }
-  };
-
-  const goToNextImage = () => {
-    if (currentSectionIndex === 0) {
-      setRedbullImageIndex((prevIndex) => (prevIndex + 1) % redbullImages.length);
-    } else if (currentSectionIndex === 1) {
-      setPlasmaImageIndex((prevIndex) => (prevIndex + 1) % plasmaImages.length);
-    } else if (currentSectionIndex === 2) {
-      setEnergyImageIndex((prevIndex) => (prevIndex + 1) % energyImages.length);
-    }
-  };
-
-  const goToPrevImage = () => {
-    if (currentSectionIndex === 0) {
-      setRedbullImageIndex((prevIndex) => (prevIndex - 1 + redbullImages.length) % redbullImages.length);
-    } else if (currentSectionIndex === 1) {
-      setPlasmaImageIndex((prevIndex) => (prevIndex - 1 + plasmaImages.length) % plasmaImages.length);
-    } else if (currentSectionIndex === 2) {
-      setEnergyImageIndex((prevIndex) => (prevIndex - 1 + energyImages.length) % energyImages.length);
-    }
-  };
-
-  const toggleAutoPlay = () => {
-    setIsAutoPlayPaused(!isAutoPlayPaused);
-  };
-
-  const renderCarousel = (images: string[], activeIndex: number, altPrefix: string) => {
-    return (
-      <div className="relative w-full h-full overflow-hidden">
-        {images.map((img, idx) => {
-          const isActive = idx === activeIndex;
-          const isPrev = idx === (activeIndex - 1 + images.length) % images.length;
-
-          const isRedBullPost = img.includes('red-bull-post.jpg');
-          const isRedBullLata = img.includes('red-bull-lata.png');
-          const isEnergyScore = img.includes('energy-drink-score.png');
-          const isEnergyOriginal = img.includes('energy-drink-original.png');
-          const isEnergyDrink = img.includes('energy-drink.png') && !img.includes('energy-drink-score.png') && !img.includes('energy-drink-original.png');
-          const isEnergyCrem = img.includes('energy-crem.png');
-
-          let positionClass = 'object-cover';
-          if (isRedBullPost) {
-            positionClass = 'object-right object-cover';
-          } else if (isRedBullLata) {
-            positionClass = 'object-[60%_center] object-cover';
-          } else if (isEnergyScore) {
-            positionClass = 'object-[70%_center] object-cover';
-          } else if (isEnergyOriginal) {
-            positionClass = 'object-[90%_center] object-cover';
-          } else if (isEnergyDrink) {
-            positionClass = 'object-left object-cover';
-          } else if (isEnergyCrem) {
-            positionClass = 'object-left object-cover';
-          }
-
-          return (
-            <img
-              key={idx}
-              src={img}
-              alt={`${altPrefix} ${idx + 1}`}
-              className={`absolute inset-0 w-full h-full transition-all duration-[1200ms] ease-in-out ${positionClass} ${
-                isActive
-                  ? 'opacity-100 scale-100 blur-none translate-x-0 z-10'
-                  : isPrev
-                  ? 'opacity-0 scale-105 blur-[40px] -translate-x-full z-0'
-                  : 'opacity-0 scale-95 blur-[40px] translate-x-full z-0'
-              }`}
-            />
-          );
-        })}
-      </div>
+  // Section navigation
+  const navigateToNextSection = useCallback(() => {
+    setCurrentSectionIndex((prev) =>
+      Math.min(prev + 1, SECTIONS.length - 1)
     );
-  };
+  }, []);
+
+  const navigateToPrevSection = useCallback(() => {
+    setCurrentSectionIndex((prev) => Math.max(prev - 1, 0));
+  }, []);
+
+  const toggleAutoPlay = useCallback(() => {
+    setIsAutoPlayPaused((prev) => !prev);
+  }, []);
+
+  const isFirstSection = currentSectionIndex === 0;
+  const isLastSection = currentSectionIndex === SECTIONS.length - 1;
 
   return (
     <div className="relative h-screen overflow-hidden">
-      <div className={`hidden md:block fixed right-12 bottom-16 z-50 transition-all duration-300 ${
-        isMenuOpen ? 'opacity-0 invisible' : 'opacity-100 visible'
-      }`}>
-        <button
-          onClick={toggleAutoPlay}
-          className="bg-white/20 p-5 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.6)] hover:bg-white/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.8)] active:scale-95 transition-all duration-300"
-          aria-label={isAutoPlayPaused ? "Resume autoplay" : "Pause autoplay"}
-        >
-          {isAutoPlayPaused ? (
-            <Play className="w-8 h-8 text-white" />
-          ) : (
-            <Pause className="w-8 h-8 text-white" />
-          )}
-        </button>
-      </div>
+      {/* Mobile Controls */}
+      <MobileControls
+        onPrevImage={carouselControls.previous}
+        onNextImage={carouselControls.next}
+        onPrevSection={navigateToPrevSection}
+        onNextSection={navigateToNextSection}
+        onToggleAutoPlay={toggleAutoPlay}
+        isAutoPlayPaused={isAutoPlayPaused}
+        isFirstSection={isFirstSection}
+        isLastSection={isLastSection}
+        isMenuOpen={isMenuOpen}
+      />
 
-      <div className={`md:hidden fixed left-4 right-4 bottom-8 flex items-center justify-between gap-3 z-50 transition-all duration-300 ${
-        isMenuOpen ? 'opacity-0 invisible' : 'opacity-100 visible'
-      }`}>
-        <div className="flex gap-3">
-          <button
-            onClick={goToPrevImage}
-            className="bg-white/20 p-4 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.6)] hover:bg-white/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.8)] hover:scale-110 active:scale-95 transition-all duration-300"
-            aria-label="Previous image"
-          >
-            <ChevronLeft className="w-6 h-6 text-white" />
-          </button>
+      {/* Desktop Controls */}
+      <DesktopControls
+        onPrevImage={carouselControls.previous}
+        onNextImage={carouselControls.next}
+        onPrevSection={navigateToPrevSection}
+        onNextSection={navigateToNextSection}
+        onToggleAutoPlay={toggleAutoPlay}
+        isAutoPlayPaused={isAutoPlayPaused}
+        isFirstSection={isFirstSection}
+        isLastSection={isLastSection}
+        isMenuOpen={isMenuOpen}
+      />
 
-          <button
-            onClick={goToNextImage}
-            className="bg-white/20 p-4 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.6)] hover:bg-white/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.8)] hover:scale-110 active:scale-95 transition-all duration-300"
-            aria-label="Next image"
-          >
-            <ChevronRight className="w-6 h-6 text-white" />
-          </button>
-        </div>
-
-        <div className="flex gap-3">
-          <button
-            onClick={toggleAutoPlay}
-            className="bg-white/20 p-4 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.6)] hover:bg-white/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.8)] hover:scale-110 active:scale-95 transition-all duration-300"
-            aria-label={isAutoPlayPaused ? "Resume autoplay" : "Pause autoplay"}
-          >
-            {isAutoPlayPaused ? (
-              <Play className="w-6 h-6 text-white" />
-            ) : (
-              <Pause className="w-6 h-6 text-white" />
-            )}
-          </button>
-
-          <button
-            onClick={scrollToPrev}
-            disabled={currentSectionIndex === 0}
-            className="bg-white/20 p-4 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.6)] hover:bg-white/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.8)] hover:scale-110 active:scale-95 transition-all duration-300 disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-white/20"
-            aria-label="Previous section"
-          >
-            <ChevronUp className="w-6 h-6 text-white" />
-          </button>
-
-          <button
-            onClick={scrollToNext}
-            disabled={currentSectionIndex === sections.length - 1}
-            className="bg-white/20 p-4 rounded-xl shadow-[0_8px_40px_rgb(0,0,0,0.8)] hover:bg-white/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.8)] hover:scale-110 active:scale-95 transition-all duration-300 disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-white/20"
-            aria-label="Next section"
-          >
-            <ChevronDown className="w-6 h-6 text-white" />
-          </button>
-        </div>
-      </div>
-
-      <div className={`hidden md:block fixed right-12 bottom-32 z-50 transition-all duration-300 ${
-        isMenuOpen ? 'lg:block opacity-0 invisible lg:opacity-100 lg:visible' : 'block opacity-100 visible'
-      }`}>
-        <div className="relative w-52 h-52">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2"></div>
-
-          <button
-            onClick={scrollToPrev}
-            disabled={currentSectionIndex === 0}
-            className="absolute top-0 left-1/2 -translate-x-1/2 bg-white/20 p-5 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.6)] hover:bg-white/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.8)] active:scale-95 transition-all duration-300 disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-white/20"
-            aria-label="Previous section"
-          >
-            <ChevronUp className="w-8 h-8 text-white" />
-          </button>
-
-          <button
-            onClick={scrollToNext}
-            disabled={currentSectionIndex === sections.length - 1}
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-white/20 p-5 rounded-xl shadow-[0_8px_40px_rgb(0,0,0,0.8)] hover:bg-white/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.8)] active:scale-95 transition-all duration-300 disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-white/20"
-            aria-label="Next section"
-          >
-            <ChevronDown className="w-8 h-8 text-white" />
-          </button>
-
-          <button
-            onClick={goToPrevImage}
-            className="absolute top-1/2 left-0 -translate-y-1/2 bg-white/20 p-5 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.6)] hover:bg-white/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.8)] active:scale-95 transition-all duration-300"
-            aria-label="Previous image"
-          >
-            <ChevronLeft className="w-8 h-8 text-white" />
-          </button>
-
-          <button
-            onClick={goToNextImage}
-            className="absolute top-1/2 right-0 -translate-y-1/2 bg-white/20 p-5 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.6)] hover:bg-white/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.8)] active:scale-95 transition-all duration-300"
-            aria-label="Next image"
-          >
-            <ChevronRight className="w-8 h-8 text-white" />
-          </button>
-        </div>
-      </div>
-
+      {/* Carousel Content */}
       <div className="h-screen w-full bg-black">
-        <div key={currentSectionIndex} className="relative w-full h-full overflow-hidden animate-fadeIn">
-          {sections[currentSectionIndex].carouselType === 'redbull' && renderCarousel(redbullImages, redbullImageIndex, 'Red Bull')}
-          {sections[currentSectionIndex].carouselType === 'plasma' && renderCarousel(plasmaImages, plasmaImageIndex, 'Plasma Shock')}
-          {sections[currentSectionIndex].carouselType === 'energy' && renderCarousel(energyImages, energyImageIndex, 'Energy Drink')}
+        <div
+          key={currentSectionIndex}
+          className="relative w-full h-full overflow-hidden animate-fadeIn"
+        >
+          <Carousel
+            images={currentConfig.images}
+            activeIndex={carouselControls.index}
+            altPrefix={currentConfig.altPrefix}
+          />
         </div>
       </div>
 
+      {/* Styles */}
       <style>{`
         @keyframes fadeIn {
           0% {

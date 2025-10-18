@@ -2,12 +2,48 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="public\favicon.ico" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <!-- Viewport configuration for responsive design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary Meta Tags -->
     <title>Napolez UI</title>
+    <meta name="title" content="Napolez UI" />
+    <meta name="description" content="Modern web application built with React and TypeScript" />
+    
+    <!-- Open Graph / Facebook Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Napolez UI" />
+    <meta property="og:description" content="Modern web application built with React and TypeScript" />
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Napolez UI" />
+    <meta name="twitter:description" content="Modern web application built with React and TypeScript" />
+    
+    <!-- Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#000000" />
+    
+    <!-- Preconnect to improve performance (add your CDN/API domains) -->
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com" /> -->
+    <!-- <link rel="preconnect" href="https://api.yourdomain.com" /> -->
   </head>
   <body>
+    <!-- Application root element -->
     <div id="root"></div>
+    
+    <!-- Main application script -->
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Fallback for users with JavaScript disabled -->
+    <noscript>
+      <div style="padding: 2rem; text-align: center; font-family: system-ui, -apple-system, sans-serif;">
+        <h1>JavaScript Required</h1>
+        <p>This application requires JavaScript to run. Please enable JavaScript in your browser settings.</p>
+      </div>
+    </noscript>
   </body>
 </html>

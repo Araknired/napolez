@@ -1,12 +1,25 @@
+/**
+ * Global stylesheet with Tailwind CSS integration and custom fonts
+ */
+
 @import "tailwindcss";
 
+/**
+ * Custom Font: Rammetto One
+ * A display font for headings and decorative text
+ */
 @font-face {
   font-family: 'Rammetto One';
   src: url('./assets/fonts/Rammetto_One/RammettoOne-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
+  font-display: swap; /* Improves performance by showing fallback font during load */
 }
 
+/**
+ * Utility class for applying Rammetto One font
+ * Usage: <element className="font-rammetto">
+ */
 .font-rammetto {
   font-family: 'Rammetto One', cursive;
 }
