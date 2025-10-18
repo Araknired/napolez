@@ -36,27 +36,27 @@ interface NavigationButtonProps {
 const CAROUSEL_CONFIGS: Record<CarouselType, CarouselConfig> = {
   redbull: {
     images: [
-      'src/assets/images/red-bull/red-bull-post.jpg',
-      'src/assets/images/red-bull/red-bull-rb20.jpg',
-      'src/assets/images/red-bull/red-bull-lata.png',
+      '/images/red-bull/red-bull-post.jpg',
+      '/images/red-bull/red-bull-rb20.jpg',
+      '/images/red-bull/red-bull-lata.png',
     ],
     altPrefix: 'Red Bull',
   },
   plasma: {
     images: [
-      'src/assets/images/plasma-shock/plasma-shock-post-blue.png',
-      'src/assets/images/plasma-shock/plasma-shock-post-orange.png',
-      'src/assets/images/plasma-shock/plasma-shock-post-fresamora.png',
-      'src/assets/images/plasma-shock/plasma-shock-post-lemon.png',
+      '/images/plasma-shock/plasma-shock-post-blue.png',
+      '/images/plasma-shock/plasma-shock-post-orange.png',
+      '/images/plasma-shock/plasma-shock-post-fresamora.png',
+      '/images/plasma-shock/plasma-shock-post-lemon.png',
     ],
     altPrefix: 'Plasma Shock',
   },
   energy: {
     images: [
-      'src/assets/images/energy-drnk/energy-drink-score.png',
-      'src/assets/images/energy-drnk/energy-drink-original.png',
-      'src/assets/images/energy-drnk/energy-drink.png',
-      'src/assets/images/energy-drnk/energy-crem.png',
+      '/images/energy-drnk/energy-drink-score.png',
+      '/images/energy-drnk/energy-drink-original.png',
+      '/images/energy-drnk/energy-drink.png',
+      '/images/energy-crem.png',
     ],
     altPrefix: 'Energy Drink',
   },
