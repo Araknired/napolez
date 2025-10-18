@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LucideIcon } from 'lucide-react';
 import { ChevronRight, Sun, Moon, Monitor, Check, Sparkles, Zap, Shield } from 'lucide-react';
@@ -103,7 +103,7 @@ const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect }) => {
     <button
       type="button"
       onClick={handleClick}
-      className={`group relative w-full flex items-center justify-between px-6 sm:px-8 lg:px-10 py-6 sm:py-7 lg:py-8 transition-all duration-300 border-b border-gray-200 last:border-b-0 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset overflow-hidden ${
+      className={`group relative w-full flex items-center justify-between px-6 sm:px-8 lg:px-8 py-6 sm:py-7 lg:py-7 transition-all duration-300 border-b border-gray-200 last:border-b-0 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset overflow-hidden ${
         isSelected
           ? `bg-gradient-to-br ${option.bgGradient} shadow-lg`
           : 'hover:bg-gray-50 hover:shadow-md'
@@ -118,16 +118,16 @@ const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect }) => {
         </>
       )}
       
-      <div className="flex items-center gap-4 sm:gap-6 lg:gap-8 relative z-10 flex-1">
+      <div className="flex items-center gap-4 sm:gap-6 lg:gap-6 relative z-10 flex-1">
         <div
-          className={`w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl sm:rounded-3xl lg:rounded-3xl flex items-center justify-center flex-shrink-0 transition-all duration-300 transform ${
+          className={`w-14 h-14 sm:w-16 sm:h-16 lg:w-16 lg:h-16 rounded-2xl sm:rounded-3xl lg:rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-300 transform ${
             isSelected
               ? `bg-gradient-to-br ${option.gradient} shadow-xl scale-100 ring-4 ring-white`
               : 'bg-gradient-to-br from-gray-100 to-gray-200 group-hover:from-gray-150 group-hover:to-gray-250 group-hover:scale-105 shadow-md'
           }`}
         >
           <Icon
-            className={`w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 transition-all duration-300 ${
+            className={`w-7 h-7 sm:w-8 sm:h-8 lg:w-8 lg:h-8 transition-all duration-300 ${
               isSelected ? 'text-white scale-100' : 'text-gray-600 group-hover:text-gray-700'
             }`}
             strokeWidth={2}
@@ -137,22 +137,22 @@ const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect }) => {
 
         <div className="flex flex-col items-start justify-center flex-1">
           <span
-            className={`font-bold text-base sm:text-lg lg:text-xl transition-colors duration-300 ${
+            className={`font-bold text-base sm:text-lg lg:text-lg transition-colors duration-300 ${
               isSelected ? 'text-gray-900' : 'text-gray-800 group-hover:text-gray-900'
             }`}
           >
             {option.label}
           </span>
-          <span className="text-sm sm:text-base lg:text-lg text-gray-600 mt-1 sm:mt-1.5 lg:mt-2 leading-snug">
+          <span className="text-sm sm:text-base lg:text-base text-gray-600 mt-1 sm:mt-1.5 lg:mt-1.5 leading-snug">
             {option.description}
           </span>
         </div>
       </div>
       
       {isSelected && (
-        <div className="relative z-10 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-xl flex-shrink-0 ring-4 ring-white transform scale-100 animate-pulse">
+        <div className="relative z-10 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 lg:w-12 lg:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-xl flex-shrink-0 ring-4 ring-white transform scale-100 animate-pulse">
           <Check
-            className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-white"
+            className="w-5 h-5 sm:w-6 sm:h-6 lg:w-6 lg:h-6 text-white"
             strokeWidth={3}
             aria-label="Selected theme"
           />
@@ -174,7 +174,7 @@ const DesktopDetailCard: FC<{ detail: typeof THEME_DETAILS[0] }> = ({ detail }) 
     : [{ icon: Monitor, label: 'Adaptive' }, { icon: Sparkles, label: 'Smart' }];
 
   return (
-    <div className="group relative p-8 rounded-2xl bg-white border border-gray-200 hover:border-gray-300 transition-all duration-300 hover:shadow-xl overflow-hidden">
+    <div className="group relative p-8 rounded-2xl bg-white border border-gray-200 hover:border-gray-300 transition-all duration-300 hover:shadow-xl overflow-hidden h-full">
       {/* Background gradient effect */}
       <div className={`absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br ${detail.iconColor} opacity-5 rounded-full blur-3xl transition-all duration-300 group-hover:opacity-10`} />
       
@@ -188,12 +188,12 @@ const DesktopDetailCard: FC<{ detail: typeof THEME_DETAILS[0] }> = ({ detail }) 
         </div>
 
         {/* Description */}
-        <p className="text-gray-600 leading-relaxed mb-6 text-sm">
+        <p className="text-gray-600 leading-relaxed mb-8 text-sm">
           {detail.description}
         </p>
 
         {/* Benefits */}
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
           {benefits.map((benefit, idx) => {
             const BenefitIcon = benefit.icon;
             return (
@@ -269,6 +269,11 @@ const Theme: FC = () => {
   const navigate = useNavigate();
   const { preference, setPreference } = useTheme();
 
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const handleBackNavigation = useCallback(() => {
     navigate('/profile');
   }, [navigate]);
@@ -316,16 +321,16 @@ const Theme: FC = () => {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-16">
+      {/* Main Content - Mobile and Tablet */}
+      <div className="lg:hidden max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-8 sm:py-10">
         {/* Premium Info Card */}
-        <div className="mb-8 sm:mb-10 lg:mb-12 p-6 sm:p-8 lg:p-8 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 rounded-2xl sm:rounded-3xl lg:rounded-2xl border border-blue-400/30 shadow-xl">
-          <div className="flex gap-4 sm:gap-5 lg:gap-6 items-start">
-            <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 lg:w-12 lg:h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-              <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 lg:w-6 lg:h-6 text-white" />
+        <div className="mb-8 sm:mb-10 p-6 sm:p-8 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 rounded-2xl sm:rounded-3xl border border-blue-400/30 shadow-xl">
+          <div className="flex gap-4 sm:gap-5 items-start">
+            <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+              <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
             </div>
             <div className="flex-1">
-              <p className="text-base sm:text-lg lg:text-base text-white leading-relaxed font-medium">
+              <p className="text-base sm:text-lg text-white leading-relaxed font-medium">
                 <span className="font-bold block mb-2 sm:mb-3">💡 Pro Tip:</span>
                 Your theme preference is securely saved and will be applied across all your devices and sessions. Select <span className="font-bold text-blue-100">"System Preference"</span> to seamlessly adapt to your device's display settings.
               </p>
@@ -335,7 +340,7 @@ const Theme: FC = () => {
 
         {/* Theme Options Container */}
         <div
-          className="bg-white rounded-3xl lg:rounded-2xl shadow-2xl shadow-gray-300/40 overflow-hidden border border-gray-200 hover:shadow-2xl hover:shadow-gray-400/50 transition-all duration-500 mb-12 lg:mb-16"
+          className="bg-white rounded-3xl shadow-2xl shadow-gray-300/40 overflow-hidden border border-gray-200 hover:shadow-2xl hover:shadow-gray-400/50 transition-all duration-500 mb-8 sm:mb-10"
           role="group"
           aria-label="Theme options"
         >
@@ -357,21 +362,8 @@ const Theme: FC = () => {
           ))}
         </div>
 
-        {/* Desktop Professional Grid */}
-        <div className="hidden lg:block">
-          <div className="mb-8 flex items-center gap-3">
-            <div className="h-1 w-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" />
-            <h2 className="text-2xl font-bold text-gray-900">Detailed Information</h2>
-          </div>
-          <div className="grid grid-cols-3 gap-8">
-            {THEME_DETAILS.map((detail) => (
-              <DesktopDetailCard key={detail.value} detail={detail} />
-            ))}
-          </div>
-        </div>
-
         {/* Mobile Information Section */}
-        <div className="lg:hidden">
+        <div>
           <div className="mb-6 sm:mb-8 flex items-center gap-3">
             <div className="h-1 w-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" />
             <h2 className="text-lg sm:text-xl font-bold text-gray-900">Learn More</h2>
@@ -380,6 +372,73 @@ const Theme: FC = () => {
             {THEME_DETAILS.map((detail) => (
               <MobileDetailCard key={detail.value} detail={detail} />
             ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content - Desktop */}
+      <div className="hidden lg:block max-w-7xl mx-auto px-8 py-16">
+        <div className="grid grid-cols-3 gap-8 h-screen">
+          {/* Left Column - Info */}
+          <div className="col-span-1 flex flex-col overflow-y-auto pr-4">
+            <div className="flex-shrink-0 mb-8">
+              <div className="mb-6 p-8 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 rounded-2xl border border-blue-400/30 shadow-xl">
+                <div className="flex gap-4 items-start">
+                  <div className="flex-shrink-0 w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <Sparkles className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-base text-white leading-relaxed font-medium">
+                      <span className="font-bold block mb-3">💡 Pro Tip:</span>
+                      Your theme preference is securely saved across all sessions and devices. Use "System Preference" to automatically match your device settings.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex-1">
+              <div className="mb-8 flex items-center gap-3">
+                <div className="h-1 w-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" />
+                <h2 className="text-2xl font-bold text-gray-900">Detailed Information</h2>
+              </div>
+              <div className="space-y-6">
+                {THEME_DETAILS.map((detail) => (
+                  <DesktopDetailCard key={detail.value} detail={detail} />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Theme Options */}
+          <div className="col-span-2 flex flex-col overflow-y-auto pl-4">
+            <div className="sticky top-0 mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">Select Your Theme</h2>
+              <p className="text-gray-600 text-lg">Choose how you want to experience our interface</p>
+            </div>
+
+            <div
+              className="bg-white rounded-2xl shadow-2xl shadow-gray-300/40 overflow-hidden border border-gray-200 flex-shrink-0"
+              role="group"
+              aria-label="Theme options"
+            >
+              {THEME_OPTIONS.map((option, index) => (
+                <div
+                  key={option.value}
+                  className="relative"
+                  style={{ 
+                    animationDelay: `${index * 100}ms`,
+                    animation: 'fadeIn 0.6s ease-out forwards'
+                  }}
+                >
+                  <ThemeItem
+                    option={option}
+                    isSelected={preference === option.value}
+                    onSelect={handleThemeSelect}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
