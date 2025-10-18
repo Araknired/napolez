@@ -181,13 +181,15 @@ const Theme: FC = () => {
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
         {/* Info Card */}
-        <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl sm:rounded-2xl border border-blue-100">
-          <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-            <span className="font-semibold text-gray-900">ðŸ'¡ Tip:</span> Your
-            theme preference will be saved and applied across all your sessions.
-            Choose <span className="font-medium">"System"</span> to automatically
-            match your device's theme.
-          </p>
+        <div className="mb-6 sm:mb-8 p-5 sm:p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg sm:rounded-2xl border border-blue-100">
+          <div className="flex gap-3">
+            <span className="text-xl sm:text-lg flex-shrink-0">💡</span>
+            <div className="flex-1">
+              <p className="text-base sm:text-sm text-gray-700 leading-relaxed">
+                <span className="font-semibold text-gray-900">Tip:</span> Tu preferencia de tema se guardará y se aplicará en todas tus sesiones. Elige <span className="font-medium">"System"</span> para que coincida automáticamente con la configuración de tu dispositivo.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Theme Options */}
