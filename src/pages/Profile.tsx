@@ -331,8 +331,8 @@ const Profile: FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-4 lg:pt-24">
-      <div className="h-[calc(100vh-1rem)] lg:h-[calc(100vh-6rem)] overflow-y-auto">
+    <div className="min-h-screen bg-gray-50 pt-4 lg:pt-24 pb-24 lg:pb-0">
+      <div className="h-auto lg:h-[calc(100vh-6rem)] overflow-y-auto">
         <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-2 lg:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Sidebar */}
