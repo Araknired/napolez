@@ -149,9 +149,9 @@ const Theme: FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pb-20 lg:pb-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pb-20 lg:pb-8 lg:pt-24">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-40">
+      <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-40 lg:sticky lg:top-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex items-center justify-between">
             <button
@@ -183,7 +183,7 @@ const Theme: FC = () => {
         {/* Info Card */}
         <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl sm:rounded-2xl border border-blue-100">
           <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-            <span className="font-semibold text-gray-900">💡 Tip:</span> Your
+            <span className="font-semibold text-gray-900">ðŸ'¡ Tip:</span> Your
             theme preference will be saved and applied across all your sessions.
             Choose <span className="font-medium">"System"</span> to automatically
             match your device's theme.
