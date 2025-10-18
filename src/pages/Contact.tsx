@@ -241,10 +241,10 @@ const ContactInfoSection: FC = () => (
     >
       <p className="text-gray-700 text-xs sm:text-base leading-relaxed">
         Do you have a project in mind or need a hand to make it a reality? I'm here to help. I can support you at every
-        stage of the development process – from planning and design to implementation and maintenance.
+        stage of the development process — from planning and design to implementation and maintenance.
       </p>
       <p className="text-gray-700 text-xs sm:text-base leading-relaxed">
-        If you'd like to work with me or simply talk about your idea, feel free to reach out – I'd love to hear more
+        If you'd like to work with me or simply talk about your idea, feel free to reach out — I'd love to hear more
         about your project.
       </p>
     </div>
@@ -483,7 +483,7 @@ const ContactPage: FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-gray-50 to-gray-100 pt-0 lg:pt-20 pb-0 lg:pb-0">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-gray-50 to-gray-100 pt-0 lg:pt-20 pb-24 lg:pb-0">
       <div className="h-full lg:h-[calc(100vh-5rem)]">
         <div className="bg-white h-full shadow-2xl overflow-hidden relative rounded-t-3xl lg:rounded-none mx-0 lg:mx-0 mt-0 lg:my-0 animate-fadeInUp">
           <BackgroundDecorations />
