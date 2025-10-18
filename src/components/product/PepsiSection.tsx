@@ -13,23 +13,23 @@ const PepsiSection = () => {
   const products: Product[] = [
     { 
       name: 'PEPSI ZERO', 
-      image: '/src/assets/images/pepsi/pepsi-zero-can.png',
-      imageLarge: '/src/assets/images/pepsi/pepsi-zero-can-60.png'
+      image: '/images/pepsi/pepsi-zero-can.png',
+      imageLarge: '/images/pepsi/pepsi-zero-can-60.png'
     },
     { 
       name: 'PEPSI', 
-      image: '/src/assets/images/pepsi/pepsi-can.png',
-      imageLarge: '/src/assets/images/pepsi/pepsi-can-60.png'
+      image: '/images/pepsi/pepsi-can.png',
+      imageLarge: '/images/pepsi/pepsi-can-60.png'
     },
     { 
       name: 'PEPSI LIGHT', 
-      image: '/src/assets/images/pepsi/pepsi-light.png',
-      imageLarge: '/src/assets/images/pepsi/pepsi-light-60.png'
+      image: '/images/pepsi/pepsi-light.png',
+      imageLarge: '/images/pepsi/pepsi-light-60.png'
     },
     { 
       name: 'PEPSI MAX', 
-      image: '/src/assets/images/pepsi/pepsi-max.png',
-      imageLarge: '/src/assets/images/pepsi/pepsi-max-45.png'
+      image: '/images/pepsi/pepsi-max.png',
+      imageLarge: '/images/pepsi/pepsi-max-45.png'
     },
   ];
 
@@ -238,7 +238,7 @@ const PepsiSection = () => {
             style={{animationDelay: '0.3s'}}
           >
             <img 
-              src="/src/assets/images/pepsi/pepsi-logo.png"
+              src="/images/pepsi/pepsi-logo.png"
               alt="PEPSI Background"
               className="w-[600px] md:w-[1500%] h-auto object-contain opacity-80 md:opacity-100"
             />

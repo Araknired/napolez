@@ -26,7 +26,7 @@ const RedBullSection = () => {
       <div
         className="absolute inset-0 bg-cover animate-[fadeInSharp_1.5s_ease-out_forwards] hidden md:block"
         style={{
-          backgroundImage: "url('/src/assets/images/red-bull/RedBullSection.png')",
+          backgroundImage: "url('/images/red-bull/RedBullSection.png')",
           backgroundPosition: 'center calc(50% - 80px)'
         }}
       />

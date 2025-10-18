@@ -6,9 +6,6 @@ import { useState, useEffect } from 'react';
 import type { FC } from 'react';
 import type { IconType } from 'react-icons';
 
-import robotImage from '../assets/images/about/robot.png';
-import aboutLikeImage from '../assets/images/about/aboutlike.png';
-
 // Constants
 const LOADING_DURATION = 1500;
 const CONTENT_FADE_DELAY = 100;
@@ -162,7 +159,7 @@ const HeroImage: FC<HeroImageProps> = ({ isVisible }) => (
     
     <div className="relative">
       <img 
-        src={robotImage} 
+        src="/images/about/robot.png"
         alt="AI Robot representing marketing and technology" 
         className="w-full h-auto relative z-10 drop-shadow-2xl max-w-md lg:max-w-2xl mx-auto"
       />
@@ -170,7 +167,7 @@ const HeroImage: FC<HeroImageProps> = ({ isVisible }) => (
       {/* Floating like icon */}
       <div className="absolute top-4 sm:top-8 -left-2 sm:-left-4 z-20">
         <img 
-          src={aboutLikeImage} 
+          src="/images/about/aboutlike.png"
           alt="Like notification indicator" 
           className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 drop-shadow-lg"
         />

@@ -3,7 +3,6 @@ import { useAuth } from '../../context/AuthContext';
 import { useMenu } from '../../context/MenuContext';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import designImage from './design.png';
 
 export default function LoginDesktop() {
   const [emailOrPhone, setEmailOrPhone] = useState('');
@@ -124,7 +123,7 @@ export default function LoginDesktop() {
             <div className="relative mb-12 transform hover:scale-105 transition-transform duration-500">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-3xl blur-2xl opacity-40"></div>
               <img 
-                src={designImage} 
+                src="/images/login/design.png"
                 alt="Design" 
                 className="relative w-full h-auto object-contain rounded-3xl"
               />

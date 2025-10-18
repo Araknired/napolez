@@ -14,10 +14,9 @@ import {
   X, 
   CreditCard 
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { products } from '../data/products';
-import type { Category, Product, CartItem } from '../types';
-import tarjetaImg from '../assets/images/payment/tarjeta.png';
+import { supabase } from '@/lib/supabase';
+import { products } from '@/data/products';
+import type { Category, Product, CartItem } from '@/types';
 
 // ==================== Types ====================
 interface PaymentCard {
@@ -41,22 +40,22 @@ interface ToastState {
 
 // ==================== Constants ====================
 const CATEGORIES: CategoryItem[] = [
-  { id: 'Donuts', name: 'Donuts', emoji: '/src/assets/arena/media/donut/donut.png' },
-  { id: 'Burger', name: 'Burger', emoji: '/src/assets/arena/media/burger/burger.png' },
-  { id: 'Ice', name: 'Ice', emoji: '/src/assets/arena/media/ice/ice.png' },
-  { id: 'Potato', name: 'Potato', emoji: '/src/assets/arena/media/potato/potato.png' },
-  { id: 'Pizza', name: 'Pizza', emoji: '/src/assets/arena/media/pizza/pizza.png' },
-  { id: 'Fuchka', name: 'Fuchka', emoji: '/src/assets/arena/media/fuchka/fuchka.png' },
-  { id: 'Hot dog', name: 'Hot dog', emoji: '/src/assets/arena/media/hotdog/hotdog.png' },
-  { id: 'Chicken', name: 'Chicken', emoji: '/src/assets/arena/media/chicken/chicken.png' },
-  { id: 'Tacos', name: 'Tacos', emoji: '/src/assets/arena/media/tacos/tacos.png' },
-  { id: 'Drinks', name: 'Drinks', emoji: '/src/assets/arena/media/drinks/drinks.png' },
-  { id: 'Coffee', name: 'Coffee', emoji: '/src/assets/arena/media/coffee/coffee.png' },
-  { id: 'Pasta', name: 'Pasta', emoji: '/src/assets/arena/media/pasta/pasta.png' },
-  { id: 'Snacks', name: 'Snacks', emoji: '/src/assets/arena/media/snacks/snacks.png' },
-  { id: 'Energy Drinks', name: 'Energy Drinks', emoji: '/src/assets/arena/media/energy/energy.png' },
-  { id: 'Desserts', name: 'Desserts', emoji: '/src/assets/arena/media/desserts/desserts.png' },
-  { id: 'Sushi', name: 'Sushi', emoji: '/src/assets/arena/media/sushi/sushi.png' }
+  { id: 'Donuts', name: 'Donuts', emoji: '/images/arena/media/donut/donut.png' },
+  { id: 'Burger', name: 'Burger', emoji: '/images/arena/media/burger/burger.png' },
+  { id: 'Ice', name: 'Ice', emoji: '/images/arena/media/ice/ice.png' },
+  { id: 'Potato', name: 'Potato', emoji: '/images/arena/media/potato/potato.png' },
+  { id: 'Pizza', name: 'Pizza', emoji: '/images/arena/media/pizza/pizza.png' },
+  { id: 'Fuchka', name: 'Fuchka', emoji: '/images/arena/media/fuchka/fuchka.png' },
+  { id: 'Hot dog', name: 'Hot dog', emoji: '/images/arena/media/hotdog/hotdog.png' },
+  { id: 'Chicken', name: 'Chicken', emoji: '/images/arena/media/chicken/chicken.png' },
+  { id: 'Tacos', name: 'Tacos', emoji: '/images/arena/media/tacos/tacos.png' },
+  { id: 'Drinks', name: 'Drinks', emoji: '/images/arena/media/drinks/drinks.png' },
+  { id: 'Coffee', name: 'Coffee', emoji: '/images/arena/media/coffee/coffee.png' },
+  { id: 'Pasta', name: 'Pasta', emoji: '/images/arena/media/pasta/pasta.png' },
+  { id: 'Snacks', name: 'Snacks', emoji: '/images/arena/media/snacks/snacks.png' },
+  { id: 'Energy Drinks', name: 'Energy Drinks', emoji: '/images/arena/media/energy/energy.png' },
+  { id: 'Desserts', name: 'Desserts', emoji: '/images/arena/media/desserts/desserts.png' },
+  { id: 'Sushi', name: 'Sushi', emoji: '/images/arena/media/sushi/sushi.png' }
 ];
 
 const TAX_AMOUNT = 6;
@@ -401,7 +400,7 @@ const PaymentCardOption: React.FC<PaymentCardOptionProps> = ({ card, isSelected,
     />
     <div className="flex items-center gap-3">
       <img 
-        src={tarjetaImg} 
+        src="/images/payment/tarjeta.png"
         alt="Card" 
         className="w-12 h-8 object-cover rounded"
       />

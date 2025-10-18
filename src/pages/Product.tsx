@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react';
 import type { FC, ReactElement } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
-import { useMenu } from '../context/MenuContext';
-import PepsiSection from '../components/product/PepsiSection';
-import CocaColaSection from '../components/product/CocaColaSection';
-import RedBullSection from '../components/product/RedBullSection';
+import { useMenu } from '@/context/MenuContext';
+import PepsiSection from '@/components/product/PepsiSection';
+import CocaColaSection from '@/components/product/CocaColaSection';
+import RedBullSection from '@/components/product/RedBullSection';
 
 /**
  * Section configuration type definition

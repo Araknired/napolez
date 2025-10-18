@@ -222,7 +222,7 @@ const ContactInfoSection: FC = () => (
     <div className="relative w-full mb-4 lg:mb-10 animate-scaleIn" style={{ animationDelay: '0.2s' }}>
       <div className="relative w-48 h-48 sm:w-52 sm:h-52 md:w-56 md:h-56 lg:w-72 lg:h-72 xl:w-80 xl:h-80 mx-auto">
         <img
-          src="/src/assets/images/contact/buzon.png"
+          src="/images/contact/buzon.png"
           alt="Contact Mailbox"
           className="w-full h-full object-contain transition-all duration-300 hover:drop-shadow-[0_20px_40px_rgba(239,68,68,0.5)]"
         />

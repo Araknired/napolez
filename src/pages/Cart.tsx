@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, Minus, Trash2, ShoppingCart, CreditCard } from 'lucide-react';
 import type { CartItem } from '../types';
 import { supabase } from '../lib/supabase';
-import tarjetaImg from '../assets/images/payment/tarjeta.png';
 
 // Types
 interface PaymentCard {
@@ -216,7 +215,7 @@ const PaymentCardOption: React.FC<PaymentCardOptionProps> = ({ card, isSelected,
       className="sr-only"
     />
     <div className="flex items-center gap-3">
-      <img src={tarjetaImg} alt="Card" className="w-12 h-8 object-cover rounded" />
+      <img src="/images/payment/tarjeta.png" alt="Card" className="w-12 h-8 object-cover rounded" />
       <div>
         <div className="text-sm font-semibold text-gray-900">
           {card.card_type} ····{getLastFourDigits(card.card_number)}

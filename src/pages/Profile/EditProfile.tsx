@@ -3,7 +3,6 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Camera, X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import tarjetaImg from '../../assets/images/payment/tarjeta.png';
 
 interface PaymentCard {
   id: string;
@@ -533,7 +532,7 @@ export default function EditProfile() {
                       >
                         <div className="flex items-center gap-3">
                           <img 
-                            src={tarjetaImg} 
+                            src="/images/payment/tarjeta.png" 
                             alt="Card" 
                             className="w-12 h-8 object-cover rounded"
                           />

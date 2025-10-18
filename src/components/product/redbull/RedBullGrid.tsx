@@ -17,7 +17,7 @@ const RedBullGrid = ({ cans, onSelect }: RedBullGridProps) => {
               <div className="relative bg-gradient-to-br from-blue-600 via-red-600 to-yellow-500 p-1 rounded-xl shadow-2xl">
                 <div className="bg-white rounded-lg p-2">
                   <img 
-                    src="/src/assets/images/red-bull/red-bull-logo.png" 
+                    src="/images/red-bull/red-bull-logo.png" 
                     alt="Red Bull Logo"
                     className="w-32 h-auto"
                   />

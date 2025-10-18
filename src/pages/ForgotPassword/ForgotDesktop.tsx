@@ -1,7 +1,6 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import forgotImage from '../Login/design.png';
 import { Mail, ArrowLeft, CheckCircle, AlertCircle, Zap, Shield } from 'lucide-react';
 
 export default function ForgotDesktop() {
@@ -81,7 +80,7 @@ export default function ForgotDesktop() {
             <div className="relative mb-12 transform hover:scale-105 transition-transform duration-500">
               <div className="absolute inset-0 bg-gradient-to-r from-orange-400 via-red-400 to-pink-400 rounded-3xl blur-2xl opacity-40"></div>
               <img 
-                src={forgotImage} 
+                src="/images/login/design.png"
                 alt="Reset Password" 
                 className="relative w-full h-auto object-contain rounded-3xl"
               />

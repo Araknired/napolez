@@ -2,7 +2,6 @@ import { useState, useEffect, type FormEvent } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import registerImage from '../../assets/images/register/register.png';
 
 export default function RegisterDesktop() {
   const [name, setName] = useState('');
@@ -165,7 +164,7 @@ export default function RegisterDesktop() {
             <div className="relative mb-12 transform hover:scale-105 transition-transform duration-500">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-blue-400 to-indigo-400 rounded-3xl blur-2xl opacity-40"></div>
               <img 
-                src={registerImage} 
+                src="/images/register/register.png" 
                 alt="Register" 
                 className="relative w-full h-auto object-contain rounded-3xl"
               />

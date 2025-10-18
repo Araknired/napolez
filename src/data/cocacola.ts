@@ -2,10 +2,10 @@ import type { CocaColaConfig } from '../types/cocacola.types';
 
 export const COCA_COLA_CONFIG: CocaColaConfig = {
   assets: {
-    watermark: "/src/assets/images/coca-cola/cocacola-watermark.png",
-    logo: "/src/assets/images/coca-cola/cocacola-logo.png",
-    smallCan: "/src/assets/images/coca-cola/cocacola-can-small.png",
-    santaClaus: "/src/assets/images/coca-cola/santa-claus.png"
+    watermark: "/images/coca-cola/cocacola-watermark.png",
+    logo: "/images/coca-cola/cocacola-logo.png",
+    smallCan: "/images/coca-cola/cocacola-can-small.png",
+    santaClaus: "/images/coca-cola/santa-claus.png"
   },
   
   animationDelays: {

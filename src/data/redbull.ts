@@ -3,7 +3,7 @@ import type { CanData } from '../types/redbull.types';
 export const cansData: CanData[] = [
   {
     id: 1,
-    image: '/src/assets/images/red-bull/red-bull-melocoton.png',
+    image: '/images/red-bull/red-bull-melocoton.png',
     name: 'Red Bull Peach',
     description: 'Refreshing peach flavor with the energy boost you need.',
     features: ['250ml', 'Caffeine: 80mg', 'Fruity flavor', 'Special edition'],
@@ -15,7 +15,7 @@ export const cansData: CanData[] = [
   },
   {
     id: 2,
-    image: '/src/assets/images/red-bull/red-bull.png',
+    image: '/images/red-bull/red-bull.png',
     name: 'Red Bull Original',
     description: 'The original energy drink that gives you wings.',
     features: ['250ml', 'Caffeine: 80mg', 'Taurine: 1000mg', 'Classic flavor'],
@@ -27,7 +27,7 @@ export const cansData: CanData[] = [
   },
   {
     id: 3,
-    image: '/src/assets/images/red-bull/red-bull-blue.png',
+    image: '/images/red-bull/red-bull-blue.png',
     name: 'Red Bull Blue Edition',
     description: 'Energy with a refreshing blueberry twist.',
     features: ['250ml', 'Caffeine: 80mg', 'Blueberry flavor', 'Blue edition'],
@@ -39,7 +39,7 @@ export const cansData: CanData[] = [
   },
   {
     id: 4,
-    image: '/src/assets/images/red-bull/red-blue-white.png',
+    image: '/images/red-bull/red-blue-white.png',
     name: 'Red Bull White Edition',
     description: 'Coconut-acai flavor with all the Red Bull energy.',
     features: ['250ml', 'Caffeine: 80mg', 'Coconut-acai flavor', 'White edition'],
@@ -50,7 +50,7 @@ export const cansData: CanData[] = [
   },
   {
     id: 5,
-    image: '/src/assets/images/red-bull/red-bull-sugarfree.png',
+    image: '/images/red-bull/red-bull-sugarfree.png',
     name: 'Red Bull Sugar Free',
     description: 'All the energy, zero sugar.',
     features: ['250ml', 'Caffeine: 80mg', '0 sugar', 'Original flavor'],
@@ -62,7 +62,7 @@ export const cansData: CanData[] = [
   },
   {
     id: 6,
-    image: '/src/assets/images/red-bull/red-bull-cola.png',
+    image: '/images/red-bull/red-bull-cola.png',
     name: 'Red Bull Cola',
     description: 'The perfect combination of cola and natural energy.',
     features: ['250ml', 'Natural caffeine', 'No artificial flavors', 'Unique cola'],
@@ -73,7 +73,7 @@ export const cansData: CanData[] = [
   },
   {
     id: 7,
-    image: '/src/assets/images/red-bull/red-bull-apricot.png',
+    image: '/images/red-bull/red-bull-apricot.png',
     name: 'Red Bull Apricot',
     description: 'Energy with the delicious taste of apricot.',
     features: ['250ml', 'Caffeine: 80mg', 'Apricot flavor', 'Special edition'],
@@ -84,7 +84,7 @@ export const cansData: CanData[] = [
   },
   {
     id: 8,
-    image: '/src/assets/images/red-bull/red-bull-botella.png',
+    image: '/images/red-bull/red-bull-botella.png',
     name: 'Red Bull Bottle',
     description: 'Red Bull in bottle format for greater convenience.',
     features: ['355ml', 'Caffeine: 114mg', 'Bottle format', 'More quantity'],
@@ -96,7 +96,7 @@ export const cansData: CanData[] = [
   },
   {
     id: 9,
-    image: '/src/assets/images/red-bull/red-bull-red.png',
+    image: '/images/red-bull/red-bull-red.png',
     name: 'Red Bull Red Edition',
     description: 'Watermelon flavor explosion with maximum energy.',
     features: ['250ml', 'Caffeine: 80mg', 'Watermelon flavor', 'Red edition'],
@@ -108,7 +108,7 @@ export const cansData: CanData[] = [
   },
   {
     id: 10,
-    image: '/src/assets/images/red-bull/red-bull-taurine.png',
+    image: '/images/red-bull/red-bull-taurine.png',
     name: 'Red Bull Taurine',
     description: 'Formula with extra taurine for maximum performance.',
     features: ['250ml', 'Caffeine: 80mg', 'Extra taurine', 'High performance'],

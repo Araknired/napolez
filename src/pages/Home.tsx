@@ -109,7 +109,7 @@ interface HeroImageProps {
 const HeroImage: FC<HeroImageProps> = ({ isLoaded, onLoad }) => (
   <div className="relative w-full max-w-full px-2 md:px-8 mt-16 md:mt-32">
     <img
-      src="/src/assets/images/home/homeworld.png"
+      src="/images/home/homeworld.png"
       alt="Home World"
       className={`w-full h-auto transition-all duration-[1500ms] ease-out md:scale-100 scale-[2] ${getAnimationClass(
         isLoaded
