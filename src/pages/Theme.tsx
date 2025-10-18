@@ -17,6 +17,7 @@ interface ThemeOption {
   readonly label: string;
   readonly icon: LucideIcon;
   readonly description: string;
+  readonly gradient: string;
 }
 
 interface ThemeItemProps {
@@ -35,18 +36,21 @@ const THEME_OPTIONS: readonly ThemeOption[] = [
     label: 'Light',
     icon: Sun,
     description: 'Clean and bright interface',
+    gradient: 'from-amber-400 via-yellow-400 to-orange-400',
   },
   {
     value: 'dark',
     label: 'Dark',
     icon: Moon,
     description: 'Easy on the eyes in low light',
+    gradient: 'from-slate-700 via-gray-800 to-slate-900',
   },
   {
     value: 'system',
     label: 'System',
     icon: Monitor,
     description: 'Follows your device settings',
+    gradient: 'from-blue-500 via-purple-500 to-pink-500',
   },
 ];
 
@@ -56,9 +60,6 @@ const THEME_OPTIONS: readonly ThemeOption[] = [
 
 /**
  * ThemeItem - Individual theme option button
- *
- * Extracted for better testability and maintains memoization to prevent
- * unnecessary re-renders when parent updates.
  */
 const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect }) => {
   const Icon = option.icon;
@@ -71,24 +72,55 @@ const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect }) => {
     <button
       type="button"
       onClick={handleClick}
-      className="w-full flex items-center justify-between px-6 py-5 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
+      className={`group relative w-full flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 transition-all duration-300 border-b border-gray-100 last:border-b-0 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset overflow-hidden ${
+        isSelected
+          ? 'bg-gradient-to-r from-blue-50 to-purple-50'
+          : 'hover:bg-gray-50'
+      }`}
       aria-pressed={isSelected}
       aria-label={`Select ${option.label} theme`}
     >
-      <div className="flex items-center gap-4">
-        <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
-          <Icon className="w-5 h-5 text-gray-700" aria-hidden="true" />
+      {isSelected && (
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 animate-pulse" />
+      )}
+      
+      <div className="flex items-center gap-3 sm:gap-4 relative z-10">
+        <div
+          className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
+            isSelected
+              ? `bg-gradient-to-br ${option.gradient} shadow-lg`
+              : 'bg-gray-100 group-hover:bg-gray-200'
+          }`}
+        >
+          <Icon
+            className={`w-5 h-5 sm:w-6 sm:h-6 transition-colors ${
+              isSelected ? 'text-white' : 'text-gray-700'
+            }`}
+            aria-hidden="true"
+          />
         </div>
         <div className="flex flex-col items-start">
-          <span className="font-medium text-gray-900">{option.label}</span>
-          <span className="text-sm text-gray-500">{option.description}</span>
+          <span
+            className={`font-semibold text-sm sm:text-base transition-colors ${
+              isSelected ? 'text-gray-900' : 'text-gray-800'
+            }`}
+          >
+            {option.label}
+          </span>
+          <span className="text-xs sm:text-sm text-gray-500 mt-0.5">
+            {option.description}
+          </span>
         </div>
       </div>
+      
       {isSelected && (
-        <Check
-          className="w-5 h-5 text-blue-500 flex-shrink-0"
-          aria-label="Selected theme"
-        />
+        <div className="relative z-10 flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-blue-500 rounded-full shadow-lg flex-shrink-0">
+          <Check
+            className="w-4 h-4 sm:w-5 sm:h-5 text-white"
+            strokeWidth={3}
+            aria-label="Selected theme"
+          />
+        </div>
       )}
     </button>
   );
@@ -100,10 +132,6 @@ const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect }) => {
 
 /**
  * Theme - Theme preference settings page
- *
- * Provides a user interface for selecting light, dark, or system theme preference.
- * Integrates with ThemeContext for state management and follows WAI-ARIA standards
- * for accessibility.
  */
 const Theme: FC = () => {
   const navigate = useNavigate();
@@ -121,43 +149,87 @@ const Theme: FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pb-20 lg:pb-8">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-2xl mx-auto px-6 py-6">
+      <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex items-center justify-between">
             <button
               type="button"
               onClick={handleBackNavigation}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 hover:bg-gray-100 rounded-xl sm:rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:scale-105 active:scale-95"
               aria-label="Go back to profile"
             >
               <ChevronRight
-                className="w-6 h-6 rotate-180"
+                className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 rotate-180"
                 aria-hidden="true"
               />
             </button>
-            <h1 className="text-xl font-semibold text-gray-900">Theme</h1>
-            <div className="w-10" aria-hidden="true" />
+            <div className="flex flex-col items-center">
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
+                Theme Preference
+              </h1>
+              <p className="hidden sm:block text-xs sm:text-sm text-gray-500 mt-0.5">
+                Choose your preferred color scheme
+              </p>
+            </div>
+            <div className="w-10 sm:w-12" aria-hidden="true" />
           </div>
         </div>
       </div>
 
-      {/* Theme Options */}
-      <div className="max-w-2xl mx-auto px-6 mt-4">
+      {/* Main Content */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+        {/* Info Card */}
+        <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl sm:rounded-2xl border border-blue-100">
+          <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
+            <span className="font-semibold text-gray-900">💡 Tip:</span> Your
+            theme preference will be saved and applied across all your sessions.
+            Choose <span className="font-medium">"System"</span> to automatically
+            match your device's theme.
+          </p>
+        </div>
+
+        {/* Theme Options */}
         <div
-          className="bg-white rounded-2xl shadow-sm overflow-hidden"
+          className="bg-white rounded-xl sm:rounded-2xl shadow-lg shadow-gray-200/50 overflow-hidden border border-gray-100 hover:shadow-xl hover:shadow-gray-300/50 transition-shadow duration-300"
           role="group"
           aria-label="Theme options"
         >
-          {THEME_OPTIONS.map((option) => (
-            <ThemeItem
+          {THEME_OPTIONS.map((option, index) => (
+            <div
               key={option.value}
-              option={option}
-              isSelected={preference === option.value}
-              onSelect={handleThemeSelect}
-            />
+              className="relative"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <ThemeItem
+                option={option}
+                isSelected={preference === option.value}
+                onSelect={handleThemeSelect}
+              />
+            </div>
           ))}
+        </div>
+
+        {/* Additional Info for Desktop */}
+        <div className="hidden lg:block mt-8 p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
+          <h3 className="text-sm font-semibold text-gray-900 mb-3">
+            About Theme Options
+          </h3>
+          <div className="space-y-2 text-sm text-gray-600">
+            <p>
+              <span className="font-medium text-gray-900">Light Mode:</span>{' '}
+              Perfect for daytime use and well-lit environments.
+            </p>
+            <p>
+              <span className="font-medium text-gray-900">Dark Mode:</span>{' '}
+              Reduces eye strain in low-light conditions and saves battery on OLED screens.
+            </p>
+            <p>
+              <span className="font-medium text-gray-900">System:</span>{' '}
+              Automatically switches between light and dark based on your device settings.
+            </p>
+          </div>
         </div>
       </div>
     </div>
