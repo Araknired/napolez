@@ -105,9 +105,9 @@ const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect, isDesktop
       <button
         type="button"
         onClick={handleClick}
-        className={`group relative w-full flex flex-col items-center justify-center gap-4 p-8 transition-all duration-300 rounded-2xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 overflow-hidden ${
+        className={`group relative w-full flex flex-col items-center justify-center gap-4 p-8 transition-all duration-300 rounded-2xl border-2 focus:outline-none overflow-hidden ${
           isSelected
-            ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg shadow-blue-300/40'
+            ? 'border-gray-300 bg-gradient-to-br from-gray-50 to-gray-100 shadow-lg shadow-gray-300/40'
             : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
         }`}
         aria-pressed={isSelected}
@@ -351,40 +351,38 @@ const Theme: FC = () => {
   const currentDetail = THEME_DETAILS.find(d => d.value === preference);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pb-24 sm:pb-20 lg:pb-8 lg:pt-24">
-      {/* Header */}
-      <div className="bg-white/90 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-40 lg:sticky lg:top-16 shadow-sm">
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-8">
-          <div className="flex items-center justify-between gap-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pb-24 sm:pb-20 lg:pb-8 lg:pt-0">
+      {/* Header - Mobile and Tablet Only */}
+      <div className="lg:hidden bg-white/90 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-6 sm:py-8">
+          <div className="flex items-center">
             <button
               type="button"
               onClick={handleBackNavigation}
-              className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 lg:w-12 lg:h-12 hover:bg-gray-100 rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:scale-110 active:scale-95 flex-shrink-0"
+              className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 hover:bg-gray-100 rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:scale-110 active:scale-95 flex-shrink-0"
               aria-label="Go back to profile"
             >
               <ChevronRight
-                className="w-6 h-6 sm:w-7 sm:h-7 lg:w-6 lg:h-6 text-gray-700 rotate-180"
+                className="w-6 h-6 sm:w-7 sm:h-7 text-gray-700 rotate-180"
                 aria-hidden="true"
               />
             </button>
-
-            <div className="flex flex-col items-center flex-1">
-              <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 lg:w-5 lg:h-5 text-blue-500" />
-                <h1 className="text-2xl sm:text-3xl lg:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                  Theme Preference
-                </h1>
-                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 lg:w-5 lg:h-5 text-blue-500" />
-              </div>
-              <p className="hidden sm:block text-sm sm:text-base lg:text-sm text-gray-600 font-medium">
-                Customize your visual experience
-              </p>
-            </div>
-
-            <div className="w-12 sm:w-14 lg:w-12" aria-hidden="true" />
           </div>
         </div>
       </div>
+
+      {/* Desktop Back Button - Fixed Position */}
+      <button
+        type="button"
+        onClick={handleBackNavigation}
+        className="hidden lg:flex fixed top-24 left-8 items-center justify-center w-12 h-12 hover:bg-gray-100 rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:scale-110 active:scale-95 z-40"
+        aria-label="Go back to profile"
+      >
+        <ChevronRight
+          className="w-6 h-6 text-gray-700 rotate-180"
+          aria-hidden="true"
+        />
+      </button>
 
       {/* Main Content - Mobile and Tablet */}
       <div className="lg:hidden max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-8 sm:py-10">
@@ -442,16 +440,54 @@ const Theme: FC = () => {
       </div>
 
       {/* Main Content - Desktop */}
-      <div className="hidden lg:block max-w-7xl mx-auto px-8 py-16">
-        <div className="grid grid-cols-2 gap-12 min-h-[calc(100vh-200px)]">
+      <div className="hidden lg:block max-w-7xl mx-auto px-8 py-12 h-[calc(100vh-80px)]">
+        <div className="grid grid-cols-2 gap-12">
+          {/* Right Column - Information First */}
+          <div className="flex flex-col">
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Theme Details</h2>
+              <p className="text-gray-600">Information about the selected theme</p>
+            </div>
+
+            {currentDetail && (
+              <div className="mb-8">
+                <DesktopDetailCard detail={currentDetail} />
+              </div>
+            )}
+
+            {/* All themes info below */}
+            <div>
+              <div className="mb-4 flex items-center gap-3">
+                <div className="h-1 w-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" />
+                <h3 className="text-lg font-bold text-gray-900">All Themes</h3>
+              </div>
+              <div className="grid grid-cols-1 gap-3">
+                {THEME_DETAILS.map((detail) => (
+                  <div key={detail.value} className="p-4 rounded-lg bg-gray-50 border border-gray-200 hover:border-gray-300 transition-all duration-300">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className={`w-8 h-8 bg-gradient-to-br ${detail.iconColor} rounded-lg flex items-center justify-center`}>
+                        {(() => {
+                          const Icon = detail.icon;
+                          return <Icon className="w-4 h-4 text-white" />;
+                        })()}
+                      </div>
+                      <h4 className="font-semibold text-gray-900 text-sm">{detail.title}</h4>
+                    </div>
+                    <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">{detail.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
           {/* Left Column - Theme Selection */}
           <div className="flex flex-col">
             <div className="mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Select Your Theme</h2>
-              <p className="text-gray-600 text-lg">Choose how you want to experience our interface</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Select Your Theme</h2>
+              <p className="text-gray-600">Choose how you want to experience our interface</p>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 flex-1">
+            <div className="grid grid-cols-1 gap-6">
               {THEME_OPTIONS.map((option, index) => (
                 <div
                   key={option.value}
@@ -468,44 +504,6 @@ const Theme: FC = () => {
                   />
                 </div>
               ))}
-            </div>
-          </div>
-
-          {/* Right Column - Information */}
-          <div className="flex flex-col overflow-y-auto pr-4">
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Theme Details</h2>
-              <p className="text-gray-600 text-lg">Information about the selected theme</p>
-            </div>
-
-            {currentDetail && (
-              <div className="flex-1">
-                <DesktopDetailCard detail={currentDetail} />
-              </div>
-            )}
-
-            {/* All themes info below */}
-            <div className="mt-12">
-              <div className="mb-6 flex items-center gap-3">
-                <div className="h-1 w-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" />
-                <h3 className="text-xl font-bold text-gray-900">All Themes Overview</h3>
-              </div>
-              <div className="space-y-4">
-                {THEME_DETAILS.map((detail) => (
-                  <div key={detail.value} className="p-4 rounded-lg bg-gray-50 border border-gray-200 hover:border-gray-300 transition-all duration-300">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className={`w-8 h-8 bg-gradient-to-br ${detail.iconColor} rounded-lg flex items-center justify-center`}>
-                        {(() => {
-                          const Icon = detail.icon;
-                          return <Icon className="w-4 h-4 text-white" />;
-                        })()}
-                      </div>
-                      <h4 className="font-semibold text-gray-900 text-sm">{detail.title}</h4>
-                    </div>
-                    <p className="text-xs text-gray-600 leading-relaxed">{detail.description}</p>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
