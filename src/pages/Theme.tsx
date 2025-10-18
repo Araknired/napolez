@@ -375,7 +375,7 @@ const Theme: FC = () => {
       <button
         type="button"
         onClick={handleBackNavigation}
-        className="hidden lg:flex fixed top-24 left-8 items-center justify-center w-12 h-12 hover:bg-gray-100 rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:scale-110 active:scale-95 z-40"
+        className="hidden lg:flex fixed top-32 left-8 items-center justify-center w-12 h-12 hover:bg-gray-100 rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:scale-110 active:scale-95 z-40"
         aria-label="Go back to profile"
       >
         <ChevronRight
@@ -442,7 +442,34 @@ const Theme: FC = () => {
       {/* Main Content - Desktop */}
       <div className="hidden lg:block max-w-7xl mx-auto px-8 pt-0 pb-12 h-[calc(100vh-100px)] flex items-center">
         <div className="grid grid-cols-2 gap-12">
-          {/* Right Column - Information First */}
+          {/* Left Column - Theme Selection */}
+          <div className="flex flex-col">
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Select Your Theme</h2>
+              <p className="text-gray-600">Choose how you want to experience our interface</p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6">
+              {THEME_OPTIONS.map((option, index) => (
+                <div
+                  key={option.value}
+                  style={{ 
+                    animationDelay: `${index * 100}ms`,
+                    animation: 'fadeIn 0.6s ease-out forwards'
+                  }}
+                >
+                  <ThemeItem
+                    option={option}
+                    isSelected={preference === option.value}
+                    onSelect={handleThemeSelect}
+                    isDesktop={true}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Column - Information */}
           <div className="flex flex-col">
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Theme Details</h2>
@@ -477,33 +504,6 @@ const Theme: FC = () => {
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
-
-          {/* Left Column - Theme Selection */}
-          <div className="flex flex-col">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Select Your Theme</h2>
-              <p className="text-gray-600">Choose how you want to experience our interface</p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6">
-              {THEME_OPTIONS.map((option, index) => (
-                <div
-                  key={option.value}
-                  style={{ 
-                    animationDelay: `${index * 100}ms`,
-                    animation: 'fadeIn 0.6s ease-out forwards'
-                  }}
-                >
-                  <ThemeItem
-                    option={option}
-                    isSelected={preference === option.value}
-                    onSelect={handleThemeSelect}
-                    isDesktop={true}
-                  />
-                </div>
-              ))}
             </div>
           </div>
         </div>
