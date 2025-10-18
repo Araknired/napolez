@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LucideIcon } from 'lucide-react';
-import { ChevronRight, Sun, Moon, Monitor, Check, Sparkles } from 'lucide-react';
+import { ChevronRight, Sun, Moon, Monitor, Check, Sparkles, Zap, Shield } from 'lucide-react';
 
 import { useTheme } from '../context/ThemeContext';
 
@@ -55,6 +55,33 @@ const THEME_OPTIONS: readonly ThemeOption[] = [
     description: 'Automatically matches your device settings',
     gradient: 'from-blue-500 via-purple-500 to-pink-500',
     bgGradient: 'from-blue-50 via-purple-50 to-pink-50',
+  },
+];
+
+const THEME_DETAILS = [
+  {
+    value: 'light',
+    title: 'Light Mode',
+    icon: Sun,
+    iconColor: 'from-amber-500 to-orange-500',
+    description: 'Optimized for daytime use with bright backgrounds and high contrast for maximum readability in well-lit environments.',
+    benefits: ['High visibility', 'Better readability', 'Day-friendly'],
+  },
+  {
+    value: 'dark',
+    title: 'Dark Mode',
+    icon: Moon,
+    iconColor: 'from-indigo-600 to-slate-800',
+    description: 'Reduces eye strain in low-light conditions and significantly extends battery life on OLED and modern display technologies.',
+    benefits: ['Less eye strain', 'Battery efficient', 'Night-friendly'],
+  },
+  {
+    value: 'system',
+    title: 'System Preference',
+    icon: Monitor,
+    iconColor: 'from-emerald-500 to-teal-600',
+    description: 'Intelligently synchronizes with your device settings, providing a seamless experience that respects your device preferences.',
+    benefits: ['Auto-switching', 'Adaptive', 'Smart sync'],
   },
 ];
 
@@ -135,6 +162,102 @@ const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect }) => {
   );
 };
 
+/**
+ * DesktopDetailCard - Professional detail card for desktop
+ */
+const DesktopDetailCard: FC<{ detail: typeof THEME_DETAILS[0] }> = ({ detail }) => {
+  const IconComponent = detail.icon;
+  const benefits = detail.value === 'light' 
+    ? [{ icon: Sun, label: 'Visibility' }, { icon: Zap, label: 'Readable' }]
+    : detail.value === 'dark'
+    ? [{ icon: Shield, label: 'Strain Relief' }, { icon: Zap, label: 'Battery' }]
+    : [{ icon: Monitor, label: 'Adaptive' }, { icon: Sparkles, label: 'Smart' }];
+
+  return (
+    <div className="group relative p-8 rounded-2xl bg-white border border-gray-200 hover:border-gray-300 transition-all duration-300 hover:shadow-xl overflow-hidden">
+      {/* Background gradient effect */}
+      <div className={`absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br ${detail.iconColor} opacity-5 rounded-full blur-3xl transition-all duration-300 group-hover:opacity-10`} />
+      
+      <div className="relative z-10">
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className={`w-14 h-14 bg-gradient-to-br ${detail.iconColor} rounded-xl flex items-center justify-center shadow-lg transform transition-transform duration-300 group-hover:scale-110`}>
+            <IconComponent className="w-7 h-7 text-white" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900">{detail.title}</h3>
+        </div>
+
+        {/* Description */}
+        <p className="text-gray-600 leading-relaxed mb-6 text-sm">
+          {detail.description}
+        </p>
+
+        {/* Benefits */}
+        <div className="flex gap-3">
+          {benefits.map((benefit, idx) => {
+            const BenefitIcon = benefit.icon;
+            return (
+              <div
+                key={idx}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r ${
+                  detail.value === 'light'
+                    ? idx === 0 ? 'from-amber-100 to-yellow-100' : 'from-orange-100 to-red-100'
+                    : detail.value === 'dark'
+                    ? idx === 0 ? 'from-indigo-100 to-purple-100' : 'from-slate-100 to-gray-100'
+                    : idx === 0 ? 'from-emerald-100 to-teal-100' : 'from-cyan-100 to-blue-100'
+                }`}
+              >
+                <BenefitIcon className={`w-4 h-4 ${
+                  detail.value === 'light'
+                    ? idx === 0 ? 'text-amber-600' : 'text-orange-600'
+                    : detail.value === 'dark'
+                    ? idx === 0 ? 'text-indigo-600' : 'text-slate-600'
+                    : idx === 0 ? 'text-emerald-600' : 'text-cyan-600'
+                }`} />
+                <span className={`text-xs font-semibold ${
+                  detail.value === 'light'
+                    ? idx === 0 ? 'text-amber-900' : 'text-orange-900'
+                    : detail.value === 'dark'
+                    ? idx === 0 ? 'text-indigo-900' : 'text-slate-900'
+                    : idx === 0 ? 'text-emerald-900' : 'text-cyan-900'
+                }`}>
+                  {benefit.label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * MobileDetailCard - Optimized detail card for mobile
+ */
+const MobileDetailCard: FC<{ detail: typeof THEME_DETAILS[0] }> = ({ detail }) => {
+  const IconComponent = detail.icon;
+
+  return (
+    <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden relative">
+      <div className={`absolute -top-12 -right-12 w-32 h-32 bg-gradient-to-br ${detail.iconColor} opacity-8 rounded-full blur-2xl`} />
+      
+      <div className="relative z-10 flex items-start gap-4">
+        <div className={`w-12 h-12 bg-gradient-to-br ${detail.iconColor} rounded-lg flex items-center justify-center flex-shrink-0 shadow-md`}>
+          <IconComponent className="w-6 h-6 text-white" />
+        </div>
+        
+        <div className="flex-1">
+          <h4 className="text-base font-bold text-gray-900 mb-2">{detail.title}</h4>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            {detail.description}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ============================================================================
 // Main Component
 // ============================================================================
@@ -161,48 +284,48 @@ const Theme: FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pb-24 sm:pb-20 lg:pb-8 lg:pt-24">
       {/* Header */}
       <div className="bg-white/90 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-40 lg:sticky lg:top-16 shadow-sm">
-        <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-12 py-6 sm:py-8 lg:py-8">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-8">
           <div className="flex items-center justify-between gap-4">
             <button
               type="button"
               onClick={handleBackNavigation}
-              className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 hover:bg-gray-100 rounded-2xl sm:rounded-2xl lg:rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:scale-110 active:scale-95 flex-shrink-0"
+              className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 lg:w-12 lg:h-12 hover:bg-gray-100 rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:scale-110 active:scale-95 flex-shrink-0"
               aria-label="Go back to profile"
             >
               <ChevronRight
-                className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-gray-700 rotate-180"
+                className="w-6 h-6 sm:w-7 sm:h-7 lg:w-6 lg:h-6 text-gray-700 rotate-180"
                 aria-hidden="true"
               />
             </button>
 
             <div className="flex flex-col items-center flex-1">
               <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-blue-500" />
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 lg:w-5 lg:h-5 text-blue-500" />
+                <h1 className="text-2xl sm:text-3xl lg:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
                   Theme Preference
                 </h1>
-                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-blue-500" />
+                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 lg:w-5 lg:h-5 text-blue-500" />
               </div>
-              <p className="hidden sm:block text-sm sm:text-base lg:text-lg text-gray-600 font-medium">
+              <p className="hidden sm:block text-sm sm:text-base lg:text-sm text-gray-600 font-medium">
                 Customize your visual experience
               </p>
             </div>
 
-            <div className="w-12 sm:w-14 lg:w-16" aria-hidden="true" />
+            <div className="w-12 sm:w-14 lg:w-12" aria-hidden="true" />
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-12 py-8 sm:py-10 lg:py-16">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-16">
         {/* Premium Info Card */}
-        <div className="mb-8 sm:mb-10 lg:mb-12 p-6 sm:p-8 lg:p-10 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 rounded-2xl sm:rounded-3xl lg:rounded-3xl border border-blue-400/30 shadow-xl">
+        <div className="mb-8 sm:mb-10 lg:mb-12 p-6 sm:p-8 lg:p-8 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 rounded-2xl sm:rounded-3xl lg:rounded-2xl border border-blue-400/30 shadow-xl">
           <div className="flex gap-4 sm:gap-5 lg:gap-6 items-start">
-            <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-              <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
+            <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 lg:w-12 lg:h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+              <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 lg:w-6 lg:h-6 text-white" />
             </div>
             <div className="flex-1">
-              <p className="text-base sm:text-lg lg:text-xl text-white leading-relaxed font-medium">
+              <p className="text-base sm:text-lg lg:text-base text-white leading-relaxed font-medium">
                 <span className="font-bold block mb-2 sm:mb-3">💡 Pro Tip:</span>
                 Your theme preference is securely saved and will be applied across all your devices and sessions. Select <span className="font-bold text-blue-100">"System Preference"</span> to seamlessly adapt to your device's display settings.
               </p>
@@ -212,7 +335,7 @@ const Theme: FC = () => {
 
         {/* Theme Options Container */}
         <div
-          className="bg-white rounded-3xl lg:rounded-3xl shadow-2xl shadow-gray-300/40 overflow-hidden border border-gray-200 hover:shadow-2xl hover:shadow-gray-400/50 transition-all duration-500"
+          className="bg-white rounded-3xl lg:rounded-2xl shadow-2xl shadow-gray-300/40 overflow-hidden border border-gray-200 hover:shadow-2xl hover:shadow-gray-400/50 transition-all duration-500 mb-12 lg:mb-16"
           role="group"
           aria-label="Theme options"
         >
@@ -234,67 +357,30 @@ const Theme: FC = () => {
           ))}
         </div>
 
-        {/* Detailed Information Section */}
-        <div className="hidden lg:block mt-12 p-10 bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-lg border border-gray-200">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-1 h-10 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full" />
-            <h3 className="text-2xl font-bold text-gray-900">
-              Understanding Theme Options
-            </h3>
+        {/* Desktop Professional Grid */}
+        <div className="hidden lg:block">
+          <div className="mb-8 flex items-center gap-3">
+            <div className="h-1 w-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" />
+            <h2 className="text-2xl font-bold text-gray-900">Detailed Information</h2>
           </div>
-          
           <div className="grid grid-cols-3 gap-8">
-            {THEME_OPTIONS.map((option) => (
-              <div
-                key={option.value}
-                className="group p-6 rounded-2xl bg-white border border-gray-200 hover:border-blue-300 transition-all duration-300 hover:shadow-lg"
-              >
-                <div className={`w-16 h-16 bg-gradient-to-br ${option.gradient} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                  {(() => {
-                    const Icon = option.icon;
-                    return <Icon className="w-8 h-8 text-white" />;
-                  })()}
-                </div>
-                <h4 className="text-lg font-bold text-gray-900 mb-2">
-                  {option.label}
-                </h4>
-                <p className="text-gray-600 leading-relaxed">
-                  {option.value === 'light' && 'Optimized for daytime use with bright backgrounds and high contrast for maximum readability in well-lit environments.'}
-                  {option.value === 'dark' && 'Reduces eye strain in low-light conditions and significantly extends battery life on OLED and modern display technologies.'}
-                  {option.value === 'system' && 'Intelligently synchronizes with your device settings, providing a seamless experience that respects your device preferences.'}
-                </p>
-              </div>
+            {THEME_DETAILS.map((detail) => (
+              <DesktopDetailCard key={detail.value} detail={detail} />
             ))}
           </div>
         </div>
 
-        {/* Mobile Info Section */}
-        <div className="lg:hidden mt-8 sm:mt-10 space-y-4">
-          {THEME_OPTIONS.map((option) => (
-            <div
-              key={option.value}
-              className="p-5 sm:p-6 rounded-2xl bg-white border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                {(() => {
-                  const Icon = option.icon;
-                  return (
-                    <div className={`w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br ${option.gradient} rounded-xl flex items-center justify-center`}>
-                      <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                    </div>
-                  );
-                })()}
-                <h4 className="text-base sm:text-lg font-bold text-gray-900">
-                  {option.label}
-                </h4>
-              </div>
-              <p className="text-sm sm:text-base text-gray-600 leading-relaxed pl-0 sm:pl-0">
-                {option.value === 'light' && 'Perfect for daytime and bright environments with excellent readability.'}
-                {option.value === 'dark' && 'Reduces eye strain and saves battery life in dark conditions.'}
-                {option.value === 'system' && 'Automatically adapts to your device settings.'}
-              </p>
-            </div>
-          ))}
+        {/* Mobile Information Section */}
+        <div className="lg:hidden">
+          <div className="mb-6 sm:mb-8 flex items-center gap-3">
+            <div className="h-1 w-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" />
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900">Learn More</h2>
+          </div>
+          <div className="space-y-4 sm:space-y-5">
+            {THEME_DETAILS.map((detail) => (
+              <MobileDetailCard key={detail.value} detail={detail} />
+            ))}
+          </div>
         </div>
       </div>
 
