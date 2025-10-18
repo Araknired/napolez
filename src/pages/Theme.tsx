@@ -25,6 +25,7 @@ interface ThemeItemProps {
   readonly option: ThemeOption;
   readonly isSelected: boolean;
   readonly onSelect: (value: ThemePreference) => void;
+  readonly isDesktop?: boolean;
 }
 
 // ============================================================================
@@ -92,18 +93,80 @@ const THEME_DETAILS = [
 /**
  * ThemeItem - Individual theme option button with enhanced design
  */
-const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect }) => {
+const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect, isDesktop = false }) => {
   const Icon = option.icon;
 
   const handleClick = useCallback(() => {
     onSelect(option.value);
   }, [option.value, onSelect]);
 
+  if (isDesktop) {
+    return (
+      <button
+        type="button"
+        onClick={handleClick}
+        className={`group relative w-full flex flex-col items-center justify-center gap-4 p-8 transition-all duration-300 rounded-2xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 overflow-hidden ${
+          isSelected
+            ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg shadow-blue-300/40'
+            : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
+        }`}
+        aria-pressed={isSelected}
+        aria-label={`Select ${option.label} theme`}
+      >
+        {isSelected && (
+          <>
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 animate-pulse rounded-2xl" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-400/30 via-transparent to-purple-400/30 rounded-2xl opacity-100 blur-md" />
+          </>
+        )}
+        
+        <div
+          className={`w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-300 transform relative z-10 ${
+            isSelected
+              ? `bg-gradient-to-br ${option.gradient} shadow-xl scale-100 ring-4 ring-white`
+              : 'bg-gradient-to-br from-gray-100 to-gray-200 group-hover:from-gray-150 group-hover:to-gray-250 group-hover:scale-105 shadow-md'
+          }`}
+        >
+          <Icon
+            className={`w-10 h-10 transition-all duration-300 ${
+              isSelected ? 'text-white scale-100' : 'text-gray-600 group-hover:text-gray-700'
+            }`}
+            strokeWidth={2}
+            aria-hidden="true"
+          />
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-2 relative z-10">
+          <span
+            className={`font-bold text-lg transition-colors duration-300 text-center ${
+              isSelected ? 'text-gray-900' : 'text-gray-800 group-hover:text-gray-900'
+            }`}
+          >
+            {option.label}
+          </span>
+          <span className="text-sm text-gray-600 text-center leading-snug max-w-xs">
+            {option.description}
+          </span>
+        </div>
+        
+        {isSelected && (
+          <div className="relative z-10 flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-xl ring-4 ring-white transform scale-100">
+            <Check
+              className="w-6 h-6 text-white"
+              strokeWidth={3}
+              aria-label="Selected theme"
+            />
+          </div>
+        )}
+      </button>
+    );
+  }
+
   return (
     <button
       type="button"
       onClick={handleClick}
-      className={`group relative w-full flex items-center justify-between px-6 sm:px-8 lg:px-8 py-6 sm:py-7 lg:py-7 transition-all duration-300 border-b border-gray-200 last:border-b-0 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset overflow-hidden ${
+      className={`group relative w-full flex items-center justify-between px-6 sm:px-8 py-6 sm:py-7 transition-all duration-300 border-b border-gray-200 last:border-b-0 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset overflow-hidden ${
         isSelected
           ? `bg-gradient-to-br ${option.bgGradient} shadow-lg`
           : 'hover:bg-gray-50 hover:shadow-md'
@@ -118,16 +181,16 @@ const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect }) => {
         </>
       )}
       
-      <div className="flex items-center gap-4 sm:gap-6 lg:gap-6 relative z-10 flex-1">
+      <div className="flex items-center gap-4 sm:gap-6 relative z-10 flex-1">
         <div
-          className={`w-14 h-14 sm:w-16 sm:h-16 lg:w-16 lg:h-16 rounded-2xl sm:rounded-3xl lg:rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-300 transform ${
+          className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-300 transform ${
             isSelected
               ? `bg-gradient-to-br ${option.gradient} shadow-xl scale-100 ring-4 ring-white`
               : 'bg-gradient-to-br from-gray-100 to-gray-200 group-hover:from-gray-150 group-hover:to-gray-250 group-hover:scale-105 shadow-md'
           }`}
         >
           <Icon
-            className={`w-7 h-7 sm:w-8 sm:h-8 lg:w-8 lg:h-8 transition-all duration-300 ${
+            className={`w-7 h-7 sm:w-8 sm:h-8 transition-all duration-300 ${
               isSelected ? 'text-white scale-100' : 'text-gray-600 group-hover:text-gray-700'
             }`}
             strokeWidth={2}
@@ -137,22 +200,22 @@ const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect }) => {
 
         <div className="flex flex-col items-start justify-center flex-1">
           <span
-            className={`font-bold text-base sm:text-lg lg:text-lg transition-colors duration-300 ${
+            className={`font-bold text-base sm:text-lg transition-colors duration-300 ${
               isSelected ? 'text-gray-900' : 'text-gray-800 group-hover:text-gray-900'
             }`}
           >
             {option.label}
           </span>
-          <span className="text-sm sm:text-base lg:text-base text-gray-600 mt-1 sm:mt-1.5 lg:mt-1.5 leading-snug">
+          <span className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-1.5 leading-snug">
             {option.description}
           </span>
         </div>
       </div>
       
       {isSelected && (
-        <div className="relative z-10 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 lg:w-12 lg:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-xl flex-shrink-0 ring-4 ring-white transform scale-100 animate-pulse">
+        <div className="relative z-10 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-xl flex-shrink-0 ring-4 ring-white transform scale-100 animate-pulse">
           <Check
-            className="w-5 h-5 sm:w-6 sm:h-6 lg:w-6 lg:h-6 text-white"
+            className="w-5 h-5 sm:w-6 sm:h-6 text-white"
             strokeWidth={3}
             aria-label="Selected theme"
           />
@@ -285,6 +348,8 @@ const Theme: FC = () => {
     [setPreference]
   );
 
+  const currentDetail = THEME_DETAILS.find(d => d.value === preference);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pb-24 sm:pb-20 lg:pb-8 lg:pt-24">
       {/* Header */}
@@ -378,54 +443,18 @@ const Theme: FC = () => {
 
       {/* Main Content - Desktop */}
       <div className="hidden lg:block max-w-7xl mx-auto px-8 py-16">
-        <div className="grid grid-cols-3 gap-8 h-screen">
-          {/* Left Column - Info */}
-          <div className="col-span-1 flex flex-col overflow-y-auto pr-4">
-            <div className="flex-shrink-0 mb-8">
-              <div className="mb-6 p-8 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 rounded-2xl border border-blue-400/30 shadow-xl">
-                <div className="flex gap-4 items-start">
-                  <div className="flex-shrink-0 w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                    <Sparkles className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-base text-white leading-relaxed font-medium">
-                      <span className="font-bold block mb-3">💡 Pro Tip:</span>
-                      Your theme preference is securely saved across all sessions and devices. Use "System Preference" to automatically match your device settings.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex-1">
-              <div className="mb-8 flex items-center gap-3">
-                <div className="h-1 w-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" />
-                <h2 className="text-2xl font-bold text-gray-900">Detailed Information</h2>
-              </div>
-              <div className="space-y-6">
-                {THEME_DETAILS.map((detail) => (
-                  <DesktopDetailCard key={detail.value} detail={detail} />
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column - Theme Options */}
-          <div className="col-span-2 flex flex-col overflow-y-auto pl-4">
-            <div className="sticky top-0 mb-8">
+        <div className="grid grid-cols-2 gap-12 min-h-[calc(100vh-200px)]">
+          {/* Left Column - Theme Selection */}
+          <div className="flex flex-col">
+            <div className="mb-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">Select Your Theme</h2>
               <p className="text-gray-600 text-lg">Choose how you want to experience our interface</p>
             </div>
 
-            <div
-              className="bg-white rounded-2xl shadow-2xl shadow-gray-300/40 overflow-hidden border border-gray-200 flex-shrink-0"
-              role="group"
-              aria-label="Theme options"
-            >
+            <div className="grid grid-cols-1 gap-6 flex-1">
               {THEME_OPTIONS.map((option, index) => (
                 <div
                   key={option.value}
-                  className="relative"
                   style={{ 
                     animationDelay: `${index * 100}ms`,
                     animation: 'fadeIn 0.6s ease-out forwards'
@@ -435,9 +464,48 @@ const Theme: FC = () => {
                     option={option}
                     isSelected={preference === option.value}
                     onSelect={handleThemeSelect}
+                    isDesktop={true}
                   />
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Right Column - Information */}
+          <div className="flex flex-col overflow-y-auto pr-4">
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">Theme Details</h2>
+              <p className="text-gray-600 text-lg">Information about the selected theme</p>
+            </div>
+
+            {currentDetail && (
+              <div className="flex-1">
+                <DesktopDetailCard detail={currentDetail} />
+              </div>
+            )}
+
+            {/* All themes info below */}
+            <div className="mt-12">
+              <div className="mb-6 flex items-center gap-3">
+                <div className="h-1 w-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" />
+                <h3 className="text-xl font-bold text-gray-900">All Themes Overview</h3>
+              </div>
+              <div className="space-y-4">
+                {THEME_DETAILS.map((detail) => (
+                  <div key={detail.value} className="p-4 rounded-lg bg-gray-50 border border-gray-200 hover:border-gray-300 transition-all duration-300">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className={`w-8 h-8 bg-gradient-to-br ${detail.iconColor} rounded-lg flex items-center justify-center`}>
+                        {(() => {
+                          const Icon = detail.icon;
+                          return <Icon className="w-4 h-4 text-white" />;
+                        })()}
+                      </div>
+                      <h4 className="font-semibold text-gray-900 text-sm">{detail.title}</h4>
+                    </div>
+                    <p className="text-xs text-gray-600 leading-relaxed">{detail.description}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
