@@ -440,7 +440,7 @@ const Theme: FC = () => {
       </div>
 
       {/* Main Content - Desktop */}
-      <div className="hidden lg:block max-w-7xl mx-auto px-8 pt-0 pb-12 h-[calc(100vh-100px)] flex items-center">
+      <div className="hidden lg:flex max-w-7xl mx-auto px-8 pt-0 pb-12 h-[calc(100vh-100px)] items-center">
         <div className="grid grid-cols-2 gap-12">
           {/* Left Column - Theme Selection */}
           <div className="flex flex-col">
