@@ -483,9 +483,9 @@ const ContactPage: FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-gray-50 to-gray-100 pt-0 lg:pt-20 pb-0 lg:pb-0">
-      <div className="h-auto lg:h-[calc(100vh-5rem)] pb-28 lg:pb-0">
-        <div className="bg-white h-auto lg:h-full shadow-2xl overflow-y-auto lg:overflow-hidden relative rounded-t-3xl lg:rounded-none mx-0 lg:mx-0 mt-0 lg:my-0 animate-fadeInUp">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-gray-50 to-gray-100 pt-0 lg:pt-20 pb-24 lg:pb-0">
+      <div className="h-full lg:h-[calc(100vh-5rem)]">
+        <div className="bg-white h-full shadow-2xl overflow-hidden relative rounded-t-3xl lg:rounded-none mx-0 lg:mx-0 mt-0 lg:my-0 animate-fadeInUp">
           <BackgroundDecorations />
 
           <div className="grid lg:grid-cols-2 h-full relative">
