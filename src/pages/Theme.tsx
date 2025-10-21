@@ -158,49 +158,25 @@ const Theme: FC = () => {
         />
       </button>
 
-{/* Layout */}
-
-/* --- Móvil --- */
-<div className="lg:hidden max-w-5xl mx-auto px-6 py-10 grid gap-8 items-center">
-  {THEME_OPTIONS.map((opt, i) => (
-    <div
-      key={opt.value}
-      style={{
-        animationDelay: `${i * 100}ms`,
-        animation: 'fadeIn 0.6s ease-out forwards',
-      }}
-    >
-      <ThemeItem
-        option={opt}
-        isSelected={preference === opt.value}
-        onSelect={handleThemeSelect}
-      />
-    </div>
-  ))}
-</div>
-
-/* --- Escritorio --- */
-<div className="hidden lg:flex justify-center items-center min-h-[calc(100vh-180px)] px-6">
-  <div className="grid gap-10 grid-cols-2 max-w-5xl w-full">
-    {THEME_OPTIONS.map((opt, i) => (
-      <div
-        key={opt.value}
-        style={{
-          animationDelay: `${i * 100}ms`,
-          animation: 'fadeIn 0.6s ease-out forwards',
-        }}
-      >
-        <ThemeItem
-          option={opt}
-          isSelected={preference === opt.value}
-          onSelect={handleThemeSelect}
-          isDesktop={true}
-        />
+      {/* Layout */}
+      <div className="max-w-5xl mx-auto px-6 py-10 grid gap-8 lg:grid-cols-2 items-center">
+        {THEME_OPTIONS.map((opt, i) => (
+          <div
+            key={opt.value}
+            style={{
+              animationDelay: `${i * 100}ms`,
+              animation: 'fadeIn 0.6s ease-out forwards',
+            }}
+          >
+            <ThemeItem
+              option={opt}
+              isSelected={preference === opt.value}
+              onSelect={handleThemeSelect}
+              isDesktop={true}
+            />
+          </div>
+        ))}
       </div>
-    ))}
-  </div>
-</div>
-
 
       <style>{`
         @keyframes fadeIn {
