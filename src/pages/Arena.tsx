@@ -75,10 +75,10 @@ const getLastFourDigits = (cardNumber: string): string => cardNumber.slice(-4);
 
 /** Loading spinner component */
 const LoadingSpinner: React.FC = () => (
-  <div className="flex h-screen items-center justify-center bg-gray-50">
+  <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
     <div className="text-center">
       <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-      <p className="text-gray-600">Loading...</p>
+      <p className="text-gray-600 dark:text-gray-400">Loading...</p>
     </div>
   </div>
 );
@@ -91,7 +91,7 @@ interface ToastNotificationProps {
 
 const ToastNotification: React.FC<ToastNotificationProps> = ({ product, onClose }) => (
   <div className="xl:hidden fixed top-4 left-4 right-4 z-50 animate-in slide-in-from-top duration-300">
-    <div className="bg-white rounded-2xl shadow-2xl border-2 border-green-500 p-4 flex items-center gap-4">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-green-500 p-4 flex items-center gap-4">
       <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
         <CheckCircle size={24} className="text-green-500" />
       </div>
@@ -450,7 +450,7 @@ const InvoiceSidebar: React.FC<InvoiceSidebarProps> = ({
   const { subTotal, tax, total } = calculateCartTotals(cart);
 
   return (
-    <div className="hidden xl:block w-96 bg-white border-l border-gray-100 overflow-y-auto shadow-sm">
+    <div className="hidden xl:block w-96 bg-white dark:bg-gray-800 border-l border-gray-100 dark:border-gray-700 overflow-y-auto shadow-sm">
       <div className="p-8">
         <h3 className="text-2xl font-bold text-gray-900 mb-8">Invoice</h3>
         
@@ -736,7 +736,7 @@ const Arena: React.FC = () => {
   const currentProducts = products[selectedCategory];
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden pt-0 xl:pt-20 lg:pt-24">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden pt-0 xl:pt-20 lg:pt-24">
       {/* Toast Notification */}
       {toast.visible && toast.product && (
         <ToastNotification product={toast.product} onClose={handleCloseToast} />
