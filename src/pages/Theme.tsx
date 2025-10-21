@@ -62,8 +62,7 @@ const THEME_DETAILS = [
     title: 'Light Mode',
     icon: Sun,
     iconColor: 'from-yellow-400 to-orange-500',
-    description:
-      'Optimized for daytime with bright tones and crisp contrast.',
+    description: 'Optimized for daytime with bright tones and crisp contrast.',
     benefits: ['High visibility', 'Vibrant UI', 'Day-friendly'],
   },
   {
@@ -71,8 +70,7 @@ const THEME_DETAILS = [
     title: 'Dark Mode',
     icon: Moon,
     iconColor: 'from-indigo-600 to-slate-800',
-    description:
-      'Best for night use, reduces glare and saves battery life.',
+    description: 'Best for night use, reduces glare and saves battery life.',
     benefits: ['Less eye strain', 'Battery efficient', 'Night-friendly'],
   },
   {
@@ -80,8 +78,7 @@ const THEME_DETAILS = [
     title: 'System Preference',
     icon: Monitor,
     iconColor: 'from-emerald-500 to-teal-600',
-    description:
-      'Adapts automatically to your system’s light or dark mode.',
+    description: 'Adapts automatically to your system’s light or dark mode.',
     benefits: ['Adaptive', 'Auto-switching', 'Smart sync'],
   },
 ];
@@ -136,9 +133,7 @@ const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect, isDesktop
         </div>
 
         <div className="flex flex-col items-center justify-center gap-2 relative z-10">
-          <span
-            className={`font-bold text-lg transition-colors duration-300 text-center ${textPrimary}`}
-          >
+          <span className={`font-bold text-lg transition-colors duration-300 text-center ${textPrimary}`}>
             {option.label}
           </span>
           <span className={`text-sm ${textSecondary} text-center leading-snug max-w-xs`}>
@@ -160,7 +155,7 @@ const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect, isDesktop
     <button
       type="button"
       onClick={handleClick}
-      className={`group relative w-full flex items-center justify-between px-6 sm:px-8 py-6 sm:py-7 transition-all duration-300 border-b ${
+      className={`group relative w-full flex items-center justify-between px-6 py-6 transition-all duration-300 border-b ${
         theme === 'dark' ? 'border-slate-700' : 'border-gray-200'
       } last:border-b-0 overflow-hidden ${
         isSelected
@@ -172,9 +167,9 @@ const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect, isDesktop
           : 'hover:bg-gray-50'
       }`}
     >
-      <div className="flex items-center gap-4 sm:gap-6 relative z-10 flex-1">
+      <div className="flex items-center gap-4 flex-1">
         <div
-          className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-300 transform ${
+          className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
             isSelected
               ? `bg-gradient-to-br ${option.gradient} shadow-xl`
               : theme === 'dark'
@@ -183,7 +178,7 @@ const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect, isDesktop
           }`}
         >
           <Icon
-            className={`w-7 h-7 sm:w-8 sm:h-8 transition-all duration-300 ${
+            className={`w-7 h-7 transition-all duration-300 ${
               isSelected ? 'text-white' : theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
             }`}
             strokeWidth={2}
@@ -191,29 +186,23 @@ const ThemeItem: FC<ThemeItemProps> = ({ option, isSelected, onSelect, isDesktop
         </div>
 
         <div className="flex flex-col items-start justify-center flex-1">
-          <span
-            className={`font-bold text-base sm:text-lg transition-colors duration-300 ${textPrimary}`}
-          >
-            {option.label}
-          </span>
-          <span className={`text-sm sm:text-base ${textSecondary} mt-1 sm:mt-1.5 leading-snug`}>
-            {option.description}
-          </span>
+          <span className={`font-bold text-base ${textPrimary}`}>{option.label}</span>
+          <span className={`text-sm ${textSecondary} mt-1 leading-snug`}>{option.description}</span>
         </div>
       </div>
 
       {isSelected && (
-        <div className="relative z-10 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-purple-700 rounded-full shadow-xl animate-pulse">
-          <Check className="w-5 h-5 sm:w-6 sm:h-6 text-white" strokeWidth={3} />
+        <div className="relative z-10 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-700 rounded-full shadow-xl animate-pulse">
+          <Check className="w-5 h-5 text-white" strokeWidth={3} />
         </div>
       )}
     </button>
   );
 };
 
-/**
- * DesktopDetailCard - Compatible con tema claro/oscuro
- */
+// ============================================================================
+// Desktop Detail Card + Mobile Detail Card
+// ============================================================================
 const DesktopDetailCard: FC<{ detail: typeof THEME_DETAILS[0] }> = ({ detail }) => {
   const { theme } = useTheme();
   const IconComponent = detail.icon;
@@ -239,9 +228,7 @@ const DesktopDetailCard: FC<{ detail: typeof THEME_DETAILS[0] }> = ({ detail }) 
       />
       <div className="relative z-10">
         <div className="flex items-center gap-4 mb-6">
-          <div
-            className={`w-14 h-14 bg-gradient-to-br ${detail.iconColor} rounded-xl flex items-center justify-center shadow-lg`}
-          >
+          <div className={`w-14 h-14 bg-gradient-to-br ${detail.iconColor} rounded-xl flex items-center justify-center shadow-lg`}>
             <IconComponent className="w-7 h-7 text-white" />
           </div>
           <h3 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -249,11 +236,7 @@ const DesktopDetailCard: FC<{ detail: typeof THEME_DETAILS[0] }> = ({ detail }) 
           </h3>
         </div>
 
-        <p
-          className={`leading-relaxed mb-8 text-sm ${
-            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-          }`}
-        >
+        <p className={`leading-relaxed mb-8 text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
           {detail.description}
         </p>
 
@@ -264,9 +247,7 @@ const DesktopDetailCard: FC<{ detail: typeof THEME_DETAILS[0] }> = ({ detail }) 
               <div
                 key={idx}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r ${
-                  theme === 'dark'
-                    ? 'from-slate-700/40 to-slate-800/40'
-                    : 'from-gray-100 to-gray-200'
+                  theme === 'dark' ? 'from-slate-700/40 to-slate-800/40' : 'from-gray-100 to-gray-200'
                 }`}
               >
                 <BenefitIcon className="w-4 h-4 text-blue-400" />
@@ -280,54 +261,6 @@ const DesktopDetailCard: FC<{ detail: typeof THEME_DETAILS[0] }> = ({ detail }) 
               </div>
             );
           })}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-/**
- * MobileDetailCard - Adaptable a modo claro/oscuro
- */
-const MobileDetailCard: FC<{ detail: typeof THEME_DETAILS[0] }> = ({ detail }) => {
-  const { theme } = useTheme();
-  const IconComponent = detail.icon;
-
-  return (
-    <div
-      className={`p-5 rounded-2xl border transition-all duration-300 overflow-hidden relative ${
-        theme === 'dark'
-          ? 'bg-slate-800 border-slate-700 hover:shadow-black/40'
-          : 'bg-white border-gray-200 hover:shadow-gray-300'
-      }`}
-    >
-      <div
-        className={`absolute -top-12 -right-12 w-32 h-32 bg-gradient-to-br ${detail.iconColor} ${
-          theme === 'dark' ? 'opacity-10' : 'opacity-20'
-        } rounded-full blur-2xl`}
-      />
-      <div className="relative z-10 flex items-start gap-4">
-        <div
-          className={`w-12 h-12 bg-gradient-to-br ${detail.iconColor} rounded-lg flex items-center justify-center flex-shrink-0 shadow-md`}
-        >
-          <IconComponent className="w-6 h-6 text-white" />
-        </div>
-
-        <div className="flex-1">
-          <h4
-            className={`text-base font-bold mb-2 ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}
-          >
-            {detail.title}
-          </h4>
-          <p
-            className={`text-sm leading-relaxed ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}
-          >
-            {detail.description}
-          </p>
         </div>
       </div>
     </div>
@@ -361,38 +294,11 @@ const Theme: FC = () => {
           : 'bg-gradient-to-br from-gray-50 via-white to-gray-50 text-gray-900'
       }`}
     >
-      {/* Header - Mobile */}
-      <div
-        className={`lg:hidden sticky top-0 z-40 backdrop-blur-xl border-b ${
-          theme === 'dark'
-            ? 'bg-slate-900/90 border-slate-800'
-            : 'bg-white/90 border-gray-200'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-6 sm:py-8">
-          <div className="flex items-center">
-            <button
-              type="button"
-              onClick={handleBackNavigation}
-              className={`flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                theme === 'dark' ? 'hover:bg-slate-800' : 'hover:bg-gray-100'
-              }`}
-            >
-              <ChevronRight
-                className={`w-6 h-6 sm:w-7 sm:h-7 rotate-180 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}
-              />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Desktop Back Button */}
+      {/* Back Button */}
       <button
         type="button"
         onClick={handleBackNavigation}
-        className={`hidden lg:flex fixed top-32 left-8 items-center justify-center w-12 h-12 rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 z-40 ${
+        className={`fixed top-8 left-8 items-center justify-center w-12 h-12 rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 z-40 ${
           theme === 'dark' ? 'hover:bg-slate-800' : 'hover:bg-gray-100'
         }`}
       >
@@ -403,112 +309,72 @@ const Theme: FC = () => {
         />
       </button>
 
-      {/* Mobile Section */}
-      <div className="lg:hidden max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-8 sm:py-10">
+      {/* Desktop / Mobile unified */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-10 space-y-16">
+        {/* Pro Tip Section */}
         <div
-          className={`mb-8 sm:mb-10 p-6 sm:p-8 rounded-2xl sm:rounded-3xl border shadow-xl ${
+          className={`p-8 rounded-3xl border shadow-xl ${
             theme === 'dark'
               ? 'bg-gradient-to-br from-blue-700 via-purple-700 to-indigo-800 border-blue-500/20'
               : 'bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 border-blue-400/30'
           }`}
         >
-          <div className="flex gap-4 sm:gap-5 items-start">
-            <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-              <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+          <div className="flex gap-6 items-start">
+            <div className="flex-shrink-0 w-14 h-14 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+              <Sparkles className="w-7 h-7 text-white" />
             </div>
             <div className="flex-1">
-              <p className="text-base sm:text-lg text-white leading-relaxed font-medium">
-                <span className="font-bold block mb-2 sm:mb-3">💡 Pro Tip:</span>
-                Your theme preference syncs across devices. Choose{" "}
+              <p className="text-lg text-white leading-relaxed font-medium">
+                <span className="font-bold block mb-2">💡 Pro Tip:</span>
+                Your theme preference syncs across devices. Choose{' '}
                 <span className="font-bold text-blue-100">System</span> to auto-adapt to your OS.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Theme Options */}
-        <div
-          className={`rounded-3xl shadow-2xl overflow-hidden border mb-8 sm:mb-10 transition-all duration-500 ${
-            theme === 'dark'
-              ? 'bg-slate-800 border-slate-700 shadow-black/40'
-              : 'bg-white border-gray-200 shadow-gray-300/40'
-          }`}
-        >
-          {THEME_OPTIONS.map((option, index) => (
-            <div
-              key={option.value}
-              style={{
-                animationDelay: `${index * 100}ms`,
-                animation: 'fadeIn 0.6s ease-out forwards',
-              }}
-            >
-              <ThemeItem
-                option={option}
-                isSelected={preference === option.value}
-                onSelect={handleThemeSelect}
-              />
-            </div>
-          ))}
-        </div>
+        {/* Theme Options & Details */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Select Your Theme</h2>
+            <p className={theme === 'dark' ? 'text-gray-400 mb-8' : 'text-gray-600 mb-8'}>
+              Choose how you want to experience the interface.
+            </p>
 
-        {/* Learn More Section */}
-        <div>
-          <div className="mb-6 sm:mb-8 flex items-center gap-3">
-            <div className="h-1 w-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" />
-            <h2 className="text-lg sm:text-xl font-bold">Learn More</h2>
-          </div>
-          <div className="space-y-4 sm:space-y-5">
-            {THEME_DETAILS.map((detail) => (
-              <MobileDetailCard key={detail.value} detail={detail} />
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Desktop Layout */}
-      <div className="hidden lg:flex max-w-7xl mx-auto px-8 pt-0 pb-12 h-[calc(100vh-100px)] items-center">
-        <div className="grid grid-cols-2 gap-12">
-          <div className="flex flex-col">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-2">Select Your Theme</h2>
-              <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                Choose how you want to experience the interface
-              </p>
-            </div>
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid gap-6">
               {THEME_OPTIONS.map((option, index) => (
-                <div
-                  key={option.value}
-                  style={{
-                    animationDelay: `${index * 100}ms`,
-                    animation: 'fadeIn 0.6s ease-out forwards',
-                  }}
-                >
+                <div key={option.value} style={{ animationDelay: `${index * 100}ms`, animation: 'fadeIn 0.6s ease-out forwards' }}>
                   <ThemeItem
                     option={option}
                     isSelected={preference === option.value}
                     onSelect={handleThemeSelect}
-                    isDesktop={true}
+                    isDesktop
                   />
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Right Column */}
-          <div className="flex flex-col">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-2">Theme Details</h2>
-              <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                Information about your selected mode
-              </p>
-            </div>
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Theme Details</h2>
+            <p className={theme === 'dark' ? 'text-gray-400 mb-8' : 'text-gray-600 mb-8'}>
+              Information about your selected mode.
+            </p>
 
-            {currentDetail && (
-              <div className="mb-8">
-                <DesktopDetailCard detail={currentDetail} />
-              </div>
-            )}
+            {currentDetail && <DesktopDetailCard detail={currentDetail} />}
+          </div>
+        </div>
+
+        {/* Learn More Section */}
+        <div>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="h-1 w-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" />
+            <h2 className="text-xl font-bold">Learn More</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {THEME_DETAILS.map((detail) => (
+              <DesktopDetailCard key={detail.value} detail={detail} />
+            ))}
           </div>
         </div>
       </div>
