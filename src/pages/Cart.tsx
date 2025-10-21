@@ -352,8 +352,17 @@ const Cart: React.FC = () => {
   };
 
   const handlePlaceOrder = (): void => {
-    // TODO: Implement order placement logic
-    console.log('Placing order with payment method:', selectedPayment);
+    if (cart.length === 0) {
+      alert('Your cart is empty');
+      return;
+    }
+    if (!selectedPayment) {
+      alert('Please select a payment method');
+      return;
+    }
+    
+    // Navigate to Package page (delivery information)
+    navigate('/package');
   };
 
   if (isLoading) {
@@ -362,10 +371,11 @@ const Cart: React.FC = () => {
 
   const summary = calculateCartSummary(cart);
   const hasPaymentMethods = paymentCards.length > 0;
+  const canPlaceOrder = cart.length > 0 && hasPaymentMethods;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
-      <div className="max-w-2xl mx-auto p-4 pt-6">
+    <div className="min-h-screen bg-gray-50 pb-24 lg:pb-8">
+      <div className="max-w-2xl mx-auto p-4 pt-6 lg:pt-24">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">My Cart</h1>
 
         <div className="space-y-3 mb-8">
@@ -397,10 +407,12 @@ const Cart: React.FC = () => {
 
             <button
               onClick={handlePlaceOrder}
-              disabled={!hasPaymentMethods}
+              disabled={!canPlaceOrder}
               className="w-full py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {hasPaymentMethods ? 'Place Order' : 'Add Payment Method First'}
+              {!hasPaymentMethods 
+                ? 'Add Payment Method First' 
+                : 'Proceed to Checkout'}
             </button>
           </>
         )}

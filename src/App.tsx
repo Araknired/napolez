@@ -39,6 +39,7 @@ import Theme from '@/pages/Theme';
 import ClearData from '@/pages/ClearData';
 import Store from '@/components/store/store';
 import Cart from '@/pages/Cart';
+import Package from '@/pages/Package';
 
 // Admin Pages
 import Dashboard from '@/pages/Admin/Dashboard';
@@ -105,6 +106,7 @@ const PROTECTED_ROUTES: ReadonlyArray<RouteDefinition> = [
   { path: '/arena', Component: Arena, layout: LAYOUT_CONFIGS.FULL },
   { path: '/product', Component: Product, layout: LAYOUT_CONFIGS.FULL },
   { path: '/cart', Component: Cart, layout: LAYOUT_CONFIGS.FULL },
+  { path: '/package', Component: Package, layout: LAYOUT_CONFIGS.FULL },
   { path: '/sponsors', Component: Sponsors, layout: LAYOUT_CONFIGS.FULL },
   { path: '/profile', Component: Profile, layout: LAYOUT_CONFIGS.FULL },
   { path: '/profile/edit', Component: EditProfile, layout: LAYOUT_CONFIGS.FULL },

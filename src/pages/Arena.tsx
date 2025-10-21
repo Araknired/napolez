@@ -433,6 +433,7 @@ interface InvoiceSidebarProps {
   onAddToCart: (product: Product) => void;
   onSelectPayment: (cardId: string) => void;
   onAddPaymentMethod: () => void;
+  onPlaceOrder: () => void;
 }
 
 const InvoiceSidebar: React.FC<InvoiceSidebarProps> = ({
@@ -443,7 +444,8 @@ const InvoiceSidebar: React.FC<InvoiceSidebarProps> = ({
   onRemoveItem,
   onAddToCart,
   onSelectPayment,
-  onAddPaymentMethod
+  onAddPaymentMethod,
+  onPlaceOrder
 }) => {
   const { subTotal, tax, total } = calculateCartTotals(cart);
 
@@ -526,10 +528,15 @@ const InvoiceSidebar: React.FC<InvoiceSidebarProps> = ({
         </div>
 
         <button 
-          disabled={paymentCards.length === 0}
+          onClick={onPlaceOrder}
+          disabled={cart.length === 0 || paymentCards.length === 0}
           className="w-full py-4 bg-orange-500 text-white rounded-xl font-bold text-base hover:bg-orange-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {paymentCards.length === 0 ? 'Add Payment Method First' : 'Place An Order Now'}
+          {cart.length === 0 
+            ? 'Add Items to Cart' 
+            : paymentCards.length === 0 
+            ? 'Add Payment Method First' 
+            : 'Place An Order Now'}
         </button>
       </div>
     </div>
@@ -542,6 +549,8 @@ const InvoiceSidebar: React.FC<InvoiceSidebarProps> = ({
  * Arena - Food ordering interface with cart management and payment integration
  */
 const Arena: React.FC = () => {
+  const navigate = useNavigate();
+  
   // State management
   const [selectedCategory, setSelectedCategory] = useState<Category>('Burger');
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -552,8 +561,6 @@ const Arena: React.FC = () => {
   const [isLoadingCart, setIsLoadingCart] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [toast, setToast] = useState<ToastState>({ visible: false, product: null });
-  
-  const navigate = useNavigate();
 
   // Initial data load
   useEffect(() => {
@@ -700,6 +707,21 @@ const Arena: React.FC = () => {
   };
 
   /**
+   * Navigate to package/delivery page
+   */
+  const handlePlaceOrder = (): void => {
+    if (cart.length === 0) {
+      alert('Your cart is empty');
+      return;
+    }
+    if (!selectedPayment) {
+      alert('Please select a payment method');
+      return;
+    }
+    navigate('/package');
+  };
+
+  /**
    * Close toast notification
    */
   const handleCloseToast = (): void => {
@@ -750,6 +772,7 @@ const Arena: React.FC = () => {
         onAddToCart={handleAddToCart}
         onSelectPayment={setSelectedPayment}
         onAddPaymentMethod={handleAddPaymentMethod}
+        onPlaceOrder={handlePlaceOrder}
       />
     </div>
   );
