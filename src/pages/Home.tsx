@@ -51,7 +51,7 @@ interface WelcomeTextProps {
 }
 
 const MobileWelcomeText: FC<WelcomeTextProps> = ({ displayName, isLoaded }) => (
-  <div className="md:hidden absolute top-28 w-full px-4">
+  <div className="md:hidden absolute top-24 w-full px-4">
     <h1
       className={`text-white font-bold text-center -mb-2 transition-all duration-[1500ms] ease-out font-berkshire ${getAnimationClass(
         isLoaded
@@ -61,11 +61,10 @@ const MobileWelcomeText: FC<WelcomeTextProps> = ({ displayName, isLoaded }) => (
       Welcome
     </h1>
     <p
-      className={`text-white text-2xl font-semibold text-left pl-8 transition-all duration-[1500ms] ease-out ${getAnimationClass(
+      className={`text-white text-2xl font-semibold text-left pl-8 transition-all duration-[1500ms] ease-out font-galada ${getAnimationClass(
         isLoaded
       )}`}
       style={{
-        fontFamily: 'Arial, sans-serif',
         transitionDelay: `${ANIMATION_DELAYS.TEXT_STAGGER}ms`,
       }}
     >
@@ -87,11 +86,10 @@ const DesktopWelcomeText: FC<WelcomeTextProps> = ({ displayName, isLoaded }) => 
       Welcome
     </h1>
     <p
-      className={`text-white text-4xl font-semibold text-center transition-all duration-[1500ms] ease-out ${getAnimationClass(
+      className={`text-white text-4xl font-semibold text-center transition-all duration-[1500ms] ease-out font-galada ${getAnimationClass(
         isLoaded
       )}`}
       style={{
-        fontFamily: 'Arial, sans-serif',
         transitionDelay: `${ANIMATION_DELAYS.TEXT_STAGGER}ms`,
       }}
     >
