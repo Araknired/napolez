@@ -15,30 +15,22 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
-import { useTheme } from '../context/ThemeContext'; // 1. Importar useTheme
+import { useTheme } from '../context/ThemeContext';
 
-/**
- * User data structure from Supabase
- */
 interface UserData {
   user_id: string;
   full_name?: string;
   phone?: string;
+  avatar_url?: string;
   [key: string]: unknown;
 }
 
-/**
- * Statistic item configuration
- */
 interface StatItem {
   readonly label: string;
   readonly value: string;
   readonly icon: LucideIcon;
 }
 
-/**
- * Settings menu item configuration
- */
 interface SettingsItem {
   readonly icon: LucideIcon;
   readonly label: string;
@@ -46,9 +38,6 @@ interface SettingsItem {
   readonly description: string;
 }
 
-/**
- * Quick action item configuration
- */
 interface QuickAction {
   readonly icon: LucideIcon;
   readonly label: string;
@@ -56,27 +45,33 @@ interface QuickAction {
   readonly gradient: string;
 }
 
-/**
- * Profile header component displaying user avatar and basic info
- */
 const ProfileHeader: FC<{
   displayName: string;
   displayUsername: string;
   displayEmail: string;
-}> = ({ displayName, displayUsername, displayEmail }) => {
+  avatarUrl?: string | null;
+}> = ({ displayName, displayUsername, displayEmail, avatarUrl }) => {
   const { theme } = useTheme();
   const cardClasses = theme === 'dark' ? 'bg-slate-800 shadow-xl shadow-black/30' : 'bg-white shadow-sm';
   const textPrimary = theme === 'dark' ? 'text-white' : 'text-gray-900';
   const textSecondary = theme === 'dark' ? 'text-gray-400' : 'text-gray-500';
   const textTertiary = theme === 'dark' ? 'text-gray-500' : 'text-gray-400';
-  const borderWhite = theme === 'dark' ? 'border-slate-800' : 'border-white'; // Para el borde del icono de estado
+  const borderWhite = theme === 'dark' ? 'border-slate-800' : 'border-white';
   
   return (
     <div className={`${cardClasses} rounded-2xl p-8`}>
       <div className="flex flex-col items-center">
         <div className="relative mb-6">
-          <div className="w-32 h-32 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-xl">
-            {displayName.charAt(0).toUpperCase()}
+          <div className="w-32 h-32 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-xl overflow-hidden">
+            {avatarUrl ? (
+              <img 
+                src={avatarUrl} 
+                alt={displayName}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              displayName.charAt(0).toUpperCase()
+            )}
           </div>
           <div className={`absolute bottom-0 right-0 w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-lg border-4 ${borderWhite}`}>
             <svg
@@ -105,9 +100,6 @@ const ProfileHeader: FC<{
   );
 };
 
-/**
- * Statistics card component
- */
 const StatisticsCard: FC<{ stats: readonly StatItem[] }> = ({ stats }) => {
   const { theme } = useTheme();
   const cardClasses = theme === 'dark' ? 'bg-slate-800 shadow-xl shadow-black/30' : 'bg-white shadow-sm';
@@ -138,9 +130,6 @@ const StatisticsCard: FC<{ stats: readonly StatItem[] }> = ({ stats }) => {
   );
 };
 
-/**
- * Quick actions grid component
- */
 const QuickActionsCard: FC<{
   actions: readonly QuickAction[];
   onNavigate: (path: string) => void;
@@ -181,9 +170,6 @@ const QuickActionsCard: FC<{
   );
 };
 
-/**
- * Settings menu component
- */
 const SettingsCard: FC<{
   items: readonly SettingsItem[];
   onNavigate: (path: string) => void;
@@ -237,9 +223,6 @@ const SettingsCard: FC<{
   );
 };
 
-/**
- * Account actions component with sign out button
- */
 const AccountActionsCard: FC<{ onSignOut: () => Promise<void> }> = ({
   onSignOut,
 }) => {
@@ -264,16 +247,12 @@ const AccountActionsCard: FC<{ onSignOut: () => Promise<void> }> = ({
   );
 };
 
-/**
- * Main profile page component
- */
 const Profile: FC = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const { theme } = useTheme(); // 2. Usar useTheme
+  const { theme } = useTheme();
   const [userData, setUserData] = useState<UserData | null>(null);
 
-  // Fetch user data from Supabase
   const fetchUserData = useCallback(async (): Promise<void> => {
     if (!user) return;
 
@@ -292,13 +271,11 @@ const Profile: FC = () => {
     fetchUserData();
   }, [fetchUserData]);
 
-  // Handle user sign out
   const handleSignOut = useCallback(async (): Promise<void> => {
     await signOut();
     navigate('/');
   }, [signOut, navigate]);
 
-  // Compute display values
   const displayName = useMemo(
     () =>
       userData?.full_name ||
@@ -320,7 +297,11 @@ const Profile: FC = () => {
     [userData, user]
   );
 
-  // Static configuration data
+  const avatarUrl = useMemo(
+    () => userData?.avatar_url || null,
+    [userData]
+  );
+
   const stats: readonly StatItem[] = useMemo(
     () => [
       { label: 'Favorites', value: '24', icon: Heart },
@@ -385,17 +366,16 @@ const Profile: FC = () => {
       <div className="h-auto lg:h-[calc(100vh-6rem)] overflow-y-auto">
         <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-2 lg:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left Sidebar */}
             <aside className="lg:col-span-4 space-y-6">
               <ProfileHeader
                 displayName={displayName}
                 displayUsername={displayUsername}
                 displayEmail={displayEmail}
+                avatarUrl={avatarUrl}
               />
               <StatisticsCard stats={stats} />
             </aside>
 
-            {/* Main Content */}
             <main className="lg:col-span-8 space-y-6">
               <QuickActionsCard actions={quickActions} onNavigate={navigate} />
               <SettingsCard items={settingsItems} onNavigate={navigate} />

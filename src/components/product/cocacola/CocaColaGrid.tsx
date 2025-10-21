@@ -6,9 +6,11 @@ interface CocaColaGridProps {
   assets: CocaColaAssets;
   animationDelays: AnimationDelays;
   content: CocaColaContent;
+  onBuyClick: () => void;
+  loading?: boolean;
 }
 
-const CocaColaGrid = ({ assets, animationDelays, content }: CocaColaGridProps) => {
+const CocaColaGrid = ({ assets, animationDelays, content, onBuyClick, loading = false }: CocaColaGridProps) => {
   return (
     <>
       <div className="absolute inset-0 flex items-center justify-end opacity-[0.15] pointer-events-none z-0 animate-fadeInSlow translate-x-24 md:translate-x-0 md:justify-center">
@@ -88,12 +90,14 @@ const CocaColaGrid = ({ assets, animationDelays, content }: CocaColaGridProps) =
             }}
           >
             <button 
-              className="group bg-[#E51D2A] hover:bg-[#c4161f] text-white px-8 md:px-10 lg:px-12 py-3 md:py-4 rounded-lg font-bold text-sm md:text-base lg:text-lg transition-all duration-300 shadow-2xl uppercase tracking-wider flex items-center gap-2 hover:shadow-[0_0_40px_rgba(229,29,42,0.7)] hover:scale-105 active:scale-95 relative overflow-hidden"
+              onClick={onBuyClick}
+              disabled={loading}
+              className="group bg-[#E51D2A] hover:bg-[#c4161f] text-white px-8 md:px-10 lg:px-12 py-3 md:py-4 rounded-lg font-bold text-sm md:text-base lg:text-lg transition-all duration-300 shadow-2xl uppercase tracking-wider flex items-center gap-2 hover:shadow-[0_0_40px_rgba(229,29,42,0.7)] hover:scale-105 active:scale-95 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Purchase Coca-Cola products"
             >
               <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
               <ShoppingCart className="w-4 h-4 lg:w-5 lg:h-5" />
-              <span>{content.ctaButtonText}</span>
+              <span>{loading ? 'Loading...' : content.ctaButtonText}</span>
             </button>
             
             <div className="flex-shrink-0 relative -ml-16 animate-canFloat">

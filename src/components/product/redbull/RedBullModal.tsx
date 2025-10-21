@@ -5,6 +5,8 @@ interface RedBullModalProps {
   can: CanData;
   onClose: () => void;
   isClosing: boolean;
+  onBuyClick: () => void;
+  loading?: boolean;
 }
 
 const generateWaterDrops = (count: number): WaterDrop[] => {
@@ -28,8 +30,13 @@ const generateWaterDrops = (count: number): WaterDrop[] => {
   return drops;
 };
 
-const RedBullModal = ({ can, onClose, isClosing }: RedBullModalProps) => {
+const RedBullModal = ({ can, onClose, isClosing, onBuyClick, loading = false }: RedBullModalProps) => {
   const waterDrops = generateWaterDrops(80);
+
+  const handleBuyNow = () => {
+    onClose(); // Cerrar el modal de detalles
+    onBuyClick(); // Abrir el flujo de compra
+  };
 
   return (
     <div 
@@ -247,10 +254,12 @@ const RedBullModal = ({ can, onClose, isClosing }: RedBullModalProps) => {
 
             <div className="space-y-3 pb-2 md:mt-auto">
               <button
-                className={`w-full bg-gradient-to-r ${can.color} text-white font-bold py-4 px-4 rounded-xl shadow-lg transition-all duration-300 active:scale-95 hover:shadow-xl text-base flex items-center justify-center gap-2`}
+                onClick={handleBuyNow}
+                disabled={loading}
+                className={`w-full bg-gradient-to-r ${can.color} text-white font-bold py-4 px-4 rounded-xl shadow-lg transition-all duration-300 active:scale-95 hover:shadow-xl text-base flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 <Zap className="w-5 h-5" fill="currentColor" />
-                Buy Now
+                {loading ? 'Loading...' : 'Buy Now'}
                 <ChevronRight className="w-5 h-5" />
               </button>
               
