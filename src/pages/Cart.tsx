@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, Minus, Trash2, ShoppingCart, CreditCard } from 'lucide-react';
 import type { CartItem } from '../types';
 import { supabase } from '../lib/supabase';
-import { useTheme } from '../context/ThemeContext'; // IMPORTANTE: Agregado para el Modo Oscuro
+import { useTheme } from '../context/ThemeContext'; // Importado para el Modo Oscuro
 
 // Types
 interface PaymentCard {
@@ -132,8 +132,12 @@ const CartItemCard: React.FC<CartItemProps> = ({ item, onRemove, onDecrement, on
 
   return (
     <div className={`flex items-center gap-4 rounded-2xl p-4 border ${baseClasses}`}>
-      <div className={`w-20 h-20 flex items-center justify-center rounded-xl overflow-hidden flex-shrink-0 ${theme === 'dark' ? 'bg-slate-700' : 'bg-gray-50'}`}>
-        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+      
+      {/* Contenedor: w-14 h-14, mantiene el fondo y permite centrado de la imagen */}
+      <div className={`w-14 h-14 flex items-center justify-center rounded-xl overflow-hidden flex-shrink-0 ${theme === 'dark' ? 'bg-slate-700' : 'bg-gray-50'}`}>
+        
+        {/* IMAGEN: w-10 h-10, y AHORA object-contain para no cortar la imagen */}
+        <img src={item.image} alt={item.name} className="w-10 h-10 object-contain" />
       </div>
 
       <div className="flex-1 min-w-0">
@@ -331,7 +335,7 @@ const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
 // Main Component
 const Cart: React.FC = () => {
   const navigate = useNavigate();
-  const { theme } = useTheme(); // Usar el tema
+  const { theme } = useTheme(); 
   const [userId, setUserId] = useState<string | null>(null);
   const [paymentCards, setPaymentCards] = useState<PaymentCard[]>([]);
   const [selectedPayment, setSelectedPayment] = useState('');

@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Home, Package, Trophy, ShoppingCart, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useMenu } from '../../context/MenuContext';
+import { useTheme } from '../../context/ThemeContext'; // Importar useTheme
 
 type TabItem = {
   name: string;
@@ -19,6 +20,7 @@ const MobileTabBar: React.FC = () => {
   const location = useLocation();
   const { user } = useAuth();
   const { intendedPath, setIntendedPath } = useMenu();
+  const { theme } = useTheme(); // USAR useTheme
   const [previousPath, setPreviousPath] = useState(location.pathname);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -58,9 +60,9 @@ const MobileTabBar: React.FC = () => {
       path: '/cart',
       icon: ShoppingCart,
       colors: {
-        gradient: 'from-green-600 via-green-500 to-green-700',
-        shadow: 'shadow-green-500/50',
-        wave: 'border-green-300',
+        gradient: 'from-orange-600 via-orange-500 to-orange-700', // Modificado a naranja/rojo para que haga match con el estilo general
+        shadow: 'shadow-orange-500/50',
+        wave: 'border-orange-300',
       },
     },
     {
@@ -101,8 +103,21 @@ const MobileTabBar: React.FC = () => {
     localStorage.setItem('intendedPath', path);
   };
 
+  // CLASES CONDICIONALES PARA MODO OSCURO
+  const tabBarClasses = theme === 'dark' 
+    ? 'bg-slate-900 border-t border-slate-700 shadow-2xl shadow-black/50' 
+    : 'bg-white border-t border-gray-200 shadow-2xl';
+  
+  const inactiveTextClasses = theme === 'dark' 
+    ? 'text-gray-400 hover:text-blue-400' 
+    : 'text-gray-500 hover:text-blue-600';
+
+  const activeIconBorder = theme === 'dark' 
+    ? 'border-slate-900' 
+    : 'border-white';
+
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-2xl">
+    <div className={`lg:hidden fixed bottom-0 left-0 right-0 z-50 ${tabBarClasses}`}>
       <div className="flex items-center justify-around px-2 py-3 pb-safe">
         {tabItems.map((item) => {
           const Icon = item.icon;
@@ -114,7 +129,7 @@ const MobileTabBar: React.FC = () => {
               to={item.path}
               onClick={() => handleTabClick(item.path)}
               className={`relative flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-2xl ${
-                active ? 'text-white' : 'text-gray-500 hover:text-blue-600'
+                active ? 'text-white' : inactiveTextClasses
               }`}
             >
               {active && (
@@ -123,7 +138,7 @@ const MobileTabBar: React.FC = () => {
                     className={`absolute inset-0 bg-gradient-to-br ${item.colors.gradient} rounded-2xl shadow-lg ${item.colors.shadow}`}
                   ></div>
                   <div
-                    className={`absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-br ${item.colors.gradient} rounded-full shadow-xl ${item.colors.shadow} flex items-center justify-center border-4 border-white`}
+                    className={`absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-br ${item.colors.gradient} rounded-full shadow-xl ${item.colors.shadow} flex items-center justify-center border-4 ${activeIconBorder}`}
                   >
                     <Icon className="w-6 h-6 text-white" strokeWidth={2.5} />
                   </div>
