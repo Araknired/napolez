@@ -2,51 +2,51 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import type { ReactElement, ReactNode } from 'react';
 
 // Context Providers
-import { MenuProvider } from './context/MenuContext';
-import { AuthProvider } from './context/AuthContext';
-import { ThemeProvider } from './context/ThemeContext';
+import { MenuProvider } from '@/context/MenuContext';
+import { AuthProvider } from '@/context/AuthContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 // Layout Components
-import Navbar from './components/layout/Navbar';
-import MobileTabBar from './components/layout/MobileTabBar';
-import AdminLayout from './components/layout/AdminLayout';
+import Navbar from '@/components/layout/Navbar';
+import MobileTabBar from '@/components/layout/MobileTabBar';
+import AdminLayout from '@/components/layout/AdminLayout';
 
 // Route Guards
-import ProtectedRoute from './components/ProtectedRoute';
-import AdminRoute from './components/AdminRoute';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import AdminRoute from '@/components/AdminRoute';
 
 // Public Pages
-import Home from './pages/Home';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import Code from './pages/Code';
+import Home from '@/pages/Home';
+import About from '@/pages/About';
+import Contact from '@/pages/Contact';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
+import Code from '@/pages/Code';
 
 // Protected User Pages
-import Product from './pages/Product';
-import Arena from './pages/Arena';
-import Sponsors from './pages/Sponsors';
-import Profile from './pages/Profile';
-import EditProfile from './pages/Profile/EditProfile';
-import Payment from './pages/Payment';
-import Favorites from './pages/Favorites';
-import Language from './pages/Language';
-import Location from './pages/Location';
-import Theme from './pages/Theme';
-import ClearData from './pages/ClearData';
-import Store from './components/store/store';
-import Cart from './pages/Cart';
+import Product from '@/pages/Product';
+import Arena from '@/pages/Arena';
+import Sponsors from '@/pages/Sponsors';
+import Profile from '@/pages/Profile';
+import EditProfile from '@/pages/Profile/EditProfile';
+import Payment from '@/pages/Payment';
+import Favorites from '@/pages/Favorites';
+import Language from '@/pages/Language';
+import Location from '@/pages/Location';
+import Theme from '@/pages/Theme';
+import ClearData from '@/pages/ClearData';
+import Store from '@/components/store/store';
+import Cart from '@/pages/Cart';
 
 // Admin Pages
-import Dashboard from './pages/Admin/Dashboard';
-import UserManagement from './pages/Admin/UserManagement';
-import ProductManagement from './pages/Admin/ProductManagement';
-import OrderManagement from './pages/Admin/OrderManagement';
-import ReportsAndAnalysis from './pages/Admin/ReportsAndAnalysis';
-import Configuration from './pages/Admin/Configuration';
+import Dashboard from '@/pages/Admin/Dashboard';
+import UserManagement from '@/pages/Admin/UserManagement';
+import ProductManagement from '@/pages/Admin/ProductManagement';
+import OrderManagement from '@/pages/Admin/OrderManagement';
+import ReportsAndAnalysis from '@/pages/Admin/ReportsAndAnalysis';
+import Configuration from '@/pages/Admin/Configuration';
 
 /**
  * Layout configuration options
