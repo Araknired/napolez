@@ -27,7 +27,17 @@ const Navbar: React.FC = () => {
   const isPaymentActive = location.pathname === '/payment';
   const isPackageActive = location.pathname === '/package';
   const isCartActive = location.pathname === '/cart';
-  const isTransparentMode = isArenaActive || isCodeActive || isLoginActive || isForgotPasswordActive || isProfileActive || isAboutActive || isContactActive || isPaymentActive || isPackageActive || isCartActive;
+  const isTransparentMode =
+    isArenaActive ||
+    isCodeActive ||
+    isLoginActive ||
+    isForgotPasswordActive ||
+    isProfileActive ||
+    isAboutActive ||
+    isContactActive ||
+    isPaymentActive ||
+    isPackageActive ||
+    isCartActive;
 
   useEffect(() => {
     if (prevPath !== location.pathname) {
@@ -73,7 +83,6 @@ const Navbar: React.FC = () => {
     }
   };
 
-  // Define colors based on theme
   const baseTextColor = theme === 'dark' ? 'text-white' : 'text-black';
   const secondaryTextColor = theme === 'dark' ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-black';
 
@@ -104,16 +113,12 @@ const Navbar: React.FC = () => {
               />
             </div>
             <div className="hidden xl:flex flex-col">
-              <span
-                className={`text-xl font-bold tracking-tight leading-none transition-all duration-700 ${
-                  isTransparentMode ? baseTextColor : baseTextColor
-                }`}
-              >
+              <span className={`text-xl font-bold tracking-tight leading-none transition-all duration-700 ${baseTextColor}`}>
                 NAPOLEZ
               </span>
               <span
                 className={`text-[9px] font-medium tracking-widest uppercase transition-all duration-700 ${
-                  theme === 'dark' ? 'text-white font-bold' : 'text-black font-bold'
+                  baseTextColor === 'text-white' ? 'text-white font-bold' : 'text-black font-bold'
                 }`}
               >
                 {isArenaActive
@@ -150,13 +155,9 @@ const Navbar: React.FC = () => {
                 key={item.path}
                 to={item.path}
                 className={`group relative flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-500 ${
-                  isActive(item.path)
-                    ? 'text-white'
-                    : secondaryTextColor
+                  isActive(item.path) ? 'text-white' : secondaryTextColor
                 }`}
-                style={{
-                  transitionDelay: `${index * 30}ms`,
-                }}
+                style={{ transitionDelay: `${index * 30}ms` }}
               >
                 {isActive(item.path) && (
                   <>
@@ -164,6 +165,10 @@ const Navbar: React.FC = () => {
                       className={`absolute inset-0 rounded-xl opacity-100 transition-all duration-700 ${
                         item.gradient
                           ? `bg-gradient-to-r ${item.gradient}`
+                          : item.path === '/arena'
+                          ? 'bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500'
+                          : item.path === '/'
+                          ? 'bg-gradient-to-r from-blue-500 via-blue-600 to-cyan-600'
                           : 'bg-gradient-to-r from-blue-600 to-purple-600'
                       }`}
                     ></div>
@@ -171,11 +176,16 @@ const Navbar: React.FC = () => {
                       className={`absolute inset-0 rounded-xl blur-xl opacity-50 transition-all duration-700 ${
                         item.gradient
                           ? `bg-gradient-to-r ${item.gradient}`
+                          : item.path === '/arena'
+                          ? 'bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500'
+                          : item.path === '/'
+                          ? 'bg-gradient-to-r from-blue-500 via-blue-600 to-cyan-600'
                           : 'bg-gradient-to-r from-blue-600 to-purple-600'
                       }`}
                     ></div>
                   </>
                 )}
+
                 {!isActive(item.path) && (
                   <div
                     className={`absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-500 ${
@@ -183,10 +193,15 @@ const Navbar: React.FC = () => {
                     }`}
                   ></div>
                 )}
+
                 <span className="relative z-10 transition-transform duration-300 group-hover:scale-110">
                   {item.icon}
                 </span>
                 <span className="relative z-10">{item.name}</span>
+
+                {isActive(item.path) && (
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-white rounded-full"></div>
+                )}
               </Link>
             ))}
           </div>
