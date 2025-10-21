@@ -361,8 +361,13 @@ const Cart: React.FC = () => {
       return;
     }
     
-    // Navigate to Package page (delivery information)
-    navigate('/package');
+    // Navigate to Package page with payment info
+    navigate('/package', { 
+      state: { 
+        selectedPaymentId: selectedPayment,
+        fromCart: true 
+      } 
+    });
   };
 
   if (isLoading) {
