@@ -122,8 +122,7 @@ const HeroContent: FC<HeroContentProps> = ({ isVisible }) => (
         UX-NAPOLEZ
       </span>
       <br />
-      {/* ✅ “Information” siempre en blanco */}
-      <span className="text-black">Information</span>
+         <span className="text-gray-900 dark:text-white">Information</span>
     </h1>
     
     <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl">
