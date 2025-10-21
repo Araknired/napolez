@@ -158,25 +158,26 @@ const Theme: FC = () => {
         />
       </button>
 
-      {/* Layout */}
-      <div className="max-w-5xl mx-auto px-6 py-10 grid gap-8 lg:grid-cols-2 items-center">
-        {THEME_OPTIONS.map((opt, i) => (
-          <div
-            key={opt.value}
-            style={{
-              animationDelay: `${i * 100}ms`,
-              animation: 'fadeIn 0.6s ease-out forwards',
-            }}
-          >
-            <ThemeItem
-              option={opt}
-              isSelected={preference === opt.value}
-              onSelect={handleThemeSelect}
-              isDesktop={true}
-            />
-          </div>
-        ))}
-      </div>
+{/* Layout */}
+<div className="max-w-5xl mx-auto px-6 py-10 lg:pt-28 grid gap-8 lg:grid-cols-2 items-center">
+  {THEME_OPTIONS.map((opt, i) => (
+    <div
+      key={opt.value}
+      style={{
+        animationDelay: `${i * 100}ms`,
+        animation: 'fadeIn 0.6s ease-out forwards',
+      }}
+    >
+      <ThemeItem
+        option={opt}
+        isSelected={preference === opt.value}
+        onSelect={handleThemeSelect}
+        isDesktop={true}
+      />
+    </div>
+  ))}
+</div>
+
 
       <style>{`
         @keyframes fadeIn {
