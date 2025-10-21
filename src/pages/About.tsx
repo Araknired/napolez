@@ -122,7 +122,7 @@ const HeroContent: FC<HeroContentProps> = ({ isVisible }) => (
         UX-NAPOLEZ
       </span>
       <br />
-      {/* ✅ “Information” ahora es siempre blanco */}
+      {/* ✅ “Information” siempre en blanco */}
       <span className="text-white">Information</span>
     </h1>
     
@@ -222,7 +222,7 @@ const OrganizationsBanner: FC<OrganizationsBannerProps> = ({ isVisible }) => (
  * About page component showcasing skills and experience
  */
 const About: FC = () => {
-  const { theme, toggleTheme } = useTheme(); // ✅ uso del ThemeContext
+  const { theme } = useTheme(); // ✅ Se usa el tema, pero sin mostrar botón
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
 
@@ -248,14 +248,6 @@ const About: FC = () => {
       }`}
     >
       <div className="max-w-[1800px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-12 lg:py-20 w-full">
-        {/* ✅ Botón para alternar el tema */}
-        <button
-          onClick={toggleTheme}
-          className="absolute top-6 right-6 bg-purple-500 text-white px-4 py-2 rounded-full text-sm hover:bg-purple-600 transition-all"
-        >
-          Toggle {theme === 'dark' ? 'Light' : 'Dark'} Mode
-        </button>
-
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           <HeroContent isVisible={showContent} />
           <HeroImage isVisible={showContent} />
