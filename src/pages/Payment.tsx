@@ -2,11 +2,14 @@ import type { FC, ChangeEvent, FormEvent } from 'react';
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { CreditCard, Lock, ArrowLeft, CheckCircle, Shield, Sparkles } from 'lucide-react';
+// 🔥 IMPORTACIONES CORREGIDAS
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext'; 
 import { supabase } from '../lib/supabase';
 
+// ===========================================================================
 // Types
+// ===========================================================================
 interface PaymentFormData {
   cardNumber: string;
   cardHolder: string;
@@ -27,7 +30,9 @@ interface LocationState {
   from?: string;
 }
 
+// ===========================================================================
 // Constants
+// ===========================================================================
 const MONTHS: Month[] = [
   { value: '01', label: 'January' },
   { value: '02', label: 'February' },
@@ -57,7 +62,9 @@ const CARD_GRADIENTS: Record<CardType, string> = {
 
 const PLACEHOLDER_CARD_NUMBER = '•••• •••• •••• ••••';
 
+// ===========================================================================
 // Utility Functions
+// ===========================================================================
 const cleanCardNumber = (value: string): string => value.replace(/\s/g, '');
 
 const formatCardNumber = (value: string): string => {
@@ -96,13 +103,15 @@ const getCardGradient = (cardType: CardType): string => {
   return CARD_GRADIENTS[cardType] || 'from-slate-700 via-slate-800 to-slate-900';
 };
 
+// ===========================================================================
+// Main Component
+// ===========================================================================
 /**
  * Payment form component for securely adding credit card information.
- * Features real-time card preview, validation, and encrypted storage.
  */
 const Payment: FC = () => {
   const { user } = useAuth();
-  const { theme } = useTheme(); // 1. OBTENER EL TEMA
+  const { theme } = useTheme(); // Usando useTheme correctamente
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -189,6 +198,7 @@ const Payment: FC = () => {
       const cardNumberClean = cleanCardNumber(formData.cardNumber);
       const expiryDate = `${formData.expiryMonth}/${formData.expiryYear}`;
 
+      // Supabase insertion mock (assuming supabase is configured)
       const { error: insertError } = await supabase.from('payment_cards').insert({
         user_id: user!.id,
         card_number: cardNumberClean,
@@ -221,16 +231,17 @@ const Payment: FC = () => {
 
   const years = generateYears();
   
-  // Clases dinámicas para el fondo principal
+  // 🔥 CLASES DE MODO OSCURO PROFESIONAL (Slate Palette)
+  // Fondo principal: Slate-900 sólido
   const mainBgClass = theme === 'dark'
-    ? 'bg-gradient-to-br from-gray-950 via-gray-900 to-black'
+    ? 'bg-slate-900'
     : 'bg-white';
     
+  // Borde y fondo de la tarjeta/contenedor (Slate-800 para contraste con Slate-900)
   const containerBorder = theme === 'dark' ? 'border-slate-700' : 'border-gray-200';
-  const containerBg = theme === 'dark' ? 'from-slate-800 to-slate-900' : 'from-gray-50 to-gray-100';
+  const containerBg = theme === 'dark' ? 'bg-slate-800' : 'from-gray-50 to-gray-100';
 
   return (
-    // 2. APLICAR TEMA AL CONTENEDOR PRINCIPAL
     <div className={`min-h-screen overflow-hidden ${mainBgClass}`}>
       <style>{`
         body::-webkit-scrollbar {
@@ -248,14 +259,12 @@ const Payment: FC = () => {
           <div className="mb-4 flex items-center justify-between lg:mb-6">
             <button
               onClick={handleCancel}
-              // APLICAR TEMA AL BOTÓN DE VOLVER
               className="group inline-flex items-center gap-3 rounded-2xl bg-gray-50 dark:bg-slate-800 px-5 py-3 font-semibold text-gray-700 dark:text-gray-300 shadow-sm transition-all duration-300 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white hover:shadow-md"
             >
               <ArrowLeft className="h-5 w-5 transition-transform duration-300 group-hover:-translate-x-1" />
               <span>Back</span>
             </button>
 
-            {/* APLICAR TEMA AL BADGE DE PAGO SEGURO */}
             <div className="inline-flex items-center gap-3 rounded-2xl border border-green-200 dark:border-green-800 bg-gradient-to-r from-green-50 dark:from-green-900 to-emerald-50 dark:to-emerald-950 px-5 py-3 shadow-sm">
               <Lock className="h-5 w-5 text-green-600" />
               <span className="hidden text-sm font-bold text-green-800 dark:text-green-400 sm:inline">
@@ -291,8 +300,9 @@ const Payment: FC = () => {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-10">
             {/* Form Section */}
             <div>
-              {/* APLICAR TEMA AL CONTENEDOR DEL FORMULARIO */}
-              <div className={`rounded-3xl border ${containerBorder} bg-gradient-to-br ${containerBg} p-5 shadow-2xl lg:p-6`}>
+              {/* Contenedor del formulario: Slate-800 */}
+              <div className={`rounded-3xl border ${containerBorder} ${containerBg} p-5 shadow-2xl lg:p-6`}>
+                
                 {/* Form Header */}
                 <div className="mb-6">
                   <div className="flex items-center gap-4">
@@ -303,14 +313,13 @@ const Payment: FC = () => {
                       </div>
                     </div>
                     <div>
-                      {/* APLICAR TEMA AL TÍTULO */}
+                      {/* Título y Subtítulo: Texto blanco en Dark Mode */}
                       <h2 className="text-2xl font-black text-gray-900 dark:text-white lg:text-3xl">
                         <span className="inline-flex items-center gap-2">
                           Add Payment Method
                           <Sparkles className="h-6 w-6 text-yellow-500" />
                         </span>
                       </h2>
-                      {/* APLICAR TEMA AL SUBTÍTULO */}
                       <p className="mt-1 text-sm font-medium text-gray-600 dark:text-gray-400">
                         Securely save your card details
                       </p>
@@ -322,17 +331,16 @@ const Payment: FC = () => {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   {/* Card Type */}
                   <div className="group">
-                    {/* APLICAR TEMA AL LABEL */}
                     <label className="mb-2 inline-flex items-center gap-2 text-sm font-black text-gray-800 dark:text-gray-200">
                       Card Type
                       <span className="text-red-500">*</span>
                     </label>
-                    {/* APLICAR TEMA AL SELECT */}
+                    {/* Select: Fondo Slate-900 con texto White/Gray-200 */}
                     <select
                       name="cardType"
                       value={formData.cardType}
                       onChange={handleInputChange}
-                      className="w-full cursor-pointer rounded-2xl border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-5 py-4 font-bold text-gray-900 dark:text-white shadow-sm transition-all duration-300 hover:border-gray-400 dark:hover:border-slate-500 hover:shadow-md focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-500/20"
+                      className="w-full cursor-pointer rounded-2xl border-2 border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 py-4 font-bold text-gray-900 dark:text-gray-200 shadow-sm transition-all duration-300 hover:border-gray-400 dark:hover:border-slate-600 hover:shadow-md focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-500/20"
                     >
                       <option>Visa</option>
                       <option>Mastercard</option>
@@ -343,38 +351,36 @@ const Payment: FC = () => {
 
                   {/* Card Number */}
                   <div className="group">
-                    {/* APLICAR TEMA AL LABEL */}
                     <label className="mb-2 inline-flex items-center gap-2 text-sm font-black text-gray-800 dark:text-gray-200">
                       Card Number
                       <span className="text-red-500">*</span>
                     </label>
-                    {/* APLICAR TEMA AL INPUT */}
+                    {/* Input: Fondo Slate-900 con texto White/Gray-200 */}
                     <input
                       type="text"
                       name="cardNumber"
                       value={formData.cardNumber}
                       onChange={handleInputChange}
                       placeholder="1234 5678 9012 3456"
-                      className="w-full rounded-2xl border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-5 py-4 font-mono text-xl tracking-wider text-gray-900 dark:text-white shadow-sm transition-all duration-300 hover:border-gray-400 dark:hover:border-slate-500 hover:shadow-md focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-500/20"
+                      className="w-full rounded-2xl border-2 border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 py-4 font-mono text-xl tracking-wider text-gray-900 dark:text-gray-200 shadow-sm transition-all duration-300 hover:border-gray-400 dark:hover:border-slate-600 hover:shadow-md focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-500/20"
                       required
                     />
                   </div>
 
                   {/* Card Holder */}
                   <div className="group">
-                    {/* APLICAR TEMA AL LABEL */}
                     <label className="mb-2 inline-flex items-center gap-2 text-sm font-black text-gray-800 dark:text-gray-200">
                       Card Holder Name
                       <span className="text-red-500">*</span>
                     </label>
-                    {/* APLICAR TEMA AL INPUT */}
+                    {/* Input: Fondo Slate-900 con texto White/Gray-200 */}
                     <input
                       type="text"
                       name="cardHolder"
                       value={formData.cardHolder}
                       onChange={handleInputChange}
                       placeholder="JOHN DOE"
-                      className="w-full rounded-2xl border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-5 py-4 font-black uppercase text-gray-900 dark:text-white shadow-sm transition-all duration-300 hover:border-gray-400 dark:hover:border-slate-500 hover:shadow-md focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-500/20"
+                      className="w-full rounded-2xl border-2 border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 py-4 font-black uppercase text-gray-900 dark:text-gray-200 shadow-sm transition-all duration-300 hover:border-gray-400 dark:hover:border-slate-600 hover:shadow-md focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-500/20"
                       required
                     />
                   </div>
@@ -382,17 +388,16 @@ const Payment: FC = () => {
                   {/* Expiry Date and CVV */}
                   <div className="grid grid-cols-7 gap-4">
                     <div className="col-span-2">
-                      {/* APLICAR TEMA AL LABEL */}
                       <label className="mb-2 inline-flex items-center gap-1 text-sm font-black text-gray-800 dark:text-gray-200">
                         Month
                         <span className="text-red-500">*</span>
                       </label>
-                      {/* APLICAR TEMA AL SELECT */}
+                      {/* Select: Fondo Slate-900 con texto White/Gray-200 */}
                       <select
                         name="expiryMonth"
                         value={formData.expiryMonth}
                         onChange={handleInputChange}
-                        className="w-full cursor-pointer rounded-2xl border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-4 font-bold text-gray-900 dark:text-white shadow-sm transition-all duration-300 hover:border-gray-400 dark:hover:border-slate-500 hover:shadow-md focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-500/20"
+                        className="w-full cursor-pointer rounded-2xl border-2 border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-4 font-bold text-gray-900 dark:text-gray-200 shadow-sm transition-all duration-300 hover:border-gray-400 dark:hover:border-slate-600 hover:shadow-md focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-500/20"
                         required
                       >
                         <option value="">MM</option>
@@ -405,17 +410,16 @@ const Payment: FC = () => {
                     </div>
 
                     <div className="col-span-2">
-                      {/* APLICAR TEMA AL LABEL */}
                       <label className="mb-2 inline-flex items-center gap-1 text-sm font-black text-gray-800 dark:text-gray-200">
                         Year
                         <span className="text-red-500">*</span>
                       </label>
-                      {/* APLICAR TEMA AL SELECT */}
+                      {/* Select: Fondo Slate-900 con texto White/Gray-200 */}
                       <select
                         name="expiryYear"
                         value={formData.expiryYear}
                         onChange={handleInputChange}
-                        className="w-full cursor-pointer rounded-2xl border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-4 font-bold text-gray-900 dark:text-white shadow-sm transition-all duration-300 hover:border-gray-400 dark:hover:border-slate-500 hover:shadow-md focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-500/20"
+                        className="w-full cursor-pointer rounded-2xl border-2 border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-4 font-bold text-gray-900 dark:text-gray-200 shadow-sm transition-all duration-300 hover:border-gray-400 dark:hover:border-slate-600 hover:shadow-md focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-500/20"
                         required
                       >
                         <option value="">YY</option>
@@ -428,19 +432,18 @@ const Payment: FC = () => {
                     </div>
 
                     <div className="col-span-3">
-                      {/* APLICAR TEMA AL LABEL */}
                       <label className="mb-2 inline-flex items-center gap-2 text-sm font-black text-gray-800 dark:text-gray-200">
                         CVV
                         <span className="text-red-500">*</span>
                       </label>
-                      {/* APLICAR TEMA AL INPUT */}
+                      {/* Input: Fondo Slate-900 con texto White/Gray-200 */}
                       <input
                         type="text"
                         name="cvv"
                         value={formData.cvv}
                         onChange={handleInputChange}
                         placeholder="123"
-                        className="w-full rounded-2xl border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-4 text-center font-mono text-xl text-gray-900 dark:text-white shadow-sm transition-all duration-300 hover:border-gray-400 dark:hover:border-slate-500 hover:shadow-md focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-500/20"
+                        className="w-full rounded-2xl border-2 border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-4 text-center font-mono text-xl text-gray-900 dark:text-gray-200 shadow-sm transition-all duration-300 hover:border-gray-400 dark:hover:border-slate-600 hover:shadow-md focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-500/20"
                         required
                       />
                     </div>
@@ -453,8 +456,7 @@ const Payment: FC = () => {
                         type="button"
                         onClick={handleCancel}
                         disabled={loading}
-                        // APLICAR TEMA AL BOTÓN CANCELAR
-                        className="flex-1 rounded-2xl border-2 border-gray-300 dark:border-slate-600 px-6 py-4 text-lg font-black text-gray-700 dark:text-gray-300 transition-all duration-300 hover:border-gray-400 dark:hover:border-slate-500 hover:bg-gray-100 dark:hover:bg-slate-700 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex-1 rounded-2xl border-2 border-gray-300 dark:border-slate-700 px-6 py-4 text-lg font-black text-gray-700 dark:text-gray-300 transition-all duration-300 hover:border-gray-400 dark:hover:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-700 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         Cancel
                       </button>
@@ -491,7 +493,6 @@ const Payment: FC = () => {
 
                   {/* Security Notice */}
                   <div className="border-t-2 border-gray-200 dark:border-slate-700 pt-4">
-                    {/* APLICAR TEMA AL BADGE DE SEGURIDAD */}
                     <div className="rounded-2xl border border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 dark:from-blue-900 to-indigo-50 dark:to-indigo-950 p-5 shadow-sm">
                       <div className="flex items-start gap-4 text-sm text-gray-700 dark:text-blue-200">
                         <Shield className="mt-0.5 h-6 w-6 flex-shrink-0 text-blue-600" />
@@ -508,9 +509,10 @@ const Payment: FC = () => {
 
             {/* Preview Section */}
             <div>
-              {/* APLICAR TEMA AL CONTENEDOR DEL PREVIEW */}
-              <div className={`rounded-3xl border ${containerBorder} bg-gradient-to-br ${containerBg} p-5 shadow-2xl lg:p-6`}>
-                {/* APLICAR TEMA AL TÍTULO */}
+              {/* Contenedor del Preview: Slate-800 */}
+              <div className={`rounded-3xl border ${containerBorder} ${containerBg} p-5 shadow-2xl lg:p-6`}>
+                
+                {/* Title */}
                 <h3 className="mb-6 text-2xl font-black text-gray-900 dark:text-white">
                   <span className="inline-flex items-center gap-3">
                     <span className="h-10 w-2 rounded-full bg-gradient-to-b from-blue-600 via-purple-600 to-indigo-700 shadow-lg" />
@@ -518,7 +520,7 @@ const Payment: FC = () => {
                   </span>
                 </h3>
 
-                {/* Card Visual (The card itself is dynamic/colorized, so it doesn't need dark mode classes) */}
+                {/* Card Visual (The card itself is dynamic/colorized) */}
                 <div className="group relative mx-auto mb-6 w-full max-w-md">
                   <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400 opacity-30 blur-2xl transition-opacity duration-500 group-hover:opacity-50" />
                   <div
@@ -589,23 +591,23 @@ const Payment: FC = () => {
                 </div>
 
                 {/* Card Details Summary */}
-                {/* APLICAR TEMA AL RESUMEN */}
-                <div className="space-y-2 rounded-2xl bg-white dark:bg-slate-700 p-5 shadow-lg">
-                  <div className="flex items-center justify-between border-b-2 border-gray-100 dark:border-slate-600 py-4">
+                {/* Resumen: Fondo Slate-900 (más oscuro que la tarjeta) */}
+                <div className="space-y-2 rounded-2xl bg-white dark:bg-slate-900 p-5 shadow-lg">
+                  <div className="flex items-center justify-between border-b-2 border-gray-100 dark:border-slate-800 py-4">
                     <span className="text-sm font-black text-gray-600 dark:text-gray-300">Card Number</span>
                     <span className="font-mono text-sm font-black text-gray-900 dark:text-white">
                       {formData.cardNumber || PLACEHOLDER_CARD_NUMBER}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between border-b-2 border-gray-100 dark:border-slate-600 py-4">
+                  <div className="flex items-center justify-between border-b-2 border-gray-100 dark:border-slate-800 py-4">
                     <span className="text-sm font-black text-gray-600 dark:text-gray-300">Card Holder</span>
                     <span className="text-sm font-black text-gray-900 dark:text-white">
                       {formData.cardHolder || 'Not provided'}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between border-b-2 border-gray-100 dark:border-slate-600 py-4">
+                  <div className="flex items-center justify-between border-b-2 border-gray-100 dark:border-slate-800 py-4">
                     <span className="text-sm font-black text-gray-600 dark:text-gray-300">Expiry Date</span>
                     <span className="text-sm font-black text-gray-900 dark:text-white">
                       {formData.expiryMonth && formData.expiryYear
@@ -623,7 +625,6 @@ const Payment: FC = () => {
                 </div>
 
                 {/* Security Badge */}
-                {/* APLICAR TEMA AL BADGE DE SEGURIDAD (PREVIEW) */}
                 <div className="mt-5 rounded-2xl border-2 border-green-300 dark:border-green-800 bg-gradient-to-br from-green-50 dark:from-green-900 to-emerald-50 dark:to-emerald-950 p-5 shadow-lg">
                   <div className="flex gap-4">
                     <div className="flex-shrink-0">
