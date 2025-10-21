@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { User, LogOut, Home, Package, Trophy, Award, UserCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 type NavItem = { name: string; path: string; icon: React.ReactNode; gradient?: string };
 
 const Navbar: React.FC = () => {
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const { theme } = useTheme();
+
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [scrolled, setScrolled] = useState(false);
@@ -17,7 +20,7 @@ const Navbar: React.FC = () => {
   const isCodeActive = location.pathname === '/code';
   const isLoginActive = location.pathname === '/login' || location.pathname === '/register';
   const isForgotPasswordActive = location.pathname === '/forgot-password' || location.pathname === '/reset-password';
-  const isProfileActive = location.pathname === '/profile' || location.pathname === '/profile/edit' || location.pathname === '/profile/favorites' || location.pathname === '/profile/theme' || location.pathname === '/profile/clear-data';
+  const isProfileActive = location.pathname.startsWith('/profile');
   const isSponsorsActive = location.pathname === '/sponsors';
   const isAboutActive = location.pathname === '/about';
   const isContactActive = location.pathname === '/contact';
@@ -35,7 +38,6 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-
       setScrolled(currentScrollY > 20);
 
       if (currentScrollY < 10) {
@@ -50,10 +52,7 @@ const Navbar: React.FC = () => {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
   const navItems: NavItem[] = [
@@ -74,103 +73,125 @@ const Navbar: React.FC = () => {
     }
   };
 
+  // Define colors based on theme
+  const baseTextColor = theme === 'dark' ? 'text-white' : 'text-black';
+  const secondaryTextColor = theme === 'dark' ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-black';
+
   return (
-    <nav className={`hidden lg:block fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
-      isVisible ? 'translate-y-0' : '-translate-y-full'
-    } ${
-      isTransparentMode
-        ? 'border-b border-gray-300'
-        : scrolled 
-          ? 'bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-black/50 border-b border-slate-700/50' 
-          : 'bg-black/30 backdrop-blur-md border-b border-white/5'
-    }`}>
+    <nav
+      className={`hidden lg:block fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
+        isVisible ? 'translate-y-0' : '-translate-y-full'
+      } ${
+        isTransparentMode
+          ? 'border-b border-gray-300'
+          : scrolled
+          ? 'bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-black/50 border-b border-slate-700/50'
+          : theme === 'dark'
+          ? 'bg-black/30 backdrop-blur-md border-b border-white/5'
+          : 'bg-white/30 backdrop-blur-md border-b border-gray-200/10'
+      }`}
+    >
       <div className="max-w-[1800px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-3.5 md:py-4.5">
         <div className="flex items-center justify-between">
-          
+          {/* LOGO */}
           <Link to="/" className="flex items-center gap-4 group relative">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
-              <img 
-                src="/logo512.png" 
-                alt="NAPOLEZ" 
-                className="h-8 sm:h-9 md:h-11 relative z-10 transition-all duration-300 group-hover:scale-110 drop-shadow-2xl" 
+              <img
+                src="/logo512.png"
+                alt="NAPOLEZ"
+                className="h-8 sm:h-9 md:h-11 relative z-10 transition-all duration-300 group-hover:scale-110 drop-shadow-2xl"
               />
             </div>
             <div className="hidden xl:flex flex-col">
-              <span className={`text-xl font-bold tracking-tight leading-none transition-all duration-700 ${
-                isTransparentMode 
-                  ? 'text-black' 
-                  : 'bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent'
-              }`}>
+              <span
+                className={`text-xl font-bold tracking-tight leading-none transition-all duration-700 ${
+                  isTransparentMode ? baseTextColor : baseTextColor
+                }`}
+              >
                 NAPOLEZ
               </span>
-              <span className={`text-[9px] font-medium tracking-widest uppercase transition-all duration-700 ${
-                isArenaActive ? 'text-black font-bold' : isCodeActive ? 'text-black font-bold' : isLoginActive ? 'text-black font-bold' : isForgotPasswordActive ? 'text-black font-bold' : isProfileActive ? 'text-black font-bold' : isAboutActive ? 'text-black font-bold' : isContactActive ? 'text-black font-bold' : isPaymentActive ? 'text-black font-bold' : isPackageActive ? 'text-black font-bold' : isCartActive ? 'text-black font-bold' : 'text-white font-bold'
-              }`}>
-                {isArenaActive ? 'GASTRONOMY' : isCodeActive ? 'CODE ARENA' : isLoginActive ? 'WELCOME' : isForgotPasswordActive ? 'RECOVERY' : isProfileActive ? 'YOUR PROFILE' : isSponsorsActive ? 'NAPOLEZ UI/UX' : isAboutActive ? 'UX NAPOLEZ' : isContactActive ? 'UX NAPOLEZ' : isPaymentActive ? 'PAYMENT' : isPackageActive ? 'CHECKOUT' : isCartActive ? 'SHOPPING CART' : 'THE GOLDEN NAPOLES'}
+              <span
+                className={`text-[9px] font-medium tracking-widest uppercase transition-all duration-700 ${
+                  theme === 'dark' ? 'text-white font-bold' : 'text-black font-bold'
+                }`}
+              >
+                {isArenaActive
+                  ? 'GASTRONOMY'
+                  : isCodeActive
+                  ? 'CODE ARENA'
+                  : isLoginActive
+                  ? 'WELCOME'
+                  : isForgotPasswordActive
+                  ? 'RECOVERY'
+                  : isProfileActive
+                  ? 'YOUR PROFILE'
+                  : isSponsorsActive
+                  ? 'NAPOLEZ UI/UX'
+                  : isAboutActive
+                  ? 'UX NAPOLEZ'
+                  : isContactActive
+                  ? 'UX NAPOLEZ'
+                  : isPaymentActive
+                  ? 'PAYMENT'
+                  : isPackageActive
+                  ? 'CHECKOUT'
+                  : isCartActive
+                  ? 'SHOPPING CART'
+                  : 'THE GOLDEN NAPOLES'}
               </span>
             </div>
           </Link>
 
+          {/* NAV LINKS */}
           <div className="flex items-center gap-1">
             {navItems.map((item, index) => (
               <Link
                 key={item.path}
                 to={item.path}
                 className={`group relative flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-500 ${
-                  isActive(item.path) 
-                    ? 'text-white' 
-                    : isTransparentMode 
-                      ? 'text-black hover:text-gray-700'
-                      : 'text-gray-400 hover:text-white'
+                  isActive(item.path)
+                    ? 'text-white'
+                    : secondaryTextColor
                 }`}
-                style={{ 
-                  transitionDelay: `${index * 30}ms` 
+                style={{
+                  transitionDelay: `${index * 30}ms`,
                 }}
               >
                 {isActive(item.path) && (
                   <>
-                    <div className={`absolute inset-0 rounded-xl opacity-100 transition-all duration-700 ${
-                      item.gradient
-                        ? `bg-gradient-to-r ${item.gradient}`
-                        : item.path === '/arena' 
-                        ? 'bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500'
-                        : item.path === '/'
-                        ? 'bg-gradient-to-r from-blue-500 via-blue-600 to-cyan-600'
-                        : 'bg-gradient-to-r from-blue-600 to-purple-600'
-                    }`}></div>
-                    <div className={`absolute inset-0 rounded-xl blur-xl opacity-50 transition-all duration-700 ${
-                      item.gradient
-                        ? `bg-gradient-to-r ${item.gradient}`
-                        : item.path === '/arena' 
-                        ? 'bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500'
-                        : item.path === '/'
-                        ? 'bg-gradient-to-r from-blue-500 via-blue-600 to-cyan-600'
-                        : 'bg-gradient-to-r from-blue-600 to-purple-600'
-                    }`}></div>
+                    <div
+                      className={`absolute inset-0 rounded-xl opacity-100 transition-all duration-700 ${
+                        item.gradient
+                          ? `bg-gradient-to-r ${item.gradient}`
+                          : 'bg-gradient-to-r from-blue-600 to-purple-600'
+                      }`}
+                    ></div>
+                    <div
+                      className={`absolute inset-0 rounded-xl blur-xl opacity-50 transition-all duration-700 ${
+                        item.gradient
+                          ? `bg-gradient-to-r ${item.gradient}`
+                          : 'bg-gradient-to-r from-blue-600 to-purple-600'
+                      }`}
+                    ></div>
                   </>
                 )}
-                
                 {!isActive(item.path) && (
-                  <div className={`absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-500 ${
-                    isTransparentMode ? 'bg-gray-100' : 'bg-white/5'
-                  }`}></div>
+                  <div
+                    className={`absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-500 ${
+                      theme === 'dark' ? 'bg-white/5' : 'bg-gray-100'
+                    }`}
+                  ></div>
                 )}
-                
-                <span className={`relative z-10 transition-transform duration-300 ${
-                  isActive(item.path) ? '' : 'group-hover:scale-110'
-                }`}>
+                <span className="relative z-10 transition-transform duration-300 group-hover:scale-110">
                   {item.icon}
                 </span>
                 <span className="relative z-10">{item.name}</span>
-                
-                {isActive(item.path) && (
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-white rounded-full"></div>
-                )}
               </Link>
             ))}
           </div>
 
+          {/* AUTH BUTTONS */}
           <div className="flex items-center gap-3">
             {user ? (
               <>
@@ -180,7 +201,6 @@ const Navbar: React.FC = () => {
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-gray-500 to-gray-600 transition-transform duration-300 group-hover:scale-105"></div>
                   <div className="absolute inset-0 border border-gray-400/50 rounded-xl"></div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-gray-400/0 to-gray-500/0 group-hover:from-gray-400/20 group-hover:to-gray-500/20 transition-all duration-300"></div>
                   <User className="w-4 h-4 relative z-10 text-white" />
                   <span className="relative z-10 text-white">Profile</span>
                 </Link>
@@ -200,12 +220,14 @@ const Navbar: React.FC = () => {
                   to="/login"
                   className="group relative px-6 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 overflow-hidden"
                 >
-                  <div className={`absolute inset-0 rounded-xl transition-all duration-300 ${
-                    isTransparentMode 
-                      ? 'bg-gray-200 border border-gray-300 group-hover:bg-gray-300' 
-                      : 'bg-white/5 border border-white/10 group-hover:bg-white/10 group-hover:border-white/20'
-                  }`}></div>
-                  <span className={`relative z-10 ${isTransparentMode ? 'text-black' : 'text-white'}`}>Sign In</span>
+                  <div
+                    className={`absolute inset-0 rounded-xl transition-all duration-300 ${
+                      theme === 'dark'
+                        ? 'bg-white/5 border border-white/10 group-hover:bg-white/10'
+                        : 'bg-gray-200 border border-gray-300 group-hover:bg-gray-300'
+                    }`}
+                  ></div>
+                  <span className={`relative z-10 ${baseTextColor}`}>Sign In</span>
                 </Link>
                 <Link
                   to="/register"
