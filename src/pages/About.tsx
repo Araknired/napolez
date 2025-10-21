@@ -122,7 +122,7 @@ const HeroContent: FC<HeroContentProps> = ({ isVisible }) => (
         UX-NAPOLEZ
       </span>
       <br />
-      {/* ✅ “Information” ahora cambia de color con el tema */}
+      {/* ✅ CLASE ACTUALIZADA: text-black para negro puro, dark:text-white para blanco en modo oscuro */}
       <span className="text-black dark:text-white">Information</span>
     </h1>
     
@@ -222,7 +222,7 @@ const OrganizationsBanner: FC<OrganizationsBannerProps> = ({ isVisible }) => (
  * About page component showcasing skills and experience
  */
 const About: FC = () => {
-  const { theme } = useTheme(); // ✅ Se usa el tema, pero sin mostrar botón
+  const { theme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
 
