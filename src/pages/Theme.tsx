@@ -298,7 +298,8 @@ const Theme: FC = () => {
       <button
         type="button"
         onClick={handleBackNavigation}
-        className={`fixed top-8 left-8 items-center justify-center w-12 h-12 rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 z-40 ${
+        // CLASE MODIFICADA: Se agrega 'lg:top-16' para bajar el botón en desktop
+        className={`fixed top-8 lg:top-16 left-8 items-center justify-center w-12 h-12 rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 z-40 ${
           theme === 'dark' ? 'hover:bg-slate-800' : 'hover:bg-gray-100'
         }`}
       >
