@@ -284,7 +284,7 @@ const Theme: FC = () => {
     [setPreference]
   );
 
-  const currentDetail = THEME_DETAILS.find((d) => d.value === preference);
+  // const currentDetail = THEME_DETAILS.find((d) => d.value === preference); // ELIMINADO: Ya no se usa.
 
   return (
     <div
@@ -333,8 +333,9 @@ const Theme: FC = () => {
           </div>
         </div>
 
-        {/* Theme Options & Details */}
+        {/* Theme Options & Learn More (Reemplazo de Theme Details) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Theme Options - Columna 1 */}
           <div>
             <h2 className="text-2xl font-bold mb-4">Select Your Theme</h2>
             <p className={theme === 'dark' ? 'text-gray-400 mb-8' : 'text-gray-600 mb-8'}>
@@ -355,26 +356,18 @@ const Theme: FC = () => {
             </div>
           </div>
 
+          {/* Learn More (Reubicado en Columna 2) */}
           <div>
-            <h2 className="text-2xl font-bold mb-4">Theme Details</h2>
+            <h2 className="text-2xl font-bold mb-4">Learn More</h2>
             <p className={theme === 'dark' ? 'text-gray-400 mb-8' : 'text-gray-600 mb-8'}>
-              Information about your selected mode.
+              Information about each mode.
             </p>
-
-            {currentDetail && <DesktopDetailCard detail={currentDetail} />}
-          </div>
-        </div>
-
-        {/* Learn More Section */}
-        <div>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="h-1 w-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" />
-            <h2 className="text-xl font-bold">Learn More</h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {THEME_DETAILS.map((detail) => (
-              <DesktopDetailCard key={detail.value} detail={detail} />
-            ))}
+            
+            <div className="grid md:grid-cols-1 gap-6">
+              {THEME_DETAILS.map((detail) => (
+                <DesktopDetailCard key={detail.value} detail={detail} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
