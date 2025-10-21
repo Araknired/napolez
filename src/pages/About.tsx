@@ -5,7 +5,7 @@ import { GiPlasticDuck } from 'react-icons/gi';
 import { useState, useEffect } from 'react';
 import type { FC } from 'react';
 import type { IconType } from 'react-icons';
-import { useTheme } from '../context/ThemeContext'; // ✅ Integración con el ThemeContext
+import { useTheme } from '../context/ThemeContext';
 
 // ============================================================================
 // Constants
@@ -122,8 +122,8 @@ const HeroContent: FC<HeroContentProps> = ({ isVisible }) => (
         UX-NAPOLEZ
       </span>
       <br />
-      {/* ✅ “Information” siempre en blanco */}
-      <span className="text-black">Information</span>
+      {/* ✅ “Information” ahora cambia de color con el tema */}
+      <span className="text-black dark:text-white">Information</span>
     </h1>
     
     <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl">
