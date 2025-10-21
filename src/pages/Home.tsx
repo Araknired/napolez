@@ -53,10 +53,9 @@ interface WelcomeTextProps {
 const MobileWelcomeText: FC<WelcomeTextProps> = ({ displayName, isLoaded }) => (
   <div className="md:hidden absolute top-28 w-full px-4">
     <h1
-      className={`text-white text-8xl font-bold text-center -mb-2 transition-all duration-[1500ms] ease-out ${getAnimationClass(
+      className={`text-white text-8xl font-bold text-center -mb-2 transition-all duration-[1500ms] ease-out font-berkshire ${getAnimationClass(
         isLoaded
       )}`}
-      style={{ fontFamily: 'Arial, sans-serif' }}
     >
       Welcome
     </h1>
@@ -80,10 +79,9 @@ const DesktopWelcomeText: FC<WelcomeTextProps> = ({ displayName, isLoaded }) => 
     style={{ marginLeft: '128px' }}
   >
     <h1
-      className={`text-white text-7xl font-bold text-center mb-2 transition-all duration-[1500ms] ease-out ${getAnimationClass(
+      className={`text-white text-7xl font-bold text-center mb-2 transition-all duration-[1500ms] ease-out font-berkshire ${getAnimationClass(
         isLoaded
       )}`}
-      style={{ fontFamily: 'Arial, sans-serif' }}
     >
       Welcome
     </h1>

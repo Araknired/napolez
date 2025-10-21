@@ -17,9 +17,29 @@
 }
 
 /**
+ * Custom Font: Berkshire Swash
+ * A decorative script font for elegant headings
+ */
+@font-face {
+  font-family: 'Berkshire Swash';
+  src: url('/fonts/Berkshire_Swash/BerkshireSwash-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/**
  * Utility class for applying Rammetto One font
  * Usage: <element className="font-rammetto">
  */
 .font-rammetto {
   font-family: 'Rammetto One', cursive;
+}
+
+/**
+ * Utility class for applying Berkshire Swash font
+ * Usage: <element className="font-berkshire">
+ */
+.font-berkshire {
+  font-family: 'Berkshire Swash', cursive;
 }
