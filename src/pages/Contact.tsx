@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { FiMail, FiGithub, FiPhone, FiCheckCircle, FiXCircle, FiX } from 'react-icons/fi';
 import emailjs from '@emailjs/browser';
 import type { ChangeEvent, FormEvent, FC } from 'react';
+// RUTA DE IMPORTACIÓN CORREGIDA
+import { useTheme } from '../context/ThemeContext'; 
 
 // Types
 interface FormData {
@@ -173,18 +175,28 @@ const useContactForm = (onSuccess: () => void, onError: (error: string) => void)
 };
 
 // Component: Loading Spinner
-const LoadingSpinner: FC = () => (
-  <div className="fixed inset-0 bg-gradient-to-br from-pink-50 via-gray-50 to-gray-100 flex items-center justify-center z-50">
-    <div className="text-center">
-      <div className="relative w-24 h-24 mx-auto mb-6">
-        <div className="absolute inset-0 border-4 border-pink-200 rounded-full animate-ping" />
-        <div className="absolute inset-0 border-4 border-t-red-600 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin" />
-        <div className="absolute inset-2 border-4 border-t-transparent border-r-pink-400 border-b-transparent border-l-transparent rounded-full animate-spin-slow" />
+const LoadingSpinner: FC = () => {
+  const { theme } = useTheme();
+
+  return (
+    <div className={`fixed inset-0 flex items-center justify-center z-50 ${
+      theme === 'dark'
+        ? 'bg-gradient-to-br from-slate-900 via-gray-950 to-black'
+        : 'bg-gradient-to-br from-pink-50 via-gray-50 to-gray-100'
+    }`}>
+      <div className="text-center">
+        <div className="relative w-24 h-24 mx-auto mb-6">
+          <div className="absolute inset-0 border-4 border-pink-200 rounded-full animate-ping" />
+          <div className="absolute inset-0 border-4 border-t-red-600 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin" />
+          <div className="absolute inset-2 border-4 border-t-transparent border-r-pink-400 border-b-transparent border-l-transparent rounded-full animate-spin-slow" />
+        </div>
+        <p className={`font-semibold text-lg animate-pulse ${
+          theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+        }`}>Loading Contact Page...</p>
       </div>
-      <p className="text-gray-600 font-semibold text-lg animate-pulse">Loading Contact Page...</p>
     </div>
-  </div>
-);
+  );
+};
 
 // Component: Contact Info Item
 interface ContactInfoItemProps {
@@ -197,6 +209,9 @@ const ContactInfoItem: FC<ContactInfoItemProps> = ({ info }) => {
   const linkProps = info.href
     ? { href: info.href, target: '_blank', rel: 'noopener noreferrer' }
     : {};
+  
+  const { theme } = useTheme();
+  const textColor = theme === 'dark' ? 'text-white' : 'text-gray-900';
 
   return (
     <Component
@@ -210,46 +225,52 @@ const ContactInfoItem: FC<ContactInfoItemProps> = ({ info }) => {
         <Icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
       </div>
       <div className="flex-1">
-        <p className="text-gray-900 font-bold text-xs sm:text-base break-all">{info.value}</p>
+        <p className={`font-bold text-xs sm:text-base break-all ${textColor}`}>{info.value}</p>
       </div>
     </Component>
   );
 };
 
 // Component: Contact Info Section
-const ContactInfoSection: FC = () => (
-  <div className="relative p-4 sm:p-8 lg:p-12 xl:p-16 flex flex-col justify-center animate-slideInLeft">
-    <div className="relative w-full mb-4 lg:mb-10 animate-scaleIn" style={{ animationDelay: '0.2s' }}>
-      <div className="relative w-48 h-48 sm:w-52 sm:h-52 md:w-56 md:h-56 lg:w-72 lg:h-72 xl:w-80 xl:h-80 mx-auto">
-        <img
-          src="/images/contact/buzon.png"
-          alt="Contact Mailbox"
-          className="w-full h-full object-contain transition-all duration-300 hover:drop-shadow-[0_20px_40px_rgba(239,68,68,0.5)]"
-        />
+const ContactInfoSection: FC = () => {
+  const { theme } = useTheme();
+  const textBodyColor = theme === 'dark' ? 'text-gray-400' : 'text-gray-700';
+  const imageShadow = theme === 'dark' ? 'hover:drop-shadow-[0_20px_40px_rgba(239,68,68,0.3)]' : 'hover:drop-shadow-[0_20px_40px_rgba(239,68,68,0.5)]';
+
+  return (
+    <div className="relative p-4 sm:p-8 lg:p-12 xl:p-16 flex flex-col justify-center animate-slideInLeft">
+      <div className="relative w-full mb-4 lg:mb-10 animate-scaleIn" style={{ animationDelay: '0.2s' }}>
+        <div className="relative w-48 h-48 sm:w-52 sm:h-52 md:w-56 md:h-56 lg:w-72 lg:h-72 xl:w-80 xl:h-80 mx-auto">
+          <img
+            src="/images/contact/buzon.png"
+            alt="Contact Mailbox"
+            className={`w-full h-full object-contain transition-all duration-300 ${imageShadow}`}
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2 lg:space-y-5 relative z-20 max-w-md mx-auto lg:mx-0 w-full">
+        {CONTACT_INFO.map((info) => (
+          <ContactInfoItem key={info.label} info={info} />
+        ))}
+      </div>
+
+      <div
+        className="mt-4 lg:mt-10 space-y-2 lg:space-y-4 relative z-20 max-w-md mx-auto lg:mx-0 animate-fadeIn"
+        style={{ animationDelay: '0.6s' }}
+      >
+        <p className={`text-xs sm:text-base leading-relaxed ${textBodyColor}`}>
+          Do you have a project in mind or need a hand to make it a reality? I'm here to help. I can support you at every
+          stage of the development process — from planning and design to implementation and maintenance.
+        </p>
+        <p className={`text-xs sm:text-base leading-relaxed ${textBodyColor}`}>
+          If you'd like to work with me or simply talk about your idea, feel free to reach out — I'd love to hear more
+          about your project.
+        </p>
       </div>
     </div>
-
-    <div className="space-y-2 lg:space-y-5 relative z-20 max-w-md mx-auto lg:mx-0 w-full">
-      {CONTACT_INFO.map((info) => (
-        <ContactInfoItem key={info.label} info={info} />
-      ))}
-    </div>
-
-    <div
-      className="mt-4 lg:mt-10 space-y-2 lg:space-y-4 relative z-20 max-w-md mx-auto lg:mx-0 animate-fadeIn"
-      style={{ animationDelay: '0.6s' }}
-    >
-      <p className="text-gray-700 text-xs sm:text-base leading-relaxed">
-        Do you have a project in mind or need a hand to make it a reality? I'm here to help. I can support you at every
-        stage of the development process — from planning and design to implementation and maintenance.
-      </p>
-      <p className="text-gray-700 text-xs sm:text-base leading-relaxed">
-        If you'd like to work with me or simply talk about your idea, feel free to reach out — I'd love to hear more
-        about your project.
-      </p>
-    </div>
-  </div>
-);
+  );
+};
 
 // Component: Form Input
 interface FormInputProps {
@@ -264,8 +285,13 @@ interface FormInputProps {
 }
 
 const FormInput: FC<FormInputProps> = ({ name, type, placeholder, value, onChange, disabled, delay, rows }) => {
-  const baseClasses =
-    'w-full px-4 sm:px-5 lg:px-6 py-2.5 sm:py-3.5 lg:py-4 text-sm sm:text-base bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all placeholder:text-gray-500 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed';
+  const { theme } = useTheme();
+
+  const baseClasses = `w-full px-4 sm:px-5 lg:px-6 py-2.5 sm:py-3.5 lg:py-4 text-sm sm:text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed ${
+    theme === 'dark'
+      ? 'bg-slate-800 border-2 border-slate-700 text-white placeholder:text-gray-500 hover:border-red-500'
+      : 'bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-500 hover:border-red-500'
+  }`;
 
   return (
     <div className="animate-slideInRight" style={{ animationDelay: delay }}>
@@ -302,88 +328,94 @@ interface ContactFormSectionProps {
   onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
-const ContactFormSection: FC<ContactFormSectionProps> = ({ formData, isLoading, onSubmit, onChange }) => (
-  <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-8 lg:p-12 xl:p-16 flex flex-col justify-center animate-slideInRight">
-    <h2
-      className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-4 sm:mb-8 lg:mb-10 animate-fadeIn"
-      style={{ animationDelay: '0.2s' }}
-    >
-      Contact Us
-    </h2>
+const ContactFormSection: FC<ContactFormSectionProps> = ({ formData, isLoading, onSubmit, onChange }) => {
+  const { theme } = useTheme();
+  const bgColor = theme === 'dark' ? 'bg-gradient-to-br from-slate-900 to-black' : 'bg-gradient-to-br from-gray-50 to-gray-100';
+  const titleColor = theme === 'dark' ? 'text-white' : 'text-gray-900';
 
-    <form onSubmit={onSubmit} className="space-y-2.5 lg:space-y-5">
-      <FormInput
-        name="firstName"
-        type="text"
-        placeholder="First Name"
-        value={formData.firstName}
-        onChange={onChange}
-        disabled={isLoading}
-        delay="0.3s"
-      />
+  return (
+    <div className={`${bgColor} p-4 sm:p-8 lg:p-12 xl:p-16 flex flex-col justify-center animate-slideInRight`}>
+      <h2
+        className={`text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-8 lg:mb-10 animate-fadeIn ${titleColor}`}
+        style={{ animationDelay: '0.2s' }}
+      >
+        Contact Us
+      </h2>
 
-      <FormInput
-        name="lastName"
-        type="text"
-        placeholder="Last Name"
-        value={formData.lastName}
-        onChange={onChange}
-        disabled={isLoading}
-        delay="0.4s"
-      />
-
-      <FormInput
-        name="email"
-        type="email"
-        placeholder="E-mail"
-        value={formData.email}
-        onChange={onChange}
-        disabled={isLoading}
-        delay="0.5s"
-      />
-
-      <FormInput
-        name="message"
-        type="text"
-        placeholder="Message"
-        value={formData.message}
-        onChange={onChange}
-        disabled={isLoading}
-        delay="0.6s"
-        rows={5}
-      />
-
-      <div className="flex justify-end pt-2 sm:pt-4 animate-fadeIn" style={{ animationDelay: '0.7s' }}>
-        <button
-          type="submit"
+      <form onSubmit={onSubmit} className="space-y-2.5 lg:space-y-5">
+        <FormInput
+          name="firstName"
+          type="text"
+          placeholder="First Name"
+          value={formData.firstName}
+          onChange={onChange}
           disabled={isLoading}
-          className="w-full sm:w-auto px-10 sm:px-12 lg:px-14 py-2.5 sm:py-3.5 lg:py-4 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold text-sm sm:text-base tracking-wider rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-xl"
-        >
-          {isLoading ? (
-            <span className="flex items-center justify-center gap-2">
-              <svg
-                className="animate-spin h-5 w-5 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-              SENDING...
-            </span>
-          ) : (
-            'SUBMIT'
-          )}
-        </button>
-      </div>
-    </form>
-  </div>
-);
+          delay="0.3s"
+        />
+
+        <FormInput
+          name="lastName"
+          type="text"
+          placeholder="Last Name"
+          value={formData.lastName}
+          onChange={onChange}
+          disabled={isLoading}
+          delay="0.4s"
+        />
+
+        <FormInput
+          name="email"
+          type="email"
+          placeholder="E-mail"
+          value={formData.email}
+          onChange={onChange}
+          disabled={isLoading}
+          delay="0.5s"
+        />
+
+        <FormInput
+          name="message"
+          type="text"
+          placeholder="Message"
+          value={formData.message}
+          onChange={onChange}
+          disabled={isLoading}
+          delay="0.6s"
+          rows={5}
+        />
+
+        <div className="flex justify-end pt-2 sm:pt-4 animate-fadeIn" style={{ animationDelay: '0.7s' }}>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full sm:w-auto px-10 sm:px-12 lg:px-14 py-2.5 sm:py-3.5 lg:py-4 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold text-sm sm:text-base tracking-wider rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-xl"
+          >
+            {isLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+                SENDING...
+              </span>
+            ) : (
+              'SUBMIT'
+            )}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
 
 // Component: Toast Notification
 interface ToastNotificationProps {
@@ -394,7 +426,7 @@ interface ToastNotificationProps {
 const ToastNotification: FC<ToastNotificationProps> = ({ toast, onClose }) => {
   const isSuccess = toast.type === 'success';
   const gradientColor = isSuccess ? 'from-green-500 to-green-600' : 'from-red-500 to-red-600';
-  const bgColor = isSuccess ? 'bg-green-100' : 'bg-red-100';
+  const bgColor = isSuccess ? 'bg-green-100' : 'bg-red-100'; 
   const textColor = isSuccess ? 'text-green-900' : 'text-red-900';
   const iconColor = isSuccess ? 'text-green-600' : 'text-red-600';
 
@@ -445,19 +477,35 @@ const ToastNotification: FC<ToastNotificationProps> = ({ toast, onClose }) => {
 };
 
 // Component: Background Decorations
-const BackgroundDecorations: FC = () => (
-  <>
-    <div className="absolute -top-40 -left-40 w-96 h-96 bg-pink-300 rounded-full opacity-20 blur-3xl animate-float" />
-    <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-red-300 rounded-full opacity-20 blur-3xl animate-float-delayed" />
-    <div className="absolute top-1/3 -right-40 w-96 h-96 bg-pink-200 rounded-full opacity-15 blur-3xl animate-float-slow" />
-    <div className="absolute bottom-1/4 right-20 w-80 h-80 bg-purple-200 rounded-full opacity-10 blur-3xl animate-float" />
-  </>
-);
+const BackgroundDecorations: FC = () => {
+  const { theme } = useTheme();
+
+  if (theme === 'dark') {
+    return (
+      <>
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-red-600 rounded-full opacity-10 blur-3xl animate-float" />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-pink-700 rounded-full opacity-10 blur-3xl animate-float-delayed" />
+        <div className="absolute top-1/3 -right-40 w-96 h-96 bg-purple-600 rounded-full opacity-5 blur-3xl animate-float-slow" />
+        <div className="absolute bottom-1/4 right-20 w-80 h-80 bg-red-800 rounded-full opacity-5 blur-3xl animate-float" />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-pink-300 rounded-full opacity-20 blur-3xl animate-float" />
+      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-red-300 rounded-full opacity-20 blur-3xl animate-float-delayed" />
+      <div className="absolute top-1/3 -right-40 w-96 h-96 bg-pink-200 rounded-full opacity-15 blur-3xl animate-float-slow" />
+      <div className="absolute bottom-1/4 right-20 w-80 h-80 bg-purple-200 rounded-full opacity-10 blur-3xl animate-float" />
+    </>
+  );
+};
 
 // Main Component
 const ContactPage: FC = () => {
   const [isPageLoading, setIsPageLoading] = useState(true);
   const { toast, showToast, closeToast } = useToast();
+  const { theme } = useTheme();
 
   const handleSuccess = (): void => {
     showToast('success', 'Message Sent Successfully!', 'Thank you for reaching out! I will get back to you as soon as possible.');
@@ -482,10 +530,18 @@ const ContactPage: FC = () => {
     return <LoadingSpinner />;
   }
 
+  const mainBg = theme === 'dark'
+    ? 'bg-gradient-to-br from-slate-950 via-gray-950 to-black'
+    : 'bg-gradient-to-br from-pink-50 via-gray-50 to-gray-100';
+  
+  const innerCardBg = theme === 'dark'
+    ? 'bg-slate-900'
+    : 'bg-white';
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-gray-50 to-gray-100 pt-0 lg:pt-20 pb-24 lg:pb-0">
+    <div className={`min-h-screen ${mainBg} pt-0 lg:pt-20 pb-24 lg:pb-0`}>
       <div className="h-full lg:h-[calc(100vh-5rem)]">
-        <div className="bg-white h-full shadow-2xl overflow-hidden relative rounded-t-3xl lg:rounded-none mx-0 lg:mx-0 mt-0 lg:my-0 animate-fadeInUp">
+        <div className={`h-full shadow-2xl overflow-hidden relative rounded-t-3xl lg:rounded-none mx-0 lg:mx-0 mt-0 lg:my-0 animate-fadeInUp ${innerCardBg}`}>
           <BackgroundDecorations />
 
           <div className="grid lg:grid-cols-2 h-full relative">
