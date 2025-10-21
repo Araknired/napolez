@@ -6,7 +6,9 @@ import { createContext, useContext, useEffect, useState } from 'react';
 // ============================================================================
 
 type Theme = 'light' | 'dark';
-type ThemePreference = 'light' | 'dark' | 'system';
+
+// Se actualiza para incluir el nuevo tema 'energy'
+type ThemePreference = 'light' | 'dark' | 'system' | 'energy';
 
 interface ThemeContextType {
   readonly theme: Theme;
@@ -21,6 +23,7 @@ interface ThemeContextType {
 // ============================================================================
 
 const STORAGE_KEY = 'theme-preference';
+// Se mantiene 'system' como valor por defecto, pero se acepta 'energy' en el tipo
 const PREFERENCE_DEFAULT: ThemePreference = 'system';
 
 // ============================================================================
@@ -38,10 +41,18 @@ function getSystemTheme(): Theme {
 
 /**
  * Resolve the actual theme based on preference and system settings
+ * * NOTA: El nuevo tema 'energy' se forzará a 'light' si no se desea que tenga un modo oscuro.
+ * Si Energy Mode debe tener una versión Dark, se necesitaría un nuevo tipo Theme.
+ * Aquí, 'energy' se resuelve como 'light' por ser "vibrante".
  */
 function resolveTheme(preference: ThemePreference): Theme {
   if (preference === 'system') {
     return getSystemTheme();
+  }
+  // Si la preferencia es 'energy', se resuelve como 'light' para mantener la interfaz base.
+  // De lo contrario, usa la preferencia si es 'light' o 'dark'.
+  if (preference === 'energy') {
+    return 'light';
   }
   return preference;
 }
@@ -63,7 +74,8 @@ function loadPreference(): ThemePreference {
     const saved = localStorage.getItem(STORAGE_KEY) as
       | ThemePreference
       | null;
-    return saved && ['light', 'dark', 'system'].includes(saved)
+    // Se añade 'energy' a la lista de preferencias válidas.
+    return saved && ['light', 'dark', 'system', 'energy'].includes(saved) 
       ? saved
       : PREFERENCE_DEFAULT;
   } catch {
@@ -116,15 +128,19 @@ export function ThemeProvider({ children }: { readonly children: ReactNode }) {
     }
   }, [preference]);
 
+  // Se actualiza toggleTheme para ciclar a través de los 4 modos (incluyendo 'energy')
   const toggleTheme = () => {
-    setPreferenceState((prev) =>
-      prev === 'system' ? 'light' : prev === 'light' ? 'dark' : 'system'
-    );
+    setPreferenceState((prev) => {
+      if (prev === 'light') return 'dark';
+      if (prev === 'dark') return 'system';
+      if (prev === 'system') return 'energy'; // Nuevo ciclo
+      return 'light'; // Vuelve a light
+    });
   };
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
-    setPreferenceState(newTheme);
+    setPreferenceState(newTheme); // Establecer 'light' o 'dark' como preferencia
   };
 
   const setPreference = (newPreference: ThemePreference) => {
