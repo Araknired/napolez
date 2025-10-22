@@ -172,7 +172,7 @@ const PepsiSection = () => {
       {/* Theme Toggle Button */}
       <button
         onClick={toggleTheme}
-        className={`fixed top-20 right-6 z-50 p-3 rounded-full ${isDark ? 'bg-white/10 hover:bg-white/20' : 'bg-gray-200 hover:bg-gray-300'} backdrop-blur-md border-2 ${isDark ? 'border-white/20' : 'border-gray-300'} transition-all duration-300 shadow-lg hover:scale-110 active:scale-95`}
+        className={`fixed top-6 md:top-32 right-6 z-50 p-3 rounded-full ${isDark ? 'bg-white/10 hover:bg-white/20' : 'bg-gray-200 hover:bg-gray-300'} backdrop-blur-md border-2 ${isDark ? 'border-white/20' : 'border-gray-300'} transition-all duration-300 shadow-lg hover:scale-110 active:scale-95`}
         aria-label="Toggle theme"
       >
         {isDark ? <Sun className="w-6 h-6 text-yellow-300" /> : <Moon className="w-6 h-6 text-gray-700" />}
