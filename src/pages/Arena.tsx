@@ -15,6 +15,7 @@ import {
   CreditCard 
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { products } from '@/data/products';
 import { useTheme } from '@/context/ThemeContext';
 import type { Category, Product, CartItem } from '@/types';
 
@@ -36,20 +37,6 @@ interface CategoryItem {
 interface ToastState {
   visible: boolean;
   product: Product | null;
-}
-
-// Interface for products from Supabase database
-interface SupabaseProduct {
-  id: string;
-  name: string;
-  price: number;
-  original_price: number;
-  rating: number;
-  image: string;
-  category: string;
-  color: string;
-  created_at?: string;
-  updated_at?: string;
 }
 
 // ==================== Constants ====================
@@ -668,13 +655,10 @@ const Arena: React.FC = () => {
   const [isLoadingCart, setIsLoadingCart] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [toast, setToast] = useState<ToastState>({ visible: false, product: null });
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
   // Initial data load
   useEffect(() => {
     loadUserAndCart();
-    loadProducts();
   }, []);
 
   // Toast auto-hide
@@ -731,41 +715,6 @@ const Arena: React.FC = () => {
       console.error('Error in loadUserAndCart:', error);
     } finally {
       setIsLoadingCart(false);
-    }
-  };
-
-
-
-  /**
-   * Load products from Supabase
-   */
-  const loadProducts = async (): Promise<void> => {
-    try {
-      setIsLoadingProducts(true);
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      
-      // Convert Supabase products to Product type
-      const formattedProducts: Product[] = (data as SupabaseProduct[] || []).map((product) => ({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        originalPrice: product.original_price,
-        rating: product.rating,
-        image: product.image,
-        category: product.category as Category,
-        color: product.color
-      }));
-      
-      setProducts(formattedProducts);
-    } catch (error) {
-      console.error('Error loading products:', error);
-    } finally {
-      setIsLoadingProducts(false);
     }
   };
 
@@ -874,11 +823,11 @@ const Arena: React.FC = () => {
   };
 
   // Loading state
-  if (isLoadingCart || isLoadingProducts) {
+  if (isLoadingCart) {
     return <LoadingSpinner />;
   }
 
-  const currentProducts = products.filter(p => p.category === selectedCategory);
+  const currentProducts = products[selectedCategory];
 
   return (
     <div className={`flex h-screen overflow-hidden pt-0 xl:pt-20 lg:pt-24 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>

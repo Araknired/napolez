@@ -7,7 +7,6 @@ export interface Product {
   originalPrice: number;
   rating: number;
   image: string;
-  category: Category;  // ✅ AGREGADO - Campo que faltaba
   color: string;
 }
 
