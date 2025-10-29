@@ -15,7 +15,6 @@ import {
   CreditCard 
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { products } from '@/data/products';
 import { useTheme } from '@/context/ThemeContext';
 import type { Category, Product, CartItem } from '@/types';
 
@@ -655,10 +654,13 @@ const Arena: React.FC = () => {
   const [isLoadingCart, setIsLoadingCart] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [toast, setToast] = useState<ToastState>({ visible: false, product: null });
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
   // Initial data load
   useEffect(() => {
     loadUserAndCart();
+    loadProducts();
   }, []);
 
   // Toast auto-hide
@@ -715,6 +717,28 @@ const Arena: React.FC = () => {
       console.error('Error in loadUserAndCart:', error);
     } finally {
       setIsLoadingCart(false);
+    }
+  };
+
+
+
+  /**
+   * Load products from Supabase
+   */
+  const loadProducts = async (): Promise<void> => {
+    try {
+      setIsLoadingProducts(true);
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setProducts(data || []);
+    } catch (error) {
+      console.error('Error loading products:', error);
+    } finally {
+      setIsLoadingProducts(false);
     }
   };
 
@@ -823,11 +847,11 @@ const Arena: React.FC = () => {
   };
 
   // Loading state
-  if (isLoadingCart) {
+  if (isLoadingCart || isLoadingProducts) {
     return <LoadingSpinner />;
   }
 
-  const currentProducts = products[selectedCategory];
+  const currentProducts = products.filter(p => p.category === selectedCategory);
 
   return (
     <div className={`flex h-screen overflow-hidden pt-0 xl:pt-20 lg:pt-24 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
