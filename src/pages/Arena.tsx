@@ -38,6 +38,20 @@ interface ToastState {
   product: Product | null;
 }
 
+// Interface for products from Supabase database
+interface SupabaseProduct {
+  id: string;
+  name: string;
+  price: number;
+  original_price: number;
+  rating: number;
+  image: string;
+  category: string;
+  color: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 // ==================== Constants ====================
 const CATEGORIES: CategoryItem[] = [
   { id: 'Donuts', name: 'Donuts', emoji: '/images/arena/media/donut/donut.png' },
@@ -734,7 +748,20 @@ const Arena: React.FC = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setProducts(data || []);
+      
+      // Convert Supabase products to Product type
+      const formattedProducts: Product[] = (data as SupabaseProduct[] || []).map((product) => ({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        originalPrice: product.original_price,
+        rating: product.rating,
+        image: product.image,
+        category: product.category as Category,
+        color: product.color
+      }));
+      
+      setProducts(formattedProducts);
     } catch (error) {
       console.error('Error loading products:', error);
     } finally {
