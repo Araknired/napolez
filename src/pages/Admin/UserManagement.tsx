@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Edit, Trash2, Mail, Phone, Calendar, Shield, User as UserIcon, RefreshCw } from 'lucide-react';
+import { Search, Edit, Trash2, Mail, Phone, Calendar, Shield, User as UserIcon, RefreshCw, X, Save } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 interface UserData {
@@ -19,6 +19,13 @@ export default function UserManagement() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState('all');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<UserData | null>(null);
+  const [formData, setFormData] = useState({
+    full_name: '',
+    phone: '',
+    role: 'user'
+  });
 
   useEffect(() => {
     loadUsers();
@@ -28,7 +35,7 @@ export default function UserManagement() {
     try {
       setLoading(true);
 
-      // 1. Cargar usuarios de la tabla users
+      // Cargar usuarios de la tabla users
       const { data: usersData, error: usersError } = await supabase
         .from('users')
         .select('*')
@@ -36,32 +43,84 @@ export default function UserManagement() {
 
       if (usersError) throw usersError;
 
-      // 2. Cargar datos de autenticación (si tienes permisos de admin)
-      // Nota: Esta llamada solo funciona con service_role key o con políticas específicas
-      const { data: { users: authUsers }, error: authError } = await supabase.auth.admin.listUsers();
+      // Intentar cargar datos de autenticación
+      try {
+        const { data: { users: authUsers }, error: authError } = await supabase.auth.admin.listUsers();
 
-      if (authError) {
-        console.warn('No se pudieron cargar datos de auth (requiere permisos admin):', authError);
+        if (!authError && authUsers) {
+          const combinedUsers = usersData?.map(user => {
+            const authUser = authUsers.find(au => au.id === user.user_id);
+            return {
+              ...user,
+              id: user.user_id,
+              email: authUser?.email || 'No disponible',
+              provider: authUser?.app_metadata?.provider || 'email',
+              last_sign_in: authUser?.last_sign_in_at || null
+            };
+          }) || [];
+          setUsers(combinedUsers);
+        } else {
+          setUsers(usersData?.map(u => ({ ...u, id: u.user_id, email: 'No disponible' })) || []);
+        }
+      } catch {
+        setUsers(usersData?.map(u => ({ ...u, id: u.user_id, email: 'No disponible' })) || []);
       }
-
-      // 3. Combinar datos
-      const combinedUsers = usersData?.map(user => {
-        const authUser = authUsers?.find(au => au.id === user.user_id);
-        return {
-          ...user,
-          id: user.user_id,
-          email: authUser?.email || 'No disponible',
-          provider: authUser?.app_metadata?.provider || 'email',
-          last_sign_in: authUser?.last_sign_in_at || null
-        };
-      }) || [];
-
-      setUsers(combinedUsers);
     } catch (error) {
       console.error('Error loading users:', error);
-      alert('Error al cargar usuarios. Verifica tus permisos.');
+      alert('Error al cargar usuarios');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleOpenModal = (user: UserData) => {
+    setEditingUser(user);
+    setFormData({
+      full_name: user.full_name || '',
+      phone: user.phone || '',
+      role: user.role || 'user'
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingUser(null);
+    setFormData({ full_name: '', phone: '', role: 'user' });
+  };
+
+  const handleUpdateUser = async () => {
+    if (!editingUser) return;
+    
+    if (!formData.full_name.trim()) {
+      alert('El nombre es requerido');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({
+          full_name: formData.full_name,
+          phone: formData.phone,
+          role: formData.role
+        })
+        .eq('user_id', editingUser.user_id);
+
+      if (error) throw error;
+
+      // Actualizar estado local
+      setUsers(users.map(user => 
+        user.user_id === editingUser.user_id 
+          ? { ...user, ...formData }
+          : user
+      ));
+
+      alert('¡Usuario actualizado exitosamente!');
+      handleCloseModal();
+    } catch (error) {
+      console.error('Error updating user:', error);
+      alert('Error al actualizar usuario');
     }
   };
 
@@ -86,10 +145,10 @@ export default function UserManagement() {
   };
 
   const deleteUser = async (userId: string, userName: string) => {
-    if (!confirm(`¿Estás seguro de que deseas eliminar al usuario "${userName}"?`)) return;
+    if (!confirm(`¿Estás seguro de que deseas eliminar al usuario "${userName}"?\n\nEsta acción no se puede deshacer.`)) return;
 
     try {
-      // Primero eliminar de la tabla users
+      // Eliminar de la tabla users
       const { error: userError } = await supabase
         .from('users')
         .delete()
@@ -99,12 +158,9 @@ export default function UserManagement() {
 
       // Intentar eliminar de auth (requiere permisos especiales)
       try {
-        const { error: authError } = await supabase.auth.admin.deleteUser(userId);
-        if (authError) {
-          console.warn('No se pudo eliminar de auth:', authError);
-        }
+        await supabase.auth.admin.deleteUser(userId);
       } catch (authError) {
-        console.warn('No tienes permisos para eliminar de auth:', authError);
+        console.warn('No se pudo eliminar de auth (requiere permisos especiales)');
       }
 
       setUsers(users.filter(user => user.user_id !== userId));
@@ -151,9 +207,10 @@ export default function UserManagement() {
         </div>
         <button
           onClick={loadUsers}
-          className="px-4 py-2 bg-purple-500 text-white rounded-xl font-semibold flex items-center gap-2 hover:bg-purple-600 transition-all"
+          disabled={loading}
+          className="px-4 py-2 bg-purple-500 text-white rounded-xl font-semibold flex items-center gap-2 hover:bg-purple-600 transition-all disabled:opacity-50"
         >
-          <RefreshCw className="w-5 h-5" />
+          <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
           Recargar
         </button>
       </div>
@@ -295,6 +352,7 @@ export default function UserManagement() {
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
                         <button 
+                          onClick={() => handleOpenModal(user)}
                           className="p-2 hover:bg-blue-50 rounded-lg transition-colors group"
                           title="Editar usuario"
                         >
@@ -328,6 +386,101 @@ export default function UserManagement() {
           </table>
         </div>
       </div>
+
+      {/* Edit Modal */}
+      {isModalOpen && editingUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl">
+            <div className="border-b border-gray-200 p-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">Editar Usuario</h2>
+              <button
+                onClick={handleCloseModal}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              {/* Avatar */}
+              <div className="flex justify-center mb-4">
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-3xl">
+                  {formData.full_name?.charAt(0)?.toUpperCase() || 'U'}
+                </div>
+              </div>
+
+              {/* Email (read-only) */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Email (no editable)
+                </label>
+                <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-600">
+                  {editingUser.email}
+                </div>
+              </div>
+
+              {/* Full Name */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Nombre Completo *
+                </label>
+                <input
+                  type="text"
+                  value={formData.full_name}
+                  onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="Ej: Juan Pérez"
+                />
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Teléfono
+                </label>
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="Ej: +57 300 123 4567"
+                />
+              </div>
+
+              {/* Role */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Rol
+                </label>
+                <select
+                  value={formData.role}
+                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                >
+                  <option value="user">Usuario</option>
+                  <option value="admin">Administrador</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-200 p-6 flex gap-3">
+              <button
+                onClick={handleCloseModal}
+                className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleUpdateUser}
+                className="flex-1 px-4 py-3 bg-purple-500 text-white rounded-xl font-semibold hover:bg-purple-600 transition-colors flex items-center justify-center gap-2"
+              >
+                <Save className="w-5 h-5" />
+                Guardar Cambios
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
