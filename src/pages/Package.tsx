@@ -8,11 +8,12 @@ import {
   FaCheckCircle, 
   FaTimes,
   FaShoppingBag,
-  FaClock
+  FaClock,
+  FaExclamationCircle
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
 import type { CartItem } from '@/types';
-import { useTheme } from '../context/ThemeContext'; // 1. IMPORTAR useTheme
+import { useTheme } from '../context/ThemeContext';
 
 // ==================== Types ====================
 interface DeliveryForm {
@@ -22,6 +23,14 @@ interface DeliveryForm {
   city: string;
   zipCode: string;
   instructions: string;
+}
+
+interface FormErrors {
+  fullName: string;
+  phone: string;
+  address: string;
+  city: string;
+  zipCode: string;
 }
 
 interface OrderSummary {
@@ -44,6 +53,14 @@ const INITIAL_FORM_STATE: DeliveryForm = {
   instructions: ''
 };
 
+const INITIAL_ERRORS_STATE: FormErrors = {
+  fullName: '',
+  phone: '',
+  address: '',
+  city: '',
+  zipCode: ''
+};
+
 // ==================== Utility Functions ====================
 const calculateOrderSummary = (cart: CartItem[]): OrderSummary => {
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -55,6 +72,15 @@ const calculateOrderSummary = (cart: CartItem[]): OrderSummary => {
 
 const generateOrderNumber = (): string => {
   return `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+};
+
+// Validation functions
+const validateOnlyLetters = (value: string): boolean => {
+  return /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(value);
+};
+
+const validateOnlyNumbers = (value: string): boolean => {
+  return /^[0-9]*$/.test(value);
 };
 
 // ==================== Sub-Components ====================
@@ -79,10 +105,11 @@ interface InputFieldProps {
   name: keyof DeliveryForm;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  type?: string;
   placeholder: string;
-  required?: boolean;
   isTextArea?: boolean;
+  required?: boolean;
+  error?: string;
+  validationType?: 'letters' | 'numbers' | 'free';
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -91,10 +118,11 @@ const InputField: React.FC<InputFieldProps> = ({
   name,
   value,
   onChange,
-  type = 'text',
   placeholder,
-  required = true,
-  isTextArea = false
+  isTextArea = false,
+  required = false,
+  error = '',
+  validationType = 'free'
 }) => {
   const { theme } = useTheme();
   const inputClasses = theme === 'dark' 
@@ -102,6 +130,21 @@ const InputField: React.FC<InputFieldProps> = ({
     : 'bg-white border-gray-200';
   const labelClasses = theme === 'dark' ? 'text-gray-300' : 'text-gray-700';
   const iconClasses = theme === 'dark' ? 'text-gray-500' : 'text-gray-400';
+  const errorClasses = error ? 'border-red-500 focus:ring-red-500' : '';
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    
+    // Apply validation based on type
+    if (validationType === 'letters' && !validateOnlyLetters(newValue)) {
+      return; // Block input
+    }
+    if (validationType === 'numbers' && !validateOnlyNumbers(newValue)) {
+      return; // Block input
+    }
+    
+    onChange(e);
+  };
 
   return (
     <div className="mb-4">
@@ -109,30 +152,35 @@ const InputField: React.FC<InputFieldProps> = ({
         {label} {required && <span className="text-orange-500">*</span>}
       </label>
       <div className="relative">
-        <div className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${iconClasses}`}>
+        <div className={`absolute left-4 ${isTextArea ? 'top-4' : 'top-1/2 transform -translate-y-1/2'} ${iconClasses}`}>
           {icon}
         </div>
         {isTextArea ? (
           <textarea
             name={name}
             value={value}
-            onChange={onChange}
+            onChange={handleChange}
             placeholder={placeholder}
             rows={3}
-            className={`w-full pl-12 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none ${inputClasses}`}
+            className={`w-full pl-12 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none ${inputClasses} ${errorClasses}`}
           />
         ) : (
           <input
-            type={type}
+            type="text"
             name={name}
             value={value}
-            onChange={onChange}
+            onChange={handleChange}
             placeholder={placeholder}
-            required={required}
-            className={`w-full pl-12 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent ${inputClasses}`}
+            className={`w-full pl-12 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent ${inputClasses} ${errorClasses}`}
           />
         )}
       </div>
+      {error && (
+        <div className="flex items-center gap-1 mt-2 text-red-500 text-sm">
+          <FaExclamationCircle className="text-xs" />
+          <span>{error}</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -270,9 +318,10 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, orderNumber, onClos
 
 const Package: React.FC = () => {
   const navigate = useNavigate();
-  const { theme } = useTheme(); // 2. USAR useTheme
+  const { theme } = useTheme();
   
   const [formData, setFormData] = useState<DeliveryForm>(INITIAL_FORM_STATE);
+  const [errors, setErrors] = useState<FormErrors>(INITIAL_ERRORS_STATE);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -323,6 +372,56 @@ const Package: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Clear error when user starts typing
+    if (name !== 'instructions') {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {
+      fullName: '',
+      phone: '',
+      address: '',
+      city: '',
+      zipCode: ''
+    };
+
+    let isValid = true;
+
+    // Full Name validation
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = 'Por favor ingresa tu nombre completo';
+      isValid = false;
+    }
+
+    // Phone validation
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Por favor ingresa tu número de teléfono';
+      isValid = false;
+    }
+
+    // Address validation
+    if (!formData.address.trim()) {
+      newErrors.address = 'Por favor ingresa tu dirección';
+      isValid = false;
+    }
+
+    // City validation
+    if (!formData.city.trim()) {
+      newErrors.city = 'Por favor ingresa tu ciudad';
+      isValid = false;
+    }
+
+    // ZIP Code validation
+    if (!formData.zipCode.trim()) {
+      newErrors.zipCode = 'Por favor ingresa tu código postal';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
   };
 
   const clearCart = async (): Promise<void> => {
@@ -346,6 +445,11 @@ const Package: React.FC = () => {
     e.preventDefault();
     
     if (isSubmitting) return;
+
+    // Validate form
+    if (!validateForm()) {
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -421,6 +525,9 @@ const Package: React.FC = () => {
                     value={formData.fullName}
                     onChange={handleInputChange}
                     placeholder="John Doe"
+                    required={true}
+                    error={errors.fullName}
+                    validationType="letters"
                   />
 
                   <InputField
@@ -429,8 +536,10 @@ const Package: React.FC = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    type="tel"
-                    placeholder="+1 (555) 123-4567"
+                    placeholder="5551234567"
+                    required={true}
+                    error={errors.phone}
+                    validationType="numbers"
                   />
 
                   <InputField
@@ -440,6 +549,9 @@ const Package: React.FC = () => {
                     value={formData.address}
                     onChange={handleInputChange}
                     placeholder="123 Main Street, Apt 4B"
+                    required={true}
+                    error={errors.address}
+                    validationType="free"
                   />
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -450,6 +562,9 @@ const Package: React.FC = () => {
                       value={formData.city}
                       onChange={handleInputChange}
                       placeholder="New York"
+                      required={true}
+                      error={errors.city}
+                      validationType="letters"
                     />
 
                     <InputField
@@ -459,6 +574,9 @@ const Package: React.FC = () => {
                       value={formData.zipCode}
                       onChange={handleInputChange}
                       placeholder="10001"
+                      required={true}
+                      error={errors.zipCode}
+                      validationType="numbers"
                     />
                   </div>
 
@@ -471,6 +589,7 @@ const Package: React.FC = () => {
                     placeholder="Ring the doorbell twice, leave at door..."
                     required={false}
                     isTextArea={true}
+                    validationType="free"
                   />
 
                   {/* Submit Button */}
