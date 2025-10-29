@@ -15,7 +15,7 @@ import {
   CreditCard 
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { products } from '@/data/products';
+import { products as initialProducts } from '@/data/products';
 import { useTheme } from '@/context/ThemeContext';
 import type { Category, Product, CartItem } from '@/types';
 
@@ -37,6 +37,11 @@ interface CategoryItem {
 interface ToastState {
   visible: boolean;
   product: Product | null;
+}
+
+// Tipo extendido para productos con categoría
+interface ProductWithCategory extends Product {
+  category: Category;
 }
 
 // ==================== Constants ====================
@@ -71,6 +76,47 @@ const calculateCartTotals = (cart: CartItem[]) => {
 };
 
 const getLastFourDigits = (cardNumber: string): string => cardNumber.slice(-4);
+
+// Función para aplanar productos iniciales
+const flattenInitialProducts = (): ProductWithCategory[] => {
+  const flat: ProductWithCategory[] = [];
+  Object.entries(initialProducts).forEach(([category, items]) => {
+    items.forEach(item => {
+      flat.push({ ...item, category: category as Category });
+    });
+  });
+  return flat;
+};
+
+// Función para cargar productos desde localStorage
+const loadProductsFromStorage = (): Record<Category, Product[]> => {
+  try {
+    const savedProducts = localStorage.getItem('arena-products');
+    if (savedProducts) {
+      const flatProducts: ProductWithCategory[] = JSON.parse(savedProducts);
+      
+      // Convertir array plano a objeto agrupado por categoría
+      const grouped: Record<string, Product[]> = {};
+      flatProducts.forEach(product => {
+        if (!grouped[product.category]) {
+          grouped[product.category] = [];
+        }
+        // Remover la propiedad category del producto individual
+        const { category, ...productWithoutCategory } = product;
+        grouped[product.category].push(productWithoutCategory);
+      });
+      
+      return grouped as Record<Category, Product[]>;
+    }
+  } catch (error) {
+    console.error('Error loading products from localStorage:', error);
+  }
+  
+  // Si no hay productos guardados, inicializar localStorage
+  const initialFlat = flattenInitialProducts();
+  localStorage.setItem('arena-products', JSON.stringify(initialFlat));
+  return initialProducts;
+};
 
 // ==================== Sub-Components ====================
 
@@ -640,6 +686,7 @@ const InvoiceSidebar: React.FC<InvoiceSidebarProps> = ({
 
 /**
  * Arena - Food ordering interface with cart management and payment integration
+ * Now reads products from localStorage to reflect admin changes
  */
 const Arena: React.FC = () => {
   const navigate = useNavigate();
@@ -655,10 +702,22 @@ const Arena: React.FC = () => {
   const [isLoadingCart, setIsLoadingCart] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [toast, setToast] = useState<ToastState>({ visible: false, product: null });
+  const [products, setProducts] = useState<Record<Category, Product[]>>({} as Record<Category, Product[]>);
 
   // Initial data load
   useEffect(() => {
     loadUserAndCart();
+    loadProducts();
+    
+    // Escuchar cambios en localStorage
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'arena-products') {
+        loadProducts();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   // Toast auto-hide
@@ -670,6 +729,14 @@ const Arena: React.FC = () => {
       return () => clearTimeout(timer);
     }
   }, [toast.visible]);
+
+  /**
+   * Load products from localStorage
+   */
+  const loadProducts = () => {
+    const loadedProducts = loadProductsFromStorage();
+    setProducts(loadedProducts);
+  };
 
   /**
    * Load user data, cart, and payment cards from Supabase
@@ -827,7 +894,7 @@ const Arena: React.FC = () => {
     return <LoadingSpinner />;
   }
 
-  const currentProducts = products[selectedCategory];
+  const currentProducts = products[selectedCategory] || [];
 
   return (
     <div className={`flex h-screen overflow-hidden pt-0 xl:pt-20 lg:pt-24 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
