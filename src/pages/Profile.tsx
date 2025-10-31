@@ -12,6 +12,7 @@ import {
   UserCircle,
   Award,
   TrendingUp,
+  ShieldCheck,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -147,7 +148,13 @@ const QuickActionsCard: FC<{
         {actions.map((action) => (
           <button
             key={action.label}
-            onClick={() => onNavigate(action.path)}
+            onClick={() => {
+              if (action.path.startsWith('http://') || action.path.startsWith('https://')) {
+                window.open(action.path, '_blank');
+              } else {
+                onNavigate(action.path);
+              }
+            }}
             className={`group relative overflow-hidden p-6 rounded-xl hover:shadow-lg transition-all duration-300 ${buttonBaseClasses}`}
           >
             <div
@@ -354,6 +361,12 @@ const Profile: FC = () => {
         label: 'Clear History',
         path: '/profile/clear-data',
         gradient: 'from-orange-500 to-red-500',
+      },
+      {
+        icon: ShieldCheck,
+        label: 'Admin',
+        path: 'https://napolez.vercel.app/admin',
+        gradient: 'from-emerald-500 to-teal-500',
       },
     ],
     []
